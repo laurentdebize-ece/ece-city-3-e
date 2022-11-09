@@ -152,3 +152,110 @@ void Charger(ECECITY* ececity){
 
     ececity->IsCodeRunning = false;
 }
+
+// Calcul les routes
+// route en cours = 1
+// pour chaque cellule de la matrice :
+//	si la cellule est de type "route" et que son numero n'est pas initialisé (est à 0 par défaut)
+//	alors on traite et on marque la cellule et route en cours +1
+// Pour marquer et traiter une cellule :
+// marquage = cellule en cours . numero = route en cours
+// pour chaque cellule autour (en croix) de la cellule en cours
+//	si la cellule est de type "route" et que son numero n'est pas initialisé (est à 0 par défaut)
+//	alors on traite et on marque la cellule
+int calculRoute( ECECITY* ececity, int typeCalcul){//type calcul 1: niveau -1 et 2: niveau -2(elec)
+    int routeEnCours = 1;
+    for (int j = 0; j < NB_LIGNES; j++) {
+        for (int i = 0; i < NB_COLONNES; i++) {
+
+                if(typeCalcul == 1){
+                    if (ececity->tabCase[i][j].type == ROUTE || ececity->tabCase[i][j].type == CHATEAUDEAU ) {
+                        ececity->tabCase[i][j].numeroConnexeEau = 0;
+                    }
+                }
+                else{
+                    if (ececity->tabCase[i][j].type == ROUTE || ececity->tabCase[i][j].type == CENTRALE) {
+                        ececity->tabCase[i][j].numeroConnexeElec = 0;
+                    }
+                }
+
+
+        }
+    }
+    for (int j = 0; j < NB_LIGNES; j++) {
+        for (int i = 0; i < NB_COLONNES; i++) {
+            int num = 0;
+            int t;
+            if(typeCalcul == 1){
+                num = ececity->tabCase[i][j].numeroConnexeEau;
+                t = CHATEAUDEAU;
+            } else {
+                num = ececity->tabCase[i][j].numeroConnexeElec;
+                t = CENTRALE;
+            }
+            if ((ececity->tabCase[i][j].type == ROUTE || ececity->tabCase[i][j].type == t) && num == 0){//
+                ajouteCelluleRoute(ececity->tabCase, i, j, routeEnCours ,typeCalcul);
+                routeEnCours++;
+            }
+
+        }
+    }
+}
+int ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int ligne, int numRoute, int typeCalcul){//type calcul 1: niveau -1 et 2: niveau -2(elec)
+    int num = 0;
+    int t;
+    if(typeCalcul == 1){
+        matrice[colonne][ligne].numeroConnexeEau = numRoute;
+        t = CHATEAUDEAU;
+    } else{
+        matrice[colonne][ligne].numeroConnexeElec = numRoute;
+        t = CENTRALE;
+    }
+
+    if (ligne - 1 >= 0  ){
+        if(typeCalcul == 1){
+            num = matrice[colonne][ligne - 1].numeroConnexeEau;
+        } else{
+            num = matrice[colonne][ligne - 1].numeroConnexeElec;
+        }
+        if ((matrice[colonne][ligne - 1].type == ROUTE || matrice[colonne][ligne - 1].type == t) && num == 0){
+            printf("lig-1\n");
+            ajouteCelluleRoute(matrice, colonne, ligne - 1, numRoute,typeCalcul);
+        }
+    }
+    if (ligne + 1< NB_LIGNES  ){
+        if(typeCalcul == 1){
+            num = matrice[colonne][ligne + 1].numeroConnexeEau;
+        } else{
+            num = matrice[colonne][ligne + 1].numeroConnexeElec;
+        }
+        if  ((matrice[colonne][ligne + 1].type == ROUTE || matrice[colonne][ligne + 1].type == t) && num == 0){
+            printf("lig+1\n");
+            ajouteCelluleRoute(matrice, colonne, ligne + 1, numRoute,typeCalcul);
+        }
+    }
+    if (colonne - 1 >=0 ){
+        if(typeCalcul == 1){
+            num = matrice[colonne - 1][ligne].numeroConnexeEau;
+        } else{
+            num = matrice[colonne - 1][ligne].numeroConnexeElec;
+        }
+        if ((matrice[colonne - 1][ligne].type == ROUTE || matrice[colonne - 1][ligne].type == t) && num == 0){
+            printf("col-1\n");
+            ajouteCelluleRoute(matrice, colonne - 1, ligne , numRoute,typeCalcul);
+        }
+
+    }
+    if (colonne + 1 < NB_COLONNES ){
+        if(typeCalcul == 1){
+            num = matrice[colonne + 1][ligne].numeroConnexeEau;
+        } else{
+            num = matrice[colonne + 1][ligne].numeroConnexeElec;
+        }
+        if ((matrice[colonne + 1][ligne].type == ROUTE || matrice[colonne + 1][ligne].type == t) && num == 0){
+            printf("col+1\n");
+            ajouteCelluleRoute(matrice, colonne + 1, ligne , numRoute,typeCalcul);
+        }
+
+    }
+}

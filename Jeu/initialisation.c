@@ -78,8 +78,8 @@ void InitCase(ECECITY* ececity){
             ececity->tabCase[colonnes][lignes].numeroType = 0;
             ececity->tabCase[colonnes][lignes].centraleAssignee = 0;
             ececity->tabCase[colonnes][lignes].chateauAssignee = 0;
-            ececity->tabCase[colonnes][lignes].numeroConnexeEau = -1;
-            ececity->tabCase[colonnes][lignes].numeroConnexeElec = -1;
+            ececity->tabCase[colonnes][lignes].numeroConnexeEau = 0;
+            ececity->tabCase[colonnes][lignes].numeroConnexeElec = 0;
 
             ececity->tabCase[colonnes][lignes].positionCase = (Rectangle) {(float) colonnes * MAP_TILE_SIZE + (float)(ececity->display.width - SIZEBOARDX) / 2,
                                                                    (float) lignes * MAP_TILE_SIZE+(float)(ececity->display.height-SIZEBOARDY)/2,

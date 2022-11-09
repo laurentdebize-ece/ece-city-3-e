@@ -28,7 +28,7 @@ if (NOT raylib_FOUND) # If there's none, fetch and build raylib
     endif()
 endif()
 # Our Project
-add_executable(ece-city-3-e ${SOURCES} Jeu/ECECity.c include/ECECity.h Jeu/initialisation.c include/initialisation.h Jeu/musique.c include/musique.h Jeu/temps.c include/temps.h Jeu/affichage.c include/affichage.h)
+add_executable(ece-city-3-e ${SOURCES} Jeu/ECECity.c include/ECECity.h Jeu/initialisation.c include/initialisation.h Jeu/musique.c include/musique.h Jeu/temps.c include/temps.h Jeu/affichage.c include/affichage.h Jeu/Gestionfichier.c include/Gestionfichier.h)
 #set(raylib_VERBOSE 1)
 target_link_libraries(ece-city-3-e raylib)
 # Web Configurations

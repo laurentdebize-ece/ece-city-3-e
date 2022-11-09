@@ -10,8 +10,6 @@
 #define SIZEBOARDX 1024
 #define SIZEBOARDY 768
 
-#define NBCOLONNE 45
-#define NBLIGNE 35
 
 #define MouseOnBoard (GetMousePosition().x > (float)(1920-SIZEBOARDX)/2  && GetMousePosition().x < (float)(NB_COLONNES)*MAP_TILE_SIZE+(float)(1920-SIZEBOARDX)/2 && GetMousePosition().y > (float)(1065-SIZEBOARDY)/2 && GetMousePosition().y < (float)(NB_LIGNES)*MAP_TILE_SIZE+(float)(1065-SIZEBOARDY)/2)? 1 : 0
 
@@ -221,5 +219,7 @@ void MainBoucle(ECECITY* ececity);
 void Menu(ECECITY* ececity);
 void Charger(ECECITY* ececity);
 void Gameplay(ECECITY* ececity);
+int calculRoute( ECECITY *ececity, int typeCalcul);
+int ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int ligne, int numRoute, int typeCalcul);
 
 #endif //PROJETINFO_ECECITY_H
