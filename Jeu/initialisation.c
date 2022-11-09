@@ -75,6 +75,7 @@ void InitCase(ECECITY* ececity){
         for (int colonnes = 0; colonnes < NB_COLONNES; ++colonnes) {
             ececity->tabCase[colonnes][lignes].type = 0;
             ececity->tabCase[colonnes][lignes].libre = true;
+
             ececity->tabCase[colonnes][lignes].positionCase = (Rectangle) {(float) colonnes * MAP_TILE_SIZE + (float)(ececity->display.width - SIZEBOARDX) / 2,
                                                                    (float) lignes * MAP_TILE_SIZE+(float)(ececity->display.height-SIZEBOARDY)/2,
                                                                            MAP_TILE_SIZE, MAP_TILE_SIZE };
