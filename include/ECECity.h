@@ -9,6 +9,7 @@
 #define NB_LIGNES 35
 #define SIZEBOARDX 1024
 #define SIZEBOARDY 768
+#define MAX_OBJET 300
 
 
 #define MouseOnBoard (GetMousePosition().x > (float)(1920-SIZEBOARDX)/2  && GetMousePosition().x < (float)(NB_COLONNES)*MAP_TILE_SIZE+(float)(1920-SIZEBOARDX)/2 && GetMousePosition().y > (float)(1065-SIZEBOARDY)/2 && GetMousePosition().y < (float)(NB_LIGNES)*MAP_TILE_SIZE+(float)(1065-SIZEBOARDY)/2)? 1 : 0
@@ -120,6 +121,9 @@ typedef struct{
     int numeroType;
     int centraleAssignee;
     int chateauAssignee;
+    int capaciteInitiale;
+    int capaciteRestante;//capacité restante centrale/chateau
+    int capaciteHabEnCours;// capacité de remplissage d'une habitation
 } Case;
 
 typedef struct{
@@ -219,7 +223,9 @@ void MainBoucle(ECECITY* ececity);
 void Menu(ECECITY* ececity);
 void Charger(ECECITY* ececity);
 void Gameplay(ECECITY* ececity);
-int calculRoute( ECECITY *ececity, int typeCalcul);
-int ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int ligne, int numRoute, int typeCalcul);
+int calculRoute( ECECITY *ececity, int typeCalcul, Case  tabCentraleElec[MAX_OBJET], Case tabChateauDeau[MAX_OBJET]);
+int ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int ligne, int numRoute, int typeCalcul,    Case  tabCentraleElec[MAX_OBJET], Case tabChateauDeau[MAX_OBJET]);
+int rechercheHabitationRoute(int listeMaison[MAX_OBJET], int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], int typeCalcul);
+int calculDistributionElec(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
 
 #endif //PROJETINFO_ECECITY_H

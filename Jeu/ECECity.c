@@ -163,7 +163,7 @@ void Charger(ECECITY* ececity){
 // pour chaque cellule autour (en croix) de la cellule en cours
 //	si la cellule est de type "route" et que son numero n'est pas initialisé (est à 0 par défaut)
 //	alors on traite et on marque la cellule
-int calculRoute( ECECITY* ececity, int typeCalcul){//type calcul 1: niveau -1 et 2: niveau -2(elec)
+int calculRoute( ECECITY* ececity, int typeCalcul,  Case  tabCentraleElec[MAX_OBJET], Case tabChateauDeau[MAX_OBJET]){//type calcul 1: niveau -1 et 2: niveau -2(elec)
     int routeEnCours = 1;
     for (int j = 0; j < NB_LIGNES; j++) {
         for (int i = 0; i < NB_COLONNES; i++) {
@@ -194,21 +194,32 @@ int calculRoute( ECECITY* ececity, int typeCalcul){//type calcul 1: niveau -1 et
                 t = CENTRALE;
             }
             if ((ececity->tabCase[i][j].type == ROUTE || ececity->tabCase[i][j].type == t) && num == 0){//
-                ajouteCelluleRoute(ececity->tabCase, i, j, routeEnCours ,typeCalcul);
+                ajouteCelluleRoute(ececity->tabCase, i, j, routeEnCours ,typeCalcul, tabCentraleElec,tabChateauDeau);
                 routeEnCours++;
             }
 
         }
     }
+    return routeEnCours - 1;
 }
-int ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int ligne, int numRoute, int typeCalcul){//type calcul 1: niveau -1 et 2: niveau -2(elec)
+int ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int ligne, int numRoute, int typeCalcul,  Case  tabCentraleElec[MAX_OBJET], Case tabChateauDeau[MAX_OBJET]){//type calcul 1: niveau -1 et 2: niveau -2(elec)
     int num = 0;
     int t;
     if(typeCalcul == 1){
         matrice[colonne][ligne].numeroConnexeEau = numRoute;
+        if(matrice[colonne][ligne].type == CHATEAUDEAU){
+            printf("numtype %d\n", matrice[colonne][ligne].numeroType);
+            tabChateauDeau[matrice[colonne][ligne].numeroType].numeroConnexeEau = numRoute;
+        }
+
         t = CHATEAUDEAU;
     } else{
         matrice[colonne][ligne].numeroConnexeElec = numRoute;
+        if(matrice[colonne][ligne].type == CENTRALE){
+            printf("numtype %d\n", matrice[colonne][ligne].numeroType);
+            tabCentraleElec[matrice[colonne][ligne].numeroType].numeroConnexeElec = numRoute;
+        }
+
         t = CENTRALE;
     }
 
@@ -219,8 +230,7 @@ int ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int li
             num = matrice[colonne][ligne - 1].numeroConnexeElec;
         }
         if ((matrice[colonne][ligne - 1].type == ROUTE || matrice[colonne][ligne - 1].type == t) && num == 0){
-            printf("lig-1\n");
-            ajouteCelluleRoute(matrice, colonne, ligne - 1, numRoute,typeCalcul);
+            ajouteCelluleRoute(matrice, colonne, ligne - 1, numRoute,typeCalcul, tabCentraleElec,tabChateauDeau);
         }
     }
     if (ligne + 1< NB_LIGNES  ){
@@ -230,8 +240,7 @@ int ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int li
             num = matrice[colonne][ligne + 1].numeroConnexeElec;
         }
         if  ((matrice[colonne][ligne + 1].type == ROUTE || matrice[colonne][ligne + 1].type == t) && num == 0){
-            printf("lig+1\n");
-            ajouteCelluleRoute(matrice, colonne, ligne + 1, numRoute,typeCalcul);
+            ajouteCelluleRoute(matrice, colonne, ligne + 1, numRoute,typeCalcul, tabCentraleElec,tabChateauDeau);
         }
     }
     if (colonne - 1 >=0 ){
@@ -241,8 +250,7 @@ int ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int li
             num = matrice[colonne - 1][ligne].numeroConnexeElec;
         }
         if ((matrice[colonne - 1][ligne].type == ROUTE || matrice[colonne - 1][ligne].type == t) && num == 0){
-            printf("col-1\n");
-            ajouteCelluleRoute(matrice, colonne - 1, ligne , numRoute,typeCalcul);
+            ajouteCelluleRoute(matrice, colonne - 1, ligne , numRoute,typeCalcul, tabCentraleElec,tabChateauDeau);
         }
 
     }
@@ -253,9 +261,73 @@ int ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int li
             num = matrice[colonne + 1][ligne].numeroConnexeElec;
         }
         if ((matrice[colonne + 1][ligne].type == ROUTE || matrice[colonne + 1][ligne].type == t) && num == 0){
-            printf("col+1\n");
-            ajouteCelluleRoute(matrice, colonne + 1, ligne , numRoute,typeCalcul);
+            ajouteCelluleRoute(matrice, colonne + 1, ligne , numRoute,typeCalcul, tabCentraleElec,tabChateauDeau);
         }
 
     }
+}
+
+int rechercheHabitationRoute(int listeMaison[MAX_OBJET], int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], int typeCalcul){ //typeCalcul 1 eau, 2 elec. REcherche les maisons connectées à une route
+    for (int j = 0; j < MAX_OBJET; j++){
+        listeMaison[j] = -1;
+    }
+    for (int j = 0; j < NB_LIGNES; j++) {
+        for (int i = 0; i < NB_COLONNES; i++) {
+            int r = 0;
+            if (typeCalcul == 1){
+                r = matrice[i][j].numeroConnexeEau;
+            } else {
+                r = matrice[i][j].numeroConnexeElec;
+            }
+            if (matrice[i][j].type == ROUTE && r == numRoute){
+                if (j - 1 > 0 && (matrice[i][j - 1].type == TerrainVague || matrice[i][j - 1].type == Cabane || matrice[i][j - 1].type == Maison || matrice[i][j - 1].type == Immeuble || matrice[i][j - 1].type == Gratte_ciel)){ // mettre tous les types habitations
+                    listeMaison[matrice[i][j - 1].numeroType] = 1;
+                }
+                if (j + 1 < NB_LIGNES && (matrice[i][j + 1].type == TerrainVague || matrice[i][j + 1].type == Cabane || matrice[i][j + 1].type == Maison || matrice[i][j + 1].type == Immeuble || matrice[i][j + 1].type == Gratte_ciel)){ // mettre tous les types habitations
+                    listeMaison[matrice[i][j + 1].numeroType] = 1;
+                }
+                if (i - 1 > 0 && (matrice[i - 1][j].type == TerrainVague || matrice[i - 1][j].type == Cabane || matrice[i - 1][j].type == Maison || matrice[i - 1][j].type == Immeuble || matrice[i - 1][j].type == Gratte_ciel)){ // mettre tous les types habitations
+                    listeMaison[matrice[i - 1][j].numeroType] = 1;
+                }
+                if (i + 1 < NB_COLONNES && (matrice[i + 1][j].type == TerrainVague || matrice[i + 1][j].type == Cabane || matrice[i + 1][j].type == Maison || matrice[i + 1][j].type == Immeuble || matrice[i + 1][j].type == Gratte_ciel)){ // mettre tous les types habitations
+                    listeMaison[matrice[i + 1][j].numeroType] = 1;
+                }
+
+            }
+        }
+    }
+}
+
+int calculDistributionElec(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c){
+//reinitialiser la capacteActuelle
+//- pour chaque centraleElec (parcourt du numero tabCentraleElec) : capacteElecActuelle = 5000
+//- pour chaque Habitation (parcourt du numero tabHabitation) : capacteElecActuelle = 0
+    for (int i = 0; i < MAX_OBJET; i++){
+        tabCentraleElec[i].capaciteRestante = c.CapaciteCentrale;
+        tabHabitation[i].capaciteHabEnCours = 0;
+    }
+
+//- pour chaque route
+    for (int r = 0; r <= nbMaxRoute; r++){
+        // calcul de la liste des habitations sur le reseau r
+        int listeMaison[MAX_OBJET];
+        rechercheHabitationRoute(listeMaison, r, matrice, 2);
+//   - pour chaque centraleElec i (parcourt du numero tabCentraleElec) qui est sur le réseau
+        for (int i = 1; i <= c.compteurCentrales; i++){
+            if(tabCentraleElec[i].numeroConnexeElec == r){
+
+                // calculer la repartition d'elec par maison (on remplit chaque maison sur la route jusqu'a epuisement des ressources de la centrale elec)
+                for (int h = 1; h <= c.compteurMaisons; h++){
+                    if (listeMaison[h] == 1){ // la maison numero h est sur la route
+                        if (tabCentraleElec[i].capaciteRestante >= tabHabitation[h].capaciteInitiale){ // la centrale a assez de capacite pour alimenter l habitation complete
+                            tabCentraleElec[i].capaciteRestante = tabCentraleElec[i].capaciteRestante - tabHabitation[h].capaciteInitiale;
+                            tabHabitation[h].capaciteHabEnCours = tabHabitation[h].capaciteInitiale;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
 }
