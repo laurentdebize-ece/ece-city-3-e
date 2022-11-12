@@ -2,7 +2,7 @@
 #define PROJETINFO_ECECITY_H
 
 #include "raylib.h"
-
+#include <limits.h>
 #define TIMENOW (ececity->time.timer.hoursCounter*3600 + ececity->time.timer.minutesCounter*60 + ececity->time.timer.secondsCounter)
 #define MAP_TILE_SIZE 20
 #define NB_COLONNES 45
@@ -128,7 +128,9 @@ typedef struct{
     int chateauAssignee;
     int capaciteInitiale;
     int capaciteRestante;//capacité restante centrale/chateau
-    int capaciteHabEnCours;// capacité de remplissage d'une habitation
+    int capaciteHabElecEnCours;// capacité de remplissage d'une habitation en elec
+    int capaciteHabEauEnCours;// capacité de remplissage d'une habitation en eau
+    int distance;
 } Case;
 
 enum SommetCouleur {
@@ -290,7 +292,12 @@ void Gameplay(ECECITY* ececity);
 int calculRoute( ECECITY *ececity, int typeCalcul, Case  tabCentraleElec[MAX_OBJET], Case tabChateauDeau[MAX_OBJET]);
 void ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int ligne, int numRoute, int typeCalcul,    Case  tabCentraleElec[MAX_OBJET], Case tabChateauDeau[MAX_OBJET]);
 void rechercheHabitationRoute(int listeMaison[MAX_OBJET], int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], int typeCalcul);
+void calculDistributionElec_old(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
+int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[NB_COLONNES][NB_LIGNES] );
+int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int distanceEnCours, Case matrice[NB_COLONNES][NB_LIGNES]);
+void calculDistributionEau(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabChateauEau[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
 void calculDistributionElec(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
+
 void pause(ECECITY* ececity);
 void defineTypeCase(ECECITY* ececity);
 void defineCurrentJeuProcess(ECECITY* ececity);
