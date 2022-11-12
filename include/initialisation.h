@@ -3,6 +3,8 @@
 
 #include "../include/ECECity.h"
 
+// AFFICHAGE
+
 void InitTOUT(ECECITY* ececity);
 void InitDisplay(ECECITY* ececity);
 void InitImage(ECECITY* ececity);
@@ -14,5 +16,14 @@ void InitWrite(ECECITY* ececity);
 void InitCompteur(ECECITY* ececity);
 void InitFormat(char * nomFichier, ECECITY* ececity);
 void ARRETERTOUT(ECECITY* ececity);
+
+// JEU
+
+void GestionImpot(ECECITY* ECE);
+Prix InitialisationPrix(ECECITY* ECE);
+void NouveauTerrainVague(ECECITY* ECE);
+void EvolutionTerrainVague(ECECITY* ECE);
+void GestionImpot(ECECITY* ECE);
+
 
 #endif //PROJETINFO_INITIALISATION_H

@@ -174,7 +174,10 @@ typedef struct{
     int CapaciteCentrale;
     int soldeBanque;
     int nbRoutes;
+    int compteurCabanes;
     int compteurMaisons;
+    int compteurImmeubles;
+    int compteurGratteCiel;
     int compteurChateaux;
     int compteurCentrales;
 }Compteur;

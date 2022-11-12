@@ -215,3 +215,79 @@ void ARRETERTOUT(ECECITY* ececity){
     CloseAudioDevice();
     CloseWindow();
 }
+
+// JEU
+
+Prix InitialisationPrix(ECECITY* ECE){
+
+    Prix Prix;
+    Prix.prixTerrainVague = 1000;
+    Prix.chateauPrix = 100000;
+    Prix.centralePrix = 100000;
+    Prix.prixRoute = ECE->compteur.nbRoutes*10; //par unité
+    Prix.Impots = 10;
+    return Prix;
+}
+
+void NouveauTerrainVague(ECECITY* ECE) {
+
+    if (ECE->compteur.soldeBanque >= 1000) {
+    ECE->compteur.soldeBanque = ECE->compteur.soldeBanque - ECE->prix.prixTerrainVague;
+    }
+    else {
+        printf(" Solde insuffisant pour contruire un terrain vague");
+    }
+
+}
+
+void EvolutionTerrainVague(ECECITY* ECE){
+
+    if (ECE->compteur.temporel >= 15){
+
+        ECE->compteur.compteurCabanes= ECE->compteur.compteurCabanes + 1;
+        ECE->compteur.nbHabitantsTotal = ECE->compteur.nbHabitantsTotal + 10;
+
+
+
+        //eau electricité else if
+
+    }
+
+    if (ECE->compteur.temporel >= 30){
+
+        ECE->compteur.compteurMaisons= ECE->compteur.compteurMaisons + 1;
+        ECE->compteur.nbHabitantsTotal = ECE->compteur.nbHabitantsTotal + 50;
+
+        //eau/electricité
+    }
+
+    if (ECE->compteur.temporel >= 45){
+
+        ECE->compteur.compteurImmeubles= ECE->compteur.compteurImmeubles + 1;
+        ECE->compteur.nbHabitantsTotal = ECE->compteur.nbHabitantsTotal + 100;
+
+        //eau/electricité
+    }
+
+    if (ECE->compteur.temporel >= 45){
+
+        ECE->compteur.compteurImmeubles= ECE->compteur.compteurImmeubles + 1;
+        ECE->compteur.nbHabitantsTotal = ECE->compteur.nbHabitantsTotal + 100;
+
+        //eau/electricité
+    }
+
+    if (ECE->compteur.temporel >= 60){
+
+        ECE->compteur.compteurGratteCiel= ECE->compteur.compteurGratteCiel + 1;
+        ECE->compteur.nbHabitantsTotal = ECE->compteur.nbHabitantsTotal + 1000;
+
+        //eau/electricité
+    }
+}
+
+void GestionImpot(ECECITY* ECE){
+
+    ECE->compteur.soldeBanque =   ECE->compteur.soldeBanque - ECE->prix.Impots * ECE->compteur.nbHabitantsTotal;
+  // Vérification faillite
+}
