@@ -405,7 +405,7 @@ int calculRoute( ECECITY* ececity, int typeCalcul,  Case  tabCentraleElec[MAX_OB
     }
     return routeEnCours - 1;
 }
-int ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int ligne, int numRoute, int typeCalcul,  Case  tabCentraleElec[MAX_OBJET], Case tabChateauDeau[MAX_OBJET]){//type calcul 1: niveau -1 et 2: niveau -2(elec)
+void ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int ligne, int numRoute, int typeCalcul,  Case  tabCentraleElec[MAX_OBJET], Case tabChateauDeau[MAX_OBJET]){//type calcul 1: niveau -1 et 2: niveau -2(elec)
     int num = 0;
     int t;
     if(typeCalcul == 1){
@@ -469,7 +469,7 @@ int ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int li
     }
 }
 
-int rechercheHabitationRoute(int listeMaison[MAX_OBJET], int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], int typeCalcul){ //typeCalcul 1 eau, 2 elec. REcherche les maisons connectées à une route
+void rechercheHabitationRoute(int listeMaison[MAX_OBJET], int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], int typeCalcul){ //typeCalcul 1 eau, 2 elec. REcherche les maisons connectées à une route
     for (int j = 0; j < MAX_OBJET; j++){
         listeMaison[j] = -1;
     }
@@ -500,7 +500,7 @@ int rechercheHabitationRoute(int listeMaison[MAX_OBJET], int numRoute, Case matr
     }
 }
 
-int calculDistributionElec_old(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c){
+void calculDistributionElec_old(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c){
 //reinitialiser la capacteActuelle
 //- pour chaque centraleElec (parcourt du numero tabCentraleElec) : capacteElecActuelle = 5000
 //- pour chaque Habitation (parcourt du numero tabHabitation) : capacteElecActuelle = 0
@@ -676,7 +676,7 @@ int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int d
     }
 }
 
-int calculDistributionEau(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabChateauEau[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c){
+void calculDistributionEau(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabChateauEau[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c){
 
 
 // reinitialiser la capacteActuelle
@@ -765,7 +765,7 @@ int calculDistributionEau(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabChateau
     }
 }
 
-int calculDistributionElec(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c){
+void calculDistributionElec(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c){
 //reinitialiser la capacteActuelle
 //- pour chaque centraleElec (parcourt du numero tabCentraleElec) : capacteElecActuelle = 5000
 //- pour chaque Habitation (parcourt du numero tabHabitation) : capacteElecActuelle = 0

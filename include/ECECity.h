@@ -287,13 +287,13 @@ void Menu(ECECITY* ececity);
 void Charger(ECECITY* ececity);
 void Gameplay(ECECITY* ececity);
 int calculRoute( ECECITY *ececity, int typeCalcul, Case  tabCentraleElec[MAX_OBJET], Case tabChateauDeau[MAX_OBJET]);
-int ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int ligne, int numRoute, int typeCalcul,    Case  tabCentraleElec[MAX_OBJET], Case tabChateauDeau[MAX_OBJET]);
-int rechercheHabitationRoute(int listeMaison[MAX_OBJET], int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], int typeCalcul);
-int calculDistributionElec_old(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
+void ajouteCelluleRoute(Case matrice[NB_COLONNES][NB_LIGNES], int colonne, int ligne, int numRoute, int typeCalcul,    Case  tabCentraleElec[MAX_OBJET], Case tabChateauDeau[MAX_OBJET]);
+void rechercheHabitationRoute(int listeMaison[MAX_OBJET], int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], int typeCalcul);
+void calculDistributionElec_old(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
 int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[NB_COLONNES][NB_LIGNES] );
 int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int distanceEnCours, Case matrice[NB_COLONNES][NB_LIGNES]);
-int calculDistributionEau(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabChateauEau[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
-int calculDistributionElec(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
+void calculDistributionEau(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabChateauEau[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
+void calculDistributionElec(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
 
 void pause(ECECITY* ececity);
 void defineTypeCase(ECECITY* ececity);
