@@ -63,44 +63,44 @@ void Graphe_ReallocGraphe(ECECITY* ececity) {
     ececity->graphe->pSommet = (pSommet *) realloc(ececity->graphe->pSommet, sizeof(pSommet) * ececity->graphe->ordre);
 
     ececity->graphe->pSommet[ececity->graphe->ordre - 1] = (pSommet) malloc(sizeof(struct Sommet));
-    ececity->graphe->pSommet[ececity->graphe->ordre - 1]->id = ececity->graphe->ordre - 1;
+    ececity->graphe->pSommet[ececity->graphe->ordre - 1]->id = ececity->graphe->ordre;
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->ligneTab = ececity->souris.ligneSouris;
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->colonneTab = ececity->souris.colonneSouris;
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->couleur = UNEXPLORED;
-    ececity->graphe->pSommet[ececity->graphe->ordre - 1]->numCC = ececity->graphe->ordre;
+    ececity->graphe->pSommet[ececity->graphe->ordre - 1]->numCC = ececity->graphe->ordre - 1;
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->arc = NULL;
+
 
 }
 
 
-/* La construction du reseau peut se faire a partir d'un fichier dont le nom est passe en parametre
-Le fichier contient : ordre, taille,orientation (0 ou 1)et liste des arcs + la ponderation de l'arc*/
+
 void buildGraphe(ECECITY* ececity) {
-    if(ececity->graphe == NULL){
-        printf("Le graphe n'existe pas \n");
-    }
-    else{
-        if(ececity->graphe->ordre) {
+
+    if(ececity->graphe != NULL){
+        if(ececity->graphe->ordre > 0) {
             Graphe_ReallocGraphe(ececity);
         }
-        for (int i = 0; i < ececity->graphe->ordre; ++i) {
-            for (int sommet = 0; sommet < ececity->graphe->ordre; ++sommet) {
-                if(i != sommet){
-                    if(proximiteSommetRoute(ececity->graphe->pSommet[i], ececity->graphe->pSommet[sommet]) && arcExiste(ececity->graphe->pSommet[i], ececity->graphe->pSommet[sommet]) == false){
-                        ececity->graphe->pSommet[i]->numCC = ececity->graphe->pSommet[sommet]->numCC;
-                        ececity->graphe->pSommet = Graph_CreateArc(ececity->graphe->pSommet, ececity->graphe->pSommet[i]->id, ececity->graphe->pSommet[sommet]->id);
-                        ececity->graphe->pSommet = Graph_CreateArc(ececity->graphe->pSommet, ececity->graphe->pSommet[sommet]->id, ececity->graphe->pSommet[i]->id);
+        for (int sommet1 = 0; sommet1 < ececity->graphe->ordre; ++sommet1) {
+            for (int sommet2 = 0; sommet2 < ececity->graphe->ordre; ++sommet2) {
+                if(sommet1 != sommet2){
+                    if(proximiteSommet(ececity->graphe->pSommet[sommet1], ececity->graphe->pSommet[sommet2])
+                    && arcExiste(ececity->graphe->pSommet[sommet1], ececity->graphe->pSommet[sommet2]) == false
+                    && arcExiste(ececity->graphe->pSommet[sommet2], ececity->graphe->pSommet[sommet1]) == false){
+                        int numCC = ececity->graphe->pSommet[sommet2]->numCC;
+                        for (int i = 0; i < ececity->graphe->ordre; ++i) {
+                            if(ececity->graphe->pSommet[i]->numCC == numCC){
+                                ececity->graphe->pSommet[i]->numCC = ececity->graphe->pSommet[sommet1]->numCC; //actualisation des numCC pour eviter les cycles
+                            }
+                        }
+                        ececity->graphe->pSommet = Graph_CreateArc(ececity->graphe->pSommet, ececity->graphe->pSommet[sommet1]->id - 1, ececity->graphe->pSommet[sommet2]->id - 1);
+                        ececity->graphe->pSommet = Graph_CreateArc(ececity->graphe->pSommet, ececity->graphe->pSommet[sommet2]->id - 1, ececity->graphe->pSommet[sommet1]->id - 1);
                         ececity->graphe->taille++;
                     }
                 }
             }
         }
-        for (int sommet = 0; sommet < ececity->graphe->ordre; ++sommet) {
-            printf("Sommet %d : lignesTab: %d colonnesTab: %d\n", ececity->graphe->pSommet[sommet]->id, ececity->graphe->pSommet[sommet]->ligneTab, ececity->graphe->pSommet[sommet]->colonneTab);
-        }
     }
-    // creer les aretes du graphe
-
 
 
 }
@@ -108,11 +108,9 @@ void buildGraphe(ECECITY* ececity) {
 //arcExiste(ececity->graphe->pSommet[i], ececity->graphe->pSommet[sommet]
 bool arcExiste(pSommet sommet1, pSommet sommet2) {
     pArc arc = sommet1->arc;
-    pArc arc2 = sommet2->arc;
 
     while (arc != NULL) {
         if(arc->sommet2 == sommet2->id){
-            printf("arc existe entre %d et %d\n", sommet1->id, sommet2->id);
             return true;
         }
         arc = arc->arc_suivant;
@@ -121,7 +119,7 @@ bool arcExiste(pSommet sommet1, pSommet sommet2) {
     return false;
 }
 
-bool proximiteSommetRoute(pSommet sommet1, pSommet sommet2) {
+bool proximiteSommet(pSommet sommet1, pSommet sommet2) {
     if (sommet1->ligneTab == sommet2->ligneTab) {
         if (sommet1->colonneTab == sommet2->colonneTab + 1 || sommet1->colonneTab == sommet2->colonneTab - 1) {
             return true;
@@ -167,16 +165,17 @@ void Graphe_DisplayArcs(Graphe* graphe) {
             pArc arc = graphe->pSommet[i]->arc;
             printf("%d --> ", graphe->pSommet[i]->id);
             while (arc != NULL) {
-                printf("%d ", arc->sommet2);
+                printf(" sommet1:%d sommet2:%d NUMCCsommet1:%d NUMCC sommet2: %d\n", arc->sommet1,arc->sommet2,graphe->pSommet[arc->sommet1]->numCC, graphe->pSommet[arc->sommet2]->numCC);
                 arc = arc->arc_suivant;
-                if(arc != NULL){
-                    printf("--> ");
-                }
             }
-            printf("\n");
         }
     }
-    else{
-        printf("Le graphe n'existe pas ou n'a pas d'arcs!\n");
+}
+
+void Graphe_DisplaySommet(Graphe* graphe) {
+    if(graphe != NULL && graphe->ordre){
+        for (int i = 0; i < graphe->ordre; ++i) {
+            printf(" sommet %d: NUMCC: %d\n",graphe->pSommet[i]->id, graphe->pSommet[i]->numCC);
+        }
     }
 }

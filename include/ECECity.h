@@ -152,7 +152,6 @@ struct Sommet
     struct Sommet *predecesseur;
     struct Sommet *suivant;
     int numCC;
-    int type;
     int colonneTab;
     int ligneTab;
     enum SommetCouleur couleur;

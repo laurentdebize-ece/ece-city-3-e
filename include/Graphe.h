@@ -12,9 +12,10 @@ void buildGraphe(ECECITY* ececity);
 
 pSommet* Graph_CreateArc(pSommet* sommet, int s1, int s2);
 
-bool proximiteSommetRoute(pSommet sommet1, pSommet sommet2);
+bool proximiteSommet(pSommet sommet1, pSommet sommet2);
 bool arcExiste(pSommet sommet1, pSommet sommet2);
 
 void Graphe_DisplayArcs(Graphe* graphe);
+void Graphe_DisplaySommet(Graphe* graphe);
 
 #endif // GRAPHE_H_INCLUDED

@@ -1,10 +1,10 @@
 #include "../include/ECECity.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include "../include/affichage.h"
 #include "../include/musique.h"
 #include "../include/temps.h"
 #include "../include/Graphe.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 void MainBoucle(ECECITY* ececity){
     while(ececity->IsCodeRunning){
@@ -21,7 +21,6 @@ void MainBoucle(ECECITY* ececity){
                 }
                 break;
             case END:
-                //affichage fin
                 ececity->IsCodeRunning = false;
                 break;
             default:
@@ -89,6 +88,7 @@ void Gameplay(ECECITY* ececity){
             ececity->IsGameBreak = true;
             break;
         case GAMEOVER:
+            Graphe_DisplaySommet(ececity->graphe);
             ececity->IsCodeRunning = false;
             break;
     }
@@ -125,7 +125,7 @@ void defineTypeCase(ECECITY* ececity){
         if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
             switch(ececity->currentJeuProcess){
                 case CONSTRUCTIONROUTE:
-                    if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type != ROUTE){
+                    if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE){
                         ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type = ROUTE;
                         ececity->compteur.nbRoutes++;
                         if(ececity->compteur.nbRoutes == 1){
@@ -133,7 +133,6 @@ void defineTypeCase(ECECITY* ececity){
                         }
                         ececity->graphe->ordre++;
                         buildGraphe(ececity);
-                        Graphe_DisplayArcs(ececity->graphe);
                     }
                     break;
 
@@ -155,7 +154,8 @@ void defineTypeCase(ECECITY* ececity){
                         }
                         ececity->tabHabitations[ececity->compteur.compteurMaisons].type = TerrainVague;
                         ececity->tabHabitations[ececity->compteur.compteurMaisons].numeroType = ececity->compteur.compteurMaisons;
-                    }
+
+                        }
                     break;
 
                 case CONSTRUCTIONCHATEAUDEAU:
@@ -177,8 +177,8 @@ void defineTypeCase(ECECITY* ececity){
                         }
                         ececity->tabChateauEau[ececity->compteur.compteurChateaux].type = CHATEAUDEAU;
                         ececity->tabChateauEau[ececity->compteur.compteurChateaux].numeroType = ececity->compteur.compteurChateaux;
-                    }
 
+                    }
                     break;
 
                 case CONSTRUCTIONCENTRALE:
