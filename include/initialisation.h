@@ -11,6 +11,8 @@ void InitMusique(ECECITY* ececity);
 void InitTime(ECECITY* ececity);
 void InitBouton(ECECITY* ececity);
 void InitWrite(ECECITY* ececity);
+void InitCompteur(ECECITY* ececity);
+void InitFormat(char * nomFichier, ECECITY* ececity);
 void ARRETERTOUT(ECECITY* ececity);
 
 #endif //PROJETINFO_INITIALISATION_H

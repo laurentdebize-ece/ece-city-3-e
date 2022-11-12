@@ -56,15 +56,19 @@ void AffichageGamePlay(ECECITY* ececity){
                             break;
 
                         case CONSTRUCTIONMAISON:
-                            colorRect = (ececity->souris.colonneSouris == colonnes && ececity->souris.ligneSouris == lignes) ?  LIGHTGRAY : BLANK;
+                            colorRect = (colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesMaison
+                                    && colonnes - ececity->souris.colonneSouris >= 0
+                                    && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesMaison
+                                    && lignes - ececity->souris.ligneSouris >= 0
+                                    ) ?  LIGHTGRAY : BLANK;
                             break;
 
                         case CONSTRUCTIONCHATEAUDEAU:
-                            colorRect = (ececity->souris.colonneSouris == colonnes && ececity->souris.ligneSouris == lignes) ?  BLUE: BLANK;
+                            colorRect = (colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesChateaux && colonnes - ececity->souris.colonneSouris >= 0 && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesChateaux && lignes - ececity->souris.ligneSouris >= 0) ?  BLUE : BLANK;
                             break;
 
                         case CONSTRUCTIONCENTRALE:
-                            colorRect = (ececity->souris.colonneSouris == colonnes && ececity->souris.ligneSouris == lignes) ?  GOLD : BLANK;
+                            colorRect = (colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesCentrales && colonnes - ececity->souris.colonneSouris >= 0 && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesCentrales && lignes - ececity->souris.ligneSouris >= 0) ?  GOLD : BLANK;
                             break;
 
                         default:
@@ -96,7 +100,7 @@ void AffichageGamePlay(ECECITY* ececity){
 
             }
             DrawRectangleLines((int)ececity->tabCase[colonnes][lignes].positionCase.x, (int)ececity->tabCase[colonnes][lignes].positionCase.y,
-                               (int)ececity->tabCase[colonnes][lignes].positionCase.width, (int)ececity->tabCase[colonnes][lignes].positionCase.height, BLACK);
+                               (int)ececity->tabCase[colonnes][lignes].positionCase.width, (int)ececity->tabCase[colonnes][lignes].positionCase.height, BLANK);
         }
     }
 
@@ -154,7 +158,6 @@ void AfficherBouton(ECECITY* ececity){
             ececity->write.fontSize = 30;
             break;
     }
-
     for (int bouton = 0; bouton < NB_BOUTON; ++bouton) {
         if (ececity->currentProcess == MENU){
             DrawRectangleRec(ececity->tabBouton[MENU][bouton].recBouton, (CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[MENU][bouton].recBouton)) ? SKYBLUE : LIGHTGRAY);

@@ -1,6 +1,7 @@
 #include "../include/initialisation.h"
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 
 
 
@@ -26,6 +27,11 @@ void InitTOUT(ECECITY* ececity){
     InitImage(ececity);
 
     InitWrite(ececity);
+
+    InitCompteur(ececity);
+
+    InitFormat("../FichierText/fichier",ececity);
+
 
 }
 
@@ -80,12 +86,15 @@ void InitCase(ECECITY* ececity){
             ececity->tabCase[colonnes][lignes].chateauAssignee = 0;
             ececity->tabCase[colonnes][lignes].numeroConnexeEau = 0;
             ececity->tabCase[colonnes][lignes].numeroConnexeElec = 0;
-
+            ececity->tabCase[colonnes][lignes].proximiteRoute = false;
             ececity->tabCase[colonnes][lignes].positionCase = (Rectangle) {(float) colonnes * MAP_TILE_SIZE + (float)(ececity->display.width - SIZEBOARDX) / 2,
                                                                    (float) lignes * MAP_TILE_SIZE+(float)(ececity->display.height-SIZEBOARDY)/2,
                                                                            MAP_TILE_SIZE, MAP_TILE_SIZE };
         }
     }
+    ececity->tabHabitations = NULL;
+    ececity->tabCentrale = NULL;
+    ececity->tabChateauEau = NULL;
 }
 
 void InitBouton(ECECITY* ececity){
@@ -146,8 +155,56 @@ void InitWrite(ECECITY* ececity){
     ececity->write.fontColor = BLACK;
 }
 
+void InitCompteur(ECECITY* ececity){
+    ececity->compteur.nbRoutes = 0;
+    ececity->compteur.compteurMaisons = 0;
+    ececity->compteur.compteurChateaux = 0;
+    ececity->compteur.compteurCentrales = 0;
+}
+
+void InitFormat(char * nomFichier, ECECITY* ececity)
+{
+
+    FILE * ifs = fopen(nomFichier,"r");//ouverture
+
+    if (!ifs)
+    {
+        printf("Erreur de lecture fichier\n");
+        exit(-1);
+    }
+    //lire fichier texte
+    fscanf(ifs,"%d %d ",&ececity->formatBatiment.nblignesRoute, &ececity->formatBatiment.nbcolonnesRoute);
+    fscanf(ifs,"\n");
+    fscanf(ifs,"%d %d ",&ececity->formatBatiment.nblignesMaison, &ececity->formatBatiment.nbcolonnesMaison);
+    fscanf(ifs,"\n");
+    fscanf(ifs,"%d %d ",&ececity->formatBatiment.nblignesCentrales, &ececity->formatBatiment.nbcolonnesCentrales);
+    ececity->formatBatiment.nblignesChateaux = ececity->formatBatiment.nblignesCentrales;
+    ececity->formatBatiment.nbcolonnesChateaux = ececity->formatBatiment.nbcolonnesCentrales;
+
+    fclose(ifs);//fermeture
+}
+
+
+
 void ARRETERTOUT(ECECITY* ececity){
 
+    if (ececity->graphe != NULL)
+    {
+        free(ececity->graphe);
+    }
+
+    if (ececity->tabHabitations != NULL)
+    {
+        free(ececity->tabHabitations);
+    }
+    if (ececity->tabCentrale != NULL)
+    {
+        free(ececity->tabCentrale);
+    }
+    if (ececity->tabChateauEau != NULL)
+    {
+        free(ececity->tabChateauEau);
+    }
     for (int image = 0; image < NB_IMAGES; ++image) {
         UnloadTexture(ececity->tabImage[image].TextureImage);
     }

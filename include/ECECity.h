@@ -12,6 +12,8 @@
 #define MAX_OBJET 300
 
 
+
+
 #define MouseOnBoard (GetMousePosition().x > (float)(1920-SIZEBOARDX)/2  && GetMousePosition().x < (float)(NB_COLONNES)*MAP_TILE_SIZE+(float)(1920-SIZEBOARDX)/2 && GetMousePosition().y > (float)(1065-SIZEBOARDY)/2 && GetMousePosition().y < (float)(NB_LIGNES)*MAP_TILE_SIZE+(float)(1065-SIZEBOARDY)/2)? 1 : 0
 
 typedef enum {
@@ -43,10 +45,10 @@ typedef enum{
     VIDE,
     ROUTE,
     TerrainVague,
-    Cabane,
-    Maison,
-    Immeuble,
-    Gratte_ciel,
+    CABANE,
+    MAISON,
+    IMMEUBLE,
+    GRATTE_CIEL,
     CHATEAUDEAU,
     CENTRALE,
 }typeCase;
@@ -112,10 +114,13 @@ static const char *boutonFinText[] = {
 };
 
 
+
+
 typedef struct{
     Rectangle positionCase;
     int type;// 0-vide 1-terrain vague/ruine 3-cabane 4- maison 5- immeuble 6- Gratte ciel 7- chateau d'eau 8- centrale electrique
     bool libre;
+    bool proximiteRoute;
     int numeroConnexeEau;
     int numeroConnexeElec;
     int numeroType;
@@ -128,12 +133,49 @@ typedef struct{
     int distance;
 } Case;
 
+enum SommetCouleur {
+    UNEXPLORED,
+    EXPLORING,
+    EXPLORED
+};
+
+struct Arc
+{
+    int sommet1;
+    int sommet2;
+    struct Arc* arc_suivant;
+};
+typedef struct Arc* pArc;
+
+struct Sommet
+{
+    struct Arc* arc;
+    int id;
+    struct Sommet *predecesseur;
+    struct Sommet *suivant;
+    int numCC;
+    int colonneTab;
+    int ligneTab;
+    enum SommetCouleur couleur;
+};
+
+typedef struct Sommet* pSommet;
+
+
+typedef struct Graphe
+{
+    int taille;
+    int ordre;
+    pSommet* pSommet;
+} Graphe;
+
 typedef struct{
     int temporel;
     int nbHabitantsTotal;
     int CapaciteEau;
     int CapaciteCentrale;
     int soldeBanque;
+    int nbRoutes;
     int compteurMaisons;
     int compteurChateaux;
     int compteurCentrales;
@@ -153,6 +195,17 @@ typedef struct{
     int Immeuble;
     int Gratte_ciel;
 }NB_habitants;
+
+typedef struct {
+    int nblignesRoute;
+    int nblignesMaison;
+    int nblignesCentrales;
+    int nblignesChateaux;
+    int nbcolonnesRoute;
+    int nbcolonnesMaison;
+    int nbcolonnesCentrales;
+    int nbcolonnesChateaux;
+}FormatBatiment;
 
 typedef struct{
     int width;
@@ -211,7 +264,15 @@ typedef struct {
     int currentProcess;
     int currentMenuProcess;
     int currentJeuProcess;
+    Graphe* graphe;
     Case tabCase[NB_COLONNES][NB_LIGNES];
+    Case* tabHabitations;
+    Case* tabChateauEau;
+    Case* tabCentrale;
+    Compteur compteur;
+    Prix prix;
+    NB_habitants nbHabitants;
+    FormatBatiment formatBatiment;
     Images tabImage[NB_IMAGES];
     Musique tabMusic[NB_MUSIQUE];
     Bouton tabBouton[NB_PROCESS][NB_BOUTON_JEU];
@@ -233,5 +294,11 @@ int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[N
 int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int distanceEnCours, Case matrice[NB_COLONNES][NB_LIGNES]);
 int calculDistributionEau(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabChateauEau[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
 int calculDistributionElec(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
+
+void pause(ECECITY* ececity);
+void defineTypeCase(ECECITY* ececity);
+void defineCurrentJeuProcess(ECECITY* ececity);
+bool proximiteRoute(ECECITY* ececity, int typeBatiment);
+bool construire(ECECITY* ececity);
 
 #endif //PROJETINFO_ECECITY_H
