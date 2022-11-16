@@ -13,24 +13,27 @@ void InitTOUT(ECECITY* ececity){
     ececity->currentMenuProcess = NADA;
     ececity->currentJeuProcess = NONE;
 
-    InitDisplay(ececity);
-    SetTargetFPS(ececity->display.FPS);
+      InitDisplay(ececity);
+      SetTargetFPS(ececity->display.FPS);
 
-    InitCase(ececity);
+      InitCase(ececity);
 
-    InitMusique(ececity);
+      InitMusique(ececity);
 
-    InitTime(ececity);
+      InitTime(ececity);
 
     InitBouton(ececity);
 
-    InitImage(ececity);
+     InitImage(ececity);
 
     InitWrite(ececity);
 
     InitCompteur(ececity);
 
-    InitFormat("../FichierText/fichier",ececity);
+   InitFormat("../FichierText/fichier",ececity);
+
+
+  InitPrix("../FichierText/fichier", ececity);
 
 
 }
@@ -162,10 +165,10 @@ void InitCompteur(ECECITY* ececity){
     ececity->compteur.compteurCentrales = 0;
 }
 
-void InitFormat(char * nomFichier, ECECITY* ececity)
+void InitFormat(char* monFichier, ECECITY* ececity)
 {
 
-    FILE * ifs = fopen(nomFichier,"r");//ouverture
+    FILE * ifs = fopen(monFichier,"r");//ouverture
 
     if (!ifs)
     {
@@ -218,18 +221,40 @@ void ARRETERTOUT(ECECITY* ececity){
 
 // JEU
 
-Prix InitialisationPrix(ECECITY* ECE){
+void InitPrix(char* monFichier, ECECITY* ececity){
 
-    Prix Prix;
-    Prix.prixTerrainVague = 1000;
-    Prix.chateauPrix = 100000;
-    Prix.centralePrix = 100000;
-    Prix.prixRoute = ECE->compteur.nbRoutes*10; //par unité
-    Prix.Impots = 10;
-    return Prix;
+    int CaractereLu, ligne = 1;
+    char* prix;
+
+    FILE * ifs = fopen(monFichier,"r");
+
+    if (!ifs)
+    {
+        printf("Erreur de lecture fichier\n");
+        exit(-1);
+    }
+    while (CaractereLu!=EOF && ligne<4) // pour lire à partir de la ligne 4
+    {
+        CaractereLu=fgetc(ifs);
+        if (CaractereLu=='\n')
+            ligne++;
+
+    }
+
+    fscanf(ifs,"%d  ",&ececity->prix.prixRoute);
+    fscanf(ifs,"\n");
+    fscanf(ifs,"%d  ",&ececity->prix.prixTerrainVague);
+    fscanf(ifs,"\n");
+    fscanf(ifs,"%d  ",&ececity->prix.chateauPrix);
+    fscanf(ifs,"\n");
+    fscanf(ifs,"%d  ",&ececity->prix.centralePrix);
+
+    printf("%d",ececity->prix.prixRoute);
+
+    fclose(ifs);
 }
 
-void NouveauTerrainVague(ECECITY* ECE) {
+void InitTerrainVague(ECECITY* ECE) {
 
     if (ECE->compteur.soldeBanque >= 1000) {
     ECE->compteur.soldeBanque = ECE->compteur.soldeBanque - ECE->prix.prixTerrainVague;
