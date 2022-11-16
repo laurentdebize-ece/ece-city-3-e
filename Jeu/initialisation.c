@@ -291,3 +291,70 @@ void GestionImpot(ECECITY* ECE){
     ECE->compteur.soldeBanque =   ECE->compteur.soldeBanque - ECE->prix.Impots * ECE->compteur.nbHabitantsTotal;
   // Vérification faillite
 }
+
+//avant on resort une maison dont son compteur == 15 ou modulo 15 si il y a pas de reset de maison
+void augmenterStadeMaison (ECECITY* tbxmaison , int maisonTraitee){//affichage
+    int typedepart = tbxmaison->tabHabitations[maisonTraitee].type;
+    int typearrivee = 0;
+    if(typedepart != GRATTE_CIEL){
+        if(typedepart == TerrainVague){
+            typearrivee = CABANE;
+            tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 10;
+        }
+        else if(typedepart == CABANE){
+            typearrivee = MAISON;
+            tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 50;
+        }
+        else if(typedepart == MAISON){
+            typearrivee = IMMEUBLE;
+            tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 100;
+        }
+        else if(typedepart == IMMEUBLE){
+            typearrivee = GRATTE_CIEL;
+            tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 1000;
+        }
+        tbxmaison->tabHabitations[maisonTraitee].type = typearrivee;
+
+        for (int j = 0; j < NB_LIGNES; j++) {
+            for (int i = 0; i < NB_COLONNES; i++) {
+                if(tbxmaison->tabCase[i][j].type == typedepart && tbxmaison->tabCase[i][j].numeroType == tbxmaison->tabHabitations[maisonTraitee].numeroType){
+                    tbxmaison->tabCase[i][j].type = typearrivee;
+                }
+            }
+        }
+
+    }
+}
+void diminuerStadeMaison (ECECITY* tbxmaison , int maisonTraitee){//affichage
+    int typedepart = tbxmaison->tabHabitations[maisonTraitee].type;
+    int typearrivee = 0;
+    if(tbxmaison->tabHabitations[maisonTraitee].type == TerrainVague){
+        typearrivee = VIDE;
+        tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 0;
+    }
+    else if(tbxmaison->tabHabitations[maisonTraitee].type == CABANE){
+        typearrivee = TerrainVague;
+        tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 0;
+    }
+    else if(tbxmaison->tabHabitations[maisonTraitee].type == MAISON){
+        typearrivee = CABANE;
+        tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 10;
+    }
+    else if(tbxmaison->tabHabitations[maisonTraitee].type == IMMEUBLE){
+        typearrivee = MAISON;
+        tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 50;
+    }
+    else if(tbxmaison->tabHabitations[maisonTraitee].type == GRATTE_CIEL){
+        typearrivee = IMMEUBLE;
+        tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 100;
+    }
+    tbxmaison->tabHabitations[maisonTraitee].type = typearrivee;
+
+    for (int j = 0; j < NB_LIGNES; j++) {
+        for (int i = 0; i < NB_COLONNES; i++) {
+            if(tbxmaison->tabCase[i][j].type == typedepart && tbxmaison->tabCase[i][j].numeroType == tbxmaison->tabHabitations[maisonTraitee].numeroType){
+                tbxmaison->tabCase[i][j].type = typearrivee;
+            }
+        }
+    }
+}

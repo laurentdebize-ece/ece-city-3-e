@@ -5,6 +5,9 @@
 #include "../include/musique.h"
 #include "../include/temps.h"
 #include "../include/Graphe.h"
+#include "../include/initialisation.h"
+
+
 
 void MainBoucle(ECECITY* ececity){
     while(ececity->IsCodeRunning){
@@ -685,12 +688,13 @@ void calculDistributionEau(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabChatea
 // - pour chaque Habitation (parcourt du numero tabHabitation) :
 //    - capacteEauActuelle = 0
 //    - distance = INT_MAX
-    for (int i = 0; i < MAX_OBJET; i++){
+    for (int i = 1; i <= c.compteurChateaux; i++){
         tabChateauEau[i].capaciteRestante = c.CapaciteEau;
+    }
+    for (int i = 1; i <= c.compteurMaisons; i++){
         tabHabitation[i].capaciteHabEauEnCours = 0;
         tabHabitation[i].distance = 0;
     }
-
 //- pour chaque route
     for (int r = 0; r <= nbMaxRoute; r++){
         // calcul de la liste des habitations sur la route r
@@ -721,7 +725,7 @@ void calculDistributionEau(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabChatea
                             // parcourir listeOrdonneeHabitation et inserer l'habitation en fonction de sa distance
                             int k = 0;
                             while (k < habiDernier && listeOrdonneeHabitation[k].distance < d){
-                                k = k + 1;
+                                k = k + 1; //classement des distances
 
                             }
 
@@ -889,3 +893,54 @@ void calculDistributionElec(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentr
     }
 }
 
+void evolutionConstruction( Case  tabCentraleElec[MAX_OBJET],  Case tabHabitation[MAX_OBJET], Case  tabChateauEau[MAX_OBJET], int maisonTraitee, ECECITY* ececity, Compteur c){
+    if(ececity->jeu.typeJeu == 1){//communisme
+        calculCommunisme(tabCentraleElec, tabHabitation, tabChateauEau, maisonTraitee, ececity, c);
+    } else{//capitalisme
+        calculCapitalisme(tabCentraleElec,tabHabitation,tabChateauEau,maisonTraitee, ececity,c);
+    }
+}
+void calculCommunisme ( Case  tabCentraleElec[MAX_OBJET],  Case tabHabitation[MAX_OBJET], Case  tabChateauEau[MAX_OBJET], int maisonTraitee, ECECITY* ececity, Compteur c){
+
+  if(tabHabitation[maisonTraitee].capaciteHabEauEnCours < tabHabitation[maisonTraitee].capaciteInitiale || tabHabitation[maisonTraitee].capaciteHabElecEnCours < tabHabitation[maisonTraitee].capaciteInitiale){
+        diminuerStadeMaison(ececity,maisonTraitee);
+        int nbmaxRoutesEau = calculRoute(ececity, 1,tabCentraleElec,tabChateauEau);
+        int nbmaxRoutesElec = calculRoute(ececity, 2,tabCentraleElec,tabChateauEau);
+
+        calculDistributionEau(ececity->tabCase,tabChateauEau,tabHabitation, nbmaxRoutesEau,c);
+        calculDistributionElec(ececity->tabCase, tabCentraleElec, tabHabitation, nbmaxRoutesElec, c);
+    }
+    else{
+        augmenterStadeMaison(ececity, maisonTraitee);
+        int nbmaxRoutesEau = calculRoute(ececity, 1,tabCentraleElec,tabChateauEau);
+        int nbmaxRoutesElec = calculRoute(ececity, 2,tabCentraleElec,tabChateauEau);
+
+        calculDistributionEau(ececity->tabCase,tabChateauEau,tabHabitation, nbmaxRoutesEau,c);
+        calculDistributionElec(ececity->tabCase, tabCentraleElec, tabHabitation, nbmaxRoutesElec, c);
+
+        if(tabHabitation[maisonTraitee].capaciteHabEauEnCours < tabHabitation[maisonTraitee].capaciteInitiale || tabHabitation[maisonTraitee].capaciteHabElecEnCours < tabHabitation[maisonTraitee].capaciteInitiale){
+            diminuerStadeMaison(ececity,maisonTraitee);
+            calculDistributionEau(ececity->tabCase,tabChateauEau,tabHabitation, nbmaxRoutesEau,c);
+            calculDistributionElec(ececity->tabCase, tabCentraleElec, tabHabitation, nbmaxRoutesElec, c);
+        }
+
+    }
+
+}
+void calculCapitalisme ( Case  tabCentraleElec[MAX_OBJET],  Case tabHabitation[MAX_OBJET], Case  tabChateauEau[MAX_OBJET], int maisonTraitee, ECECITY* ececity, Compteur c){
+
+    augmenterStadeMaison(ececity, maisonTraitee);
+    int nbmaxRoutesEau = calculRoute(ececity, 1,tabCentraleElec,tabChateauEau);
+    int nbmaxRoutesElec = calculRoute(ececity, 2,tabCentraleElec,tabChateauEau);
+
+    calculDistributionEau(ececity->tabCase,tabChateauEau,tabHabitation, nbmaxRoutesEau,c);
+    calculDistributionElec(ececity->tabCase, tabCentraleElec, tabHabitation, nbmaxRoutesElec, c);
+
+
+    if(tabHabitation[maisonTraitee].capaciteHabEauEnCours < tabHabitation[maisonTraitee].capaciteInitiale || tabHabitation[maisonTraitee].capaciteHabElecEnCours < tabHabitation[maisonTraitee].capaciteInitiale){
+        diminuerStadeMaison(ececity,maisonTraitee);
+        calculDistributionEau(ececity->tabCase,tabChateauEau,tabHabitation, nbmaxRoutesEau,c);
+        calculDistributionElec(ececity->tabCase, tabCentraleElec, tabHabitation, nbmaxRoutesElec, c);
+    }
+
+}

@@ -3,6 +3,7 @@
 
 #include "raylib.h"
 #include <limits.h>
+
 #define TIMENOW (ececity->time.timer.hoursCounter*3600 + ececity->time.timer.minutesCounter*60 + ececity->time.timer.secondsCounter)
 #define MAP_TILE_SIZE 20
 #define NB_COLONNES 45
@@ -184,6 +185,12 @@ typedef struct{
     int compteurCentrales;
 }Compteur;
 
+typedef struct {
+    int typeJeu;//1- si communisme 2- si capitalisme
+    int typeCalcul;// 1 eau, 2 elec.
+
+}ElementSauvegarde;
+
 typedef struct{
     int prixTerrainVague;
     int prixRoute;
@@ -267,6 +274,7 @@ typedef struct {
     int currentProcess;
     int currentMenuProcess;
     int currentJeuProcess;
+    ElementSauvegarde jeu;
     Graphe* graphe;
     Case tabCase[NB_COLONNES][NB_LIGNES];
     Case* tabHabitations;
@@ -297,7 +305,9 @@ int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[N
 int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int distanceEnCours, Case matrice[NB_COLONNES][NB_LIGNES]);
 void calculDistributionEau(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabChateauEau[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
 void calculDistributionElec(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
-
+void calculCommunisme ( Case  tabCentraleElec[MAX_OBJET],  Case tabHabitation[MAX_OBJET], Case  tabChateauEau[MAX_OBJET], int maisonTraitee, ECECITY* ececity, Compteur c);
+void calculCapitalisme ( Case  tabCentraleElec[MAX_OBJET],  Case tabHabitation[MAX_OBJET], Case  tabChateauEau[MAX_OBJET], int maisonTraitee, ECECITY* ececity, Compteur c);
+void evolutionConstruction( Case  tabCentraleElec[MAX_OBJET],  Case tabHabitation[MAX_OBJET], Case  tabChateauEau[MAX_OBJET], int maisonTraitee, ECECITY* ececity, Compteur c);
 void pause(ECECITY* ececity);
 void defineTypeCase(ECECITY* ececity);
 void defineCurrentJeuProcess(ECECITY* ececity);

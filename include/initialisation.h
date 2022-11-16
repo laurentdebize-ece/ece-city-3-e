@@ -24,6 +24,8 @@ Prix InitialisationPrix(ECECITY* ECE);
 void NouveauTerrainVague(ECECITY* ECE);
 void EvolutionTerrainVague(ECECITY* ECE);
 void GestionImpot(ECECITY* ECE);
+void augmenterStadeMaison (ECECITY* tbxmaison , int maisonTraitee);
+void diminuerStadeMaison (ECECITY* tbxmaison , int maisonTraitee);
 
 
 #endif //PROJETINFO_INITIALISATION_H
