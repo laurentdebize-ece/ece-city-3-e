@@ -1,6 +1,7 @@
 #include "../include/ECECity.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include "../include/affichage.h"
 #include "../include/musique.h"
 #include "../include/temps.h"
@@ -21,6 +22,7 @@ void MainBoucle(ECECITY* ececity){
                 }
                 break;
             case END:
+                //Faillite - Fin
                 ececity->IsCodeRunning = false;
                 break;
             default:
@@ -723,14 +725,14 @@ void calculDistributionEau(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabChatea
                             while (k < habiDernier && listeOrdonneeHabitation[k].distance < d){
                                 k = k + 1;
 
-                            }
+                            } //k position
 
                 		    // on a trouve la bonne position dnas le tableau
                             if (k < habiDernier){ // insertion en milieu de file, decalage de la fin de file
                                 // decaler les case suivantes
 
 
-                                for (int z = habiDernier - 1; z >= k; z--){
+                                for (int z = habiDernier - 1; z >= k; z--){  // z indiceposition
 
                                     listeOrdonneeHabitation[z+1].type = listeOrdonneeHabitation[z].type;
                                     listeOrdonneeHabitation[z+1].numeroType = listeOrdonneeHabitation[z].numeroType;

@@ -20,10 +20,10 @@ void ARRETERTOUT(ECECITY* ececity);
 // JEU
 
 void GestionImpot(ECECITY* ECE);
-Prix InitialisationPrix(ECECITY* ECE);
-void NouveauTerrainVague(ECECITY* ECE);
+void InitPrix(char* monFichier, ECECITY* ececity);
+void InitTerrainVague(ECECITY* ECE);
 void EvolutionTerrainVague(ECECITY* ECE);
-void GestionImpot(ECECITY* ECE);
+
 
 
 #endif //PROJETINFO_INITIALISATION_H
