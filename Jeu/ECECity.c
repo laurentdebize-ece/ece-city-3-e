@@ -1,5 +1,4 @@
 #include "../include/ECECity.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 #include "../include/affichage.h"
@@ -152,14 +151,15 @@ void defineTypeCase(ECECITY* ececity){
                             }
                         }
                         if(ececity->compteur.compteurMaisons == 1){
-                            ececity->tabHabitations = calloc(1,sizeof(Case));
+                            ececity->tabHabitations = malloc(sizeof(Case));
                         }
                         else{
-                            ececity->tabHabitations = (Case*)realloc(ececity->tabHabitations, sizeof(Case)*(ececity->compteur.compteurMaisons));
+                            ececity->tabHabitations = (Case*)realloc(ececity->tabHabitations, sizeof(Case)*(ececity->compteur.compteurMaisons+1));
                         }
+                        printf("cm:%d\n",ececity->compteur.compteurMaisons);
                         ececity->tabHabitations[ececity->compteur.compteurMaisons].type = TerrainVague;
                         ececity->tabHabitations[ececity->compteur.compteurMaisons].numeroType = ececity->compteur.compteurMaisons;
-
+                        ececity->tabHabitations[ececity->compteur.compteurMaisons].timerSeconds = TIMENOW;
                         }
                     break;
 
@@ -174,11 +174,11 @@ void defineTypeCase(ECECITY* ececity){
                         }
                         //alloc tabChateauEau
                         if(ececity->compteur.compteurChateaux == 1){
-                            ececity->tabChateauEau = calloc(1,sizeof (Case));
+                            ececity->tabChateauEau = malloc(sizeof (Case));
                         }
                         else{
                             //realloc tabChateauEau
-                            ececity->tabChateauEau = (Case*)realloc(ececity->tabChateauEau, (ececity->compteur.compteurChateaux)*(sizeof(Case)));
+                            ececity->tabChateauEau = (Case*)realloc(ececity->tabChateauEau, (ececity->compteur.compteurChateaux + 1)*(sizeof(Case)));
                         }
                         ececity->tabChateauEau[ececity->compteur.compteurChateaux].type = CHATEAUDEAU;
                         ececity->tabChateauEau[ececity->compteur.compteurChateaux].numeroType = ececity->compteur.compteurChateaux;
@@ -192,15 +192,15 @@ void defineTypeCase(ECECITY* ececity){
                         ececity->compteur.compteurCentrales++;
                         for (int lignes = 0; lignes < ececity->formatBatiment.nblignesCentrales ; ++lignes) {
                             for (int colonnes = 0; colonnes < ececity->formatBatiment.nbcolonnesCentrales; ++colonnes) {
-                                ececity->tabCase[colonnes + ececity->souris.colonneSouris][ lignes + ececity->souris.ligneSouris].type = CENTRALE;
+                                ececity->tabCase[colonnes + ececity->souris.colonneSouris][lignes + ececity->souris.ligneSouris].type = CENTRALE;
                             }
                         }
                         //alloc tabCentrale
                         if(ececity->compteur.compteurCentrales == 1){
-                            ececity->tabCentrale = calloc(1 ,sizeof(Case));
+                            ececity->tabCentrale = malloc(sizeof(Case));
                         }
                         else{
-                            ececity->tabCentrale = (Case*)realloc(ececity->tabCentrale, sizeof(Case)*(ececity->compteur.compteurCentrales));
+                            ececity->tabCentrale = (Case*)realloc(ececity->tabCentrale, sizeof(Case)*(ececity->compteur.compteurCentrales + 1));
                         }
                         ececity->tabCentrale[ececity->compteur.compteurCentrales - 1].type = CENTRALE;
                         ececity->tabCentrale[ececity->compteur.compteurCentrales - 1].numeroType = ececity->compteur.compteurCentrales;

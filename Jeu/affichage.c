@@ -111,6 +111,7 @@ void AffichageGamePlay(ECECITY* ececity){
     EndDrawing();
 }
 
+
 void AfficherCaseInfo(ECECITY* ececity){
     if(MouseOnBoard){
         char* nomCase;

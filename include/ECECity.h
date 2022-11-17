@@ -2,7 +2,6 @@
 #define PROJETINFO_ECECITY_H
 
 #include "raylib.h"
-#include <limits.h>
 
 #define TIMENOW (ececity->time.timer.hoursCounter*3600 + ececity->time.timer.minutesCounter*60 + ececity->time.timer.secondsCounter)
 #define MAP_TILE_SIZE 20
@@ -132,7 +131,12 @@ typedef struct{
     int capaciteHabElecEnCours;// capacité de remplissage d'une habitation en elec
     int capaciteHabEauEnCours;// capacité de remplissage d'une habitation en eau
     int distance;
+    int timerSeconds;
 } Case;
+
+typedef struct{
+
+}InfoBatiment;
 
 enum SommetCouleur {
     UNEXPLORED,
@@ -152,6 +156,7 @@ struct Sommet
 {
     struct Arc* arc;
     int id;
+    int type;
     struct Sommet *predecesseur;
     struct Sommet *suivant;
     int numCC;
@@ -200,6 +205,7 @@ typedef struct{
 }Prix;
 
 typedef struct{
+    int terrainVague;
     int Cabane;
     int Maison;
     int Immeuble;
