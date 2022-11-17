@@ -51,6 +51,7 @@ typedef enum{
     GRATTE_CIEL,
     CHATEAUDEAU,
     CENTRALE,
+    RUINE,
 }typeCase;
 
 typedef enum {
@@ -118,14 +119,12 @@ static const char *boutonFinText[] = {
 
 typedef struct{
     Rectangle positionCase;
-    int type;// 0-vide 1-terrain vague/ruine 3-cabane 4- maison 5- immeuble 6- Gratte ciel 7- chateau d'eau 8- centrale electrique
+    int type;
     bool libre;
     bool proximiteRoute;
     int numeroConnexeEau;
     int numeroConnexeElec;
     int numeroType;
-    int centraleAssignee;
-    int chateauAssignee;
     int capaciteInitiale;
     int capaciteRestante;//capacité restante centrale/chateau
     int capaciteHabElecEnCours;// capacité de remplissage d'une habitation en elec

@@ -83,8 +83,6 @@ void InitCase(ECECITY* ececity){
             ececity->tabCase[colonnes][lignes].type = 0;
             ececity->tabCase[colonnes][lignes].libre = true;
             ececity->tabCase[colonnes][lignes].numeroType = 0;
-            ececity->tabCase[colonnes][lignes].centraleAssignee = 0;
-            ececity->tabCase[colonnes][lignes].chateauAssignee = 0;
             ececity->tabCase[colonnes][lignes].numeroConnexeEau = 0;
             ececity->tabCase[colonnes][lignes].numeroConnexeElec = 0;
             ececity->tabCase[colonnes][lignes].proximiteRoute = false;
@@ -303,6 +301,10 @@ void augmenterStadeMaison (ECECITY* tbxmaison , int maisonTraitee){//affichage
     int typedepart = tbxmaison->tabHabitations[maisonTraitee].type;
     int typearrivee = 0;
     if(typedepart != GRATTE_CIEL){
+        if(typedepart == RUINE){
+            typearrivee = TerrainVague;
+            tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 0;
+        }
         if(typedepart == TerrainVague){
             typearrivee = CABANE;
             tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 10;
@@ -335,7 +337,7 @@ void diminuerStadeMaison (ECECITY* ececity , int maisonTraitee){//affichage
     int typedepart = ececity->tabHabitations[maisonTraitee].type;
     int typearrivee = 0;
     if(ececity->tabHabitations[maisonTraitee].type == TerrainVague){
-        typearrivee = VIDE;
+        typearrivee = RUINE;
         ececity->tabHabitations[maisonTraitee].capaciteInitiale = 0;
     }
     else if(ececity->tabHabitations[maisonTraitee].type == CABANE){
