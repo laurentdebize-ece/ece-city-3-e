@@ -250,7 +250,7 @@ void InitTerrainVague(ECECITY* ececity) {
     }
 
 }
-
+/*
 void EvolutionTerrainVague(ECECITY* ececity){
 
     if (ececity->compteur.temporel >= 15){
@@ -289,7 +289,7 @@ void EvolutionTerrainVague(ECECITY* ececity){
         //eau/electricité
     }
 }
-
+*/
 void GestionImpot(ECECITY* ececity){
 
     ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.Impots * ececity->compteur.nbHabitantsTotal;
