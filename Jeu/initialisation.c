@@ -159,6 +159,8 @@ void InitCompteur(ECECITY* ececity){
     ececity->compteur.compteurMaisons = 0;
     ececity->compteur.compteurChateaux = 0;
     ececity->compteur.compteurCentrales = 0;
+    ececity->compteur.CapaciteCentrale = CAPACENTRALE;
+    ececity->compteur.CapaciteEau = CAPAEAU;
 }
 
 void InitInfoFichierText(char* monFichier, ECECITY* ececity)
