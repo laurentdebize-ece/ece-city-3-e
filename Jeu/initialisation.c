@@ -85,8 +85,6 @@ void InitCase(ECECITY* ececity){
             ececity->tabCase[colonnes][lignes].type = 0;
             ececity->tabCase[colonnes][lignes].libre = true;
             ececity->tabCase[colonnes][lignes].numeroType = 0;
-            ececity->tabCase[colonnes][lignes].centraleAssignee = 0;
-            ececity->tabCase[colonnes][lignes].chateauAssignee = 0;
             ececity->tabCase[colonnes][lignes].numeroConnexeEau = 0;
             ececity->tabCase[colonnes][lignes].numeroConnexeElec = 0;
             ececity->tabCase[colonnes][lignes].proximiteRoute = false;
@@ -163,6 +161,9 @@ void InitCompteur(ECECITY* ececity){
     ececity->compteur.compteurMaisons = 0;
     ececity->compteur.compteurChateaux = 0;
     ececity->compteur.compteurCentrales = 0;
+    ececity->compteur.CapaciteCentrale = CAPACENTRALE;
+    ececity->compteur.CapaciteEau = CAPAEAU;
+    ececity->compteur.soldeBanque = SOLDEBANQUE;
 }
 
 void InitFormat(char* monFichier, ECECITY* ececity)
@@ -233,7 +234,8 @@ void InitPrix(char* monFichier, ECECITY* ececity){
         printf("Erreur de lecture fichier\n");
         exit(-1);
     }
-    while (CaractereLu!=EOF && ligne<4) // pour lire à partir de la ligne 4
+
+    while (CaractereLu!=EOF && ligne<6) // pour lire à partir de la ligne 4
     {
         CaractereLu=fgetc(ifs);
         if (CaractereLu=='\n')
@@ -249,24 +251,110 @@ void InitPrix(char* monFichier, ECECITY* ececity){
     fscanf(ifs,"\n");
     fscanf(ifs,"%d  ",&ececity->prix.centralePrix);
 
-    printf("%d",ececity->prix.prixRoute);
 
     fclose(ifs);
 }
 
 void InitTerrainVague(ECECITY* ECE) {
 
-    if (ECE->compteur.soldeBanque >= 1000) {
+    if (ECE->compteur.soldeBanque >= ECE->prix.prixTerrainVague) {
     ECE->compteur.soldeBanque = ECE->compteur.soldeBanque - ECE->prix.prixTerrainVague;
-    }
-    else {
-        printf(" Solde insuffisant pour contruire un terrain vague");
     }
 
 }
-
+void initPayementCentrale(ECECITY* ececity){
+    if(ececity->compteur.soldeBanque >= ececity->prix.centralePrix){
+        ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.centralePrix;
+    }
+}
+void initPayementChateau(ECECITY* ececity){
+    if(ececity->compteur.soldeBanque >= ececity->prix.chateauPrix){
+        ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.chateauPrix;
+    }
+}
+void initPayementRoute(ECECITY* ececity){
+    if(ececity->compteur.soldeBanque >= ececity->prix.prixRoute){
+        ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.prixRoute;
+    }
+}
+void calculHabitant(ECECITY* ececity){
+    int nbhab = 0;
+    for (int i = 0; i < ececity->compteur.compteurMaisons; i++) {
+        nbhab = nbhab + ececity->tabHabitations[i].capaciteInitiale;
+    }
+    ececity->compteur.nbHabitantsTotal = nbhab;
+}
 void GestionImpot(ECECITY* ECE){
 
   ECE->compteur.soldeBanque =  ECE->compteur.soldeBanque - ECE->compteur.nbHabitantsTotal*10;
 
+}
+
+
+//avant on resort une maison dont son compteur == 15 ou modulo 15 si il y a pas de reset de maison
+void augmenterStadeMaison (ECECITY* tbxmaison , int maisonTraitee){//affichage
+    int typedepart = tbxmaison->tabHabitations[maisonTraitee].type;
+    int typearrivee = 0;
+    if(typedepart != GRATTE_CIEL){
+        if(typedepart == RUINE){
+            typearrivee = TerrainVague;
+            tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 0;
+        }
+        if(typedepart == TerrainVague){
+            typearrivee = CABANE;
+            tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 10;
+        }
+        else if(typedepart == CABANE){
+            typearrivee = MAISON;
+            tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 50;
+        }
+        else if(typedepart == MAISON){
+            typearrivee = IMMEUBLE;
+            tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 100;
+        }
+        else if(typedepart == IMMEUBLE){
+            typearrivee = GRATTE_CIEL;
+            tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 1000;
+        }
+        tbxmaison->tabHabitations[maisonTraitee].type = typearrivee;
+        for (int j = 0; j < NB_LIGNES; j++) {
+            for (int i = 0; i < NB_COLONNES; i++) {
+                if(tbxmaison->tabCase[i][j].type == typedepart && tbxmaison->tabCase[i][j].numeroType == tbxmaison->tabHabitations[maisonTraitee].numeroType){
+                    tbxmaison->tabCase[i][j].type = typearrivee;
+                }
+            }
+        }
+    }
+}
+void diminuerStadeMaison (ECECITY* ececity , int maisonTraitee){//affichage
+    int typedepart = ececity->tabHabitations[maisonTraitee].type;
+    int typearrivee = 0;
+    if(ececity->tabHabitations[maisonTraitee].type == TerrainVague){
+        typearrivee = RUINE;
+        ececity->tabHabitations[maisonTraitee].capaciteInitiale = 0;
+    }
+    else if(ececity->tabHabitations[maisonTraitee].type == CABANE){
+        typearrivee = TerrainVague;
+        ececity->tabHabitations[maisonTraitee].capaciteInitiale = 0;
+    }
+    else if(ececity->tabHabitations[maisonTraitee].type == MAISON){
+        typearrivee = CABANE;
+        ececity->tabHabitations[maisonTraitee].capaciteInitiale = 10;
+    }
+    else if(ececity->tabHabitations[maisonTraitee].type == IMMEUBLE){
+        typearrivee = MAISON;
+        ececity->tabHabitations[maisonTraitee].capaciteInitiale = 50;
+    }
+    else if(ececity->tabHabitations[maisonTraitee].type == GRATTE_CIEL){
+        typearrivee = IMMEUBLE;
+        ececity->tabHabitations[maisonTraitee].capaciteInitiale = 100;
+    }
+    ececity->tabHabitations[maisonTraitee].type = typearrivee;
+    for (int j = 0; j < NB_LIGNES; j++) {
+        for (int i = 0; i < NB_COLONNES; i++) {
+            if(ececity->tabCase[i][j].type == typedepart && ececity->tabCase[i][j].numeroType == ececity->tabHabitations[maisonTraitee].numeroType){
+                ececity->tabCase[i][j].type = typearrivee;
+            }
+        }
+    }
 }

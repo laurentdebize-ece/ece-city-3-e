@@ -12,6 +12,7 @@
 #define MAX_OBJET 300
 #define CAPACENTRALE 5000
 #define CAPAEAU 5000
+#define SOLDEBANQUE 500000
 
 
 
