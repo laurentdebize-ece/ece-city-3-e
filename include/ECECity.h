@@ -60,6 +60,8 @@ typedef enum {
     IMAGEACCUEIL,
     IMAGEJEU,
     IMAGEROUTE,
+    IMAGECHATEAUEAU,
+    IMAGECENTRALEELEC,
     NB_IMAGES,
 }NomImage;
 
@@ -269,6 +271,7 @@ typedef struct{
 typedef struct{
     Font font;
     int fontSize;
+    Vector2 positions;
     Color fontColor;
 }Write;
 

@@ -11,14 +11,14 @@ void AffichageMenu(ECECITY* ececity){
     for (int image = IMAGEACCUEIL; image < IMAGEJEU; ++image) {
         DrawTexture(ececity->tabImage[image].TextureImage, (int)ececity->tabImage[image].format.x, (int)ececity->tabImage[image].format.y, WHITE);
     }
-
     if (ececity->currentMenuProcess == CREDITS){
         DrawText("(c) ECE CITY by Aurelien, Jules, Eva and Thomas", 15, 15, 50, BLACK);
     }
-    DrawText("WELCOME TO ECE CITY", (int)(ececity->display.width/2 - MeasureText("WELCOME TO ECE CITY",100)/2),
-             ececity->display.height/6, 100, RED);
+     DrawText("WELCOME TO ECE CITY", (int)(ececity->display.width/3 - MeasureText("WELCOME TO ECE CITY",100)/2),
+          ececity->display.height/11, 120, RED);
 
     AfficherBouton(ececity);
+
 
     EndDrawing();
 }
