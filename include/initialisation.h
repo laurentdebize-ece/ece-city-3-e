@@ -19,15 +19,12 @@ void ARRETERTOUT(ECECITY* ececity);
 
 // JEU
 
-void GestionImpot(ECECITY* ECE);
 void InitPrix(char* monFichier, ECECITY* ececity);
-void InitTerrainVague(ECECITY* ECE);
+
 void diminuerStadeMaison (ECECITY* ececity , int maisonTraitee);
 void augmenterStadeMaison (ECECITY* tbxmaison , int maisonTraitee);
-void initPayementCentrale(ECECITY* ececity);
-void initPayementChateau(ECECITY* ececity);
-void initPayementRoute(ECECITY* ececity);
-void calculHabitant(ECECITY* ececity);
+
+
 
 
 

@@ -255,40 +255,6 @@ void InitPrix(char* monFichier, ECECITY* ececity){
     fclose(ifs);
 }
 
-void InitTerrainVague(ECECITY* ECE) {
-
-    if (ECE->compteur.soldeBanque >= ECE->prix.prixTerrainVague) {
-    ECE->compteur.soldeBanque = ECE->compteur.soldeBanque - ECE->prix.prixTerrainVague;
-    }
-
-}
-void initPayementCentrale(ECECITY* ececity){
-    if(ececity->compteur.soldeBanque >= ececity->prix.centralePrix){
-        ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.centralePrix;
-    }
-}
-void initPayementChateau(ECECITY* ececity){
-    if(ececity->compteur.soldeBanque >= ececity->prix.chateauPrix){
-        ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.chateauPrix;
-    }
-}
-void initPayementRoute(ECECITY* ececity){
-    if(ececity->compteur.soldeBanque >= ececity->prix.prixRoute){
-        ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.prixRoute;
-    }
-}
-void calculHabitant(ECECITY* ececity){
-    int nbhab = 0;
-    for (int i = 0; i < ececity->compteur.compteurMaisons; i++) {
-        nbhab = nbhab + ececity->tabHabitations[i].capaciteInitiale;
-    }
-    ececity->compteur.nbHabitantsTotal = nbhab;
-}
-void GestionImpot(ECECITY* ECE){
-
-  ECE->compteur.soldeBanque =  ECE->compteur.soldeBanque - ECE->compteur.nbHabitantsTotal*10;
-
-}
 
 
 //avant on resort une maison dont son compteur == 15 ou modulo 15 si il y a pas de reset de maison

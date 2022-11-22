@@ -13,6 +13,7 @@
 #define CAPACENTRALE 5000
 #define CAPAEAU 5000
 #define SOLDEBANQUE 500000
+#define PRIXIMPOT 10
 
 
 
@@ -189,6 +190,7 @@ typedef struct{
     int compteurMaisons;
     int compteurChateaux;
     int compteurCentrales;
+    int timerImpots;
 }Compteur;
 
 typedef struct {
@@ -322,5 +324,7 @@ void defineCurrentJeuProcess(ECECITY* ececity);
 bool proximiteRoute(ECECITY* ececity, int typeBatiment);
 bool construire(ECECITY* ececity);
 void calculTimerHabitations(ECECITY* ececity);
+void calculHabitant(ECECITY* ececity);
+void CalculImpotChaqueMois(ECECITY* ececity);
 
 #endif //PROJETINFO_ECECITY_H

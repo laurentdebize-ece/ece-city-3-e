@@ -83,6 +83,8 @@ void Gameplay(ECECITY* ececity){
 
     ececity->souris.position = GetMousePosition();
     timerCounter(ececity);
+    calculHabitant( ececity);
+    CalculImpotChaqueMois(ececity);
     calculTimerHabitations(ececity);
     defineTypeCase(ececity);
     defineCurrentJeuProcess(ececity);
@@ -131,6 +133,22 @@ void calculTimerHabitations(ECECITY* ececity){
 
    }
 }
+void calculHabitant(ECECITY* ececity){
+    int nbhab = 0;
+    for (int i = 0; i < ececity->compteur.compteurMaisons; i++) {
+        nbhab = nbhab + ececity->tabHabitations[i].capaciteInitiale;
+    }
+    ececity->compteur.nbHabitantsTotal = nbhab;
+}
+void CalculImpotChaqueMois(ECECITY* ececity){
+    int t = TIMENOW;
+    if(t - ececity->compteur.timerImpots >= ececity->time.constructionTime){
+        ececity->compteur.soldeBanque =  ececity->compteur.soldeBanque + ececity->compteur.nbHabitantsTotal * PRIXIMPOT;
+        ececity->compteur.timerImpots = TIMENOW;
+        printf("HAB %d\n", ececity->compteur.nbHabitantsTotal);
+    }
+
+}
 
 void pause(ECECITY* ececity){
     if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][PAUSE].recBouton) && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
@@ -142,6 +160,7 @@ void pause(ECECITY* ececity){
 
 void defineTypeCase(ECECITY* ececity){
     if(MouseOnBoard){
+
         for (int lignes = 0; lignes < NB_LIGNES; ++lignes) {
             for (int colonnes = 0; colonnes < NB_COLONNES; ++colonnes) {
                 if(CheckCollisionPointRec(ececity->souris.position,ececity->tabCase[colonnes][lignes].positionCase)){
@@ -153,99 +172,130 @@ void defineTypeCase(ECECITY* ececity){
         if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
             switch(ececity->currentJeuProcess){
                 case CONSTRUCTIONROUTE:
-                    if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE){
-                        ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type = ROUTE;
-                        ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType = ececity->compteur.nbRoutes;
-                        ececity->compteur.nbRoutes++;
-                        if(ececity->compteur.nbRoutes == 1){
-                            Graphe_AllocGraphe(ececity);
+                    if(ececity->compteur.soldeBanque >= ececity->prix.prixRoute){
+
+                        if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE){
+                            ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type = ROUTE;
+                            ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType = ececity->compteur.nbRoutes;
+                            ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.prixRoute;
+                            ececity->compteur.nbRoutes++;
+                            if(ececity->compteur.nbRoutes == 1){
+                                Graphe_AllocGraphe(ececity);
+                            }
+                            ececity->graphe->ordre++;
+                            buildGraphe(ececity);
                         }
-                        ececity->graphe->ordre++;
-                        buildGraphe(ececity);
                     }
                     break;
 
                 case CONSTRUCTIONMAISON:
                         //CONTOUR DE LA MAISON
-                        if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE
-                        && construire(ececity)){
+                    if (ececity->compteur.soldeBanque >= ececity->prix.prixTerrainVague) {
+                        if (ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE
+                            && construire(ececity)) {
                             ececity->compteur.compteurMaisons++;
-                            for (int lignes = 0; lignes < ececity->formatBatiment.nblignesMaison ; ++lignes) {
-                                for (int colonnes = 0; colonnes < ececity->formatBatiment.nbcolonnesMaison; ++colonnes) {
-                                    ececity->tabCase[colonnes + ececity->souris.colonneSouris][lignes + ececity->souris.ligneSouris].type = TerrainVague;
-                                    ececity->tabCase[colonnes + ececity->souris.colonneSouris][lignes + ececity->souris.ligneSouris].numeroType = ececity->compteur.compteurMaisons;
+                            for (int lignes = 0; lignes < ececity->formatBatiment.nblignesMaison; ++lignes) {
+                                for (int colonnes = 0;
+                                     colonnes < ececity->formatBatiment.nbcolonnesMaison; ++colonnes) {
+                                    ececity->tabCase[colonnes + ececity->souris.colonneSouris][lignes +
+                                                                                               ececity->souris.ligneSouris].type = TerrainVague;
+                                    ececity->tabCase[colonnes + ececity->souris.colonneSouris][lignes +
+                                                                                               ececity->souris.ligneSouris].numeroType = ececity->compteur.compteurMaisons;
                                 }
                             }
-                            if(ececity->compteur.compteurMaisons == 1){
+                            if (ececity->compteur.compteurMaisons == 1) {
                                 ececity->tabHabitations = malloc(sizeof(Case));
+                            } else {
+                                ececity->tabHabitations = (Case *) realloc(ececity->tabHabitations, sizeof(Case) *
+                                                                                                    (ececity->compteur.compteurMaisons));
                             }
-                            else{
-                                ececity->tabHabitations = (Case*)realloc(ececity->tabHabitations, sizeof(Case)*(ececity->compteur.compteurMaisons));
-                            }
-                            printf("cm:%d\n",ececity->compteur.compteurMaisons);
+                            printf("cm:%d\n", ececity->compteur.compteurMaisons);
                             ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].type = TerrainVague;
-                            ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].numeroType = ececity->compteur.compteurMaisons;
+                            ececity->tabHabitations[ececity->compteur.compteurMaisons -
+                                                    1].numeroType = ececity->compteur.compteurMaisons;
                             ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].capaciteInitiale = 0;
                             ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].timerSeconds = TIMENOW;
                             ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].capaciteHabEauEnCours = 0;
                             ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].capaciteHabElecEnCours = 0;
                             ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].capaciteRestante = 0;
+                            ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.prixTerrainVague;
+
                         }
+                    }
                     break;
 
                 case CONSTRUCTIONCHATEAUDEAU:
-                    if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE
-                    && construire(ececity)){
-                        ececity->compteur.compteurChateaux++;
-                        for (int lignes = 0; lignes < ececity->formatBatiment.nblignesChateaux ; ++lignes) {
-                            for (int colonnes = 0; colonnes < ececity->formatBatiment.nbcolonnesChateaux; ++colonnes) {
-                                ececity->tabCase[colonnes + ececity->souris.colonneSouris][lignes + ececity->souris.ligneSouris].type = CHATEAUDEAU;
-                                ececity->tabCase[colonnes + ececity->souris.colonneSouris][lignes + ececity->souris.ligneSouris].numeroType =  ececity->compteur.compteurChateaux;
+                    if(ececity->compteur.soldeBanque >= ececity->prix.chateauPrix) {
+                        if (ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE
+                            && construire(ececity)) {
+                            ececity->compteur.compteurChateaux++;
+                            for (int lignes = 0; lignes < ececity->formatBatiment.nblignesChateaux; ++lignes) {
+                                for (int colonnes = 0;
+                                     colonnes < ececity->formatBatiment.nbcolonnesChateaux; ++colonnes) {
+                                    ececity->tabCase[colonnes + ececity->souris.colonneSouris][lignes +
+                                                                                               ececity->souris.ligneSouris].type = CHATEAUDEAU;
+                                    ececity->tabCase[colonnes + ececity->souris.colonneSouris][lignes +
+                                                                                               ececity->souris.ligneSouris].numeroType = ececity->compteur.compteurChateaux;
+                                }
                             }
-                        }
-                        //alloc tabChateauEau
-                        if(ececity->compteur.compteurChateaux == 1){
-                            ececity->tabChateauEau = malloc(sizeof (Case));
-                        }
-                        else{
-                            //realloc tabChateauEau
-                            ececity->tabChateauEau = (Case*)realloc(ececity->tabChateauEau, (ececity->compteur.compteurChateaux )*(sizeof(Case)));
-                        }
-                        ececity->tabChateauEau[ececity->compteur.compteurChateaux - 1].type = CHATEAUDEAU;
-                        ececity->tabChateauEau[ececity->compteur.compteurChateaux - 1].numeroType = ececity->compteur.compteurChateaux;
-                        ececity->tabChateauEau[ececity->compteur.compteurChateaux - 1].capaciteInitiale = ececity->compteur.CapaciteEau;
-                        ececity->tabChateauEau[ececity->compteur.compteurChateaux - 1].capaciteRestante = ececity->compteur.CapaciteEau;
-                        ececity->tabChateauEau[ececity->compteur.compteurChateaux - 1].capaciteHabEauEnCours = 0;
-                        ececity->tabChateauEau[ececity->compteur.compteurChateaux - 1].capaciteHabElecEnCours = 0;
+                            //alloc tabChateauEau
+                            if (ececity->compteur.compteurChateaux == 1) {
+                                ececity->tabChateauEau = malloc(sizeof(Case));
+                            } else {
+                                //realloc tabChateauEau
+                                ececity->tabChateauEau = (Case *) realloc(ececity->tabChateauEau,
+                                                                          (ececity->compteur.compteurChateaux) *
+                                                                          (sizeof(Case)));
+                            }
+                            ececity->tabChateauEau[ececity->compteur.compteurChateaux - 1].type = CHATEAUDEAU;
+                            ececity->tabChateauEau[ececity->compteur.compteurChateaux -
+                                                   1].numeroType = ececity->compteur.compteurChateaux;
+                            ececity->tabChateauEau[ececity->compteur.compteurChateaux -
+                                                   1].capaciteInitiale = ececity->compteur.CapaciteEau;
+                            ececity->tabChateauEau[ececity->compteur.compteurChateaux -
+                                                   1].capaciteRestante = ececity->compteur.CapaciteEau;
+                            ececity->tabChateauEau[ececity->compteur.compteurChateaux - 1].capaciteHabEauEnCours = 0;
+                            ececity->tabChateauEau[ececity->compteur.compteurChateaux - 1].capaciteHabElecEnCours = 0;
+                            ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.chateauPrix;
 
+                        }
                     }
                     break;
 
                 case CONSTRUCTIONCENTRALE:
-                    if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE
-                    && construire(ececity)) {
-                        ececity->compteur.compteurCentrales++;
-                        for (int lignes = 0; lignes < ececity->formatBatiment.nblignesCentrales ; ++lignes) {
-                            for (int colonnes = 0; colonnes < ececity->formatBatiment.nbcolonnesCentrales; ++colonnes) {
-                                ececity->tabCase[colonnes + ececity->souris.colonneSouris][lignes + ececity->souris.ligneSouris].type = CENTRALE;
-                                ececity->tabCase[colonnes + ececity->souris.colonneSouris][lignes + ececity->souris.ligneSouris].numeroType = ececity->compteur.compteurCentrales;
+                    if(ececity->compteur.soldeBanque >= ececity->prix.centralePrix) {
+                        if (ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE
+                            && construire(ececity)) {
+                            ececity->compteur.compteurCentrales++;
+                            for (int lignes = 0; lignes < ececity->formatBatiment.nblignesCentrales; ++lignes) {
+                                for (int colonnes = 0;
+                                     colonnes < ececity->formatBatiment.nbcolonnesCentrales; ++colonnes) {
+                                    ececity->tabCase[colonnes + ececity->souris.colonneSouris][lignes +
+                                                                                               ececity->souris.ligneSouris].type = CENTRALE;
+                                    ececity->tabCase[colonnes + ececity->souris.colonneSouris][lignes +
+                                                                                               ececity->souris.ligneSouris].numeroType = ececity->compteur.compteurCentrales;
+                                }
                             }
-                        }
-                        //alloc tabCentrale
-                        if(ececity->compteur.compteurCentrales == 1){
-                            ececity->tabCentrale = malloc(sizeof(Case));
-                        }
-                        else{
-                            ececity->tabCentrale = (Case*)realloc(ececity->tabCentrale, sizeof(Case)*(ececity->compteur.compteurCentrales ));
-                        }
+                            //alloc tabCentrale
+                            if (ececity->compteur.compteurCentrales == 1) {
+                                ececity->tabCentrale = malloc(sizeof(Case));
+                            } else {
+                                ececity->tabCentrale = (Case *) realloc(ececity->tabCentrale, sizeof(Case) *
+                                                                                              (ececity->compteur.compteurCentrales));
+                            }
 
-                        ececity->tabCentrale[ececity->compteur.compteurCentrales - 1].type = CENTRALE;
-                        ececity->tabCentrale[ececity->compteur.compteurCentrales - 1].numeroType = ececity->compteur.compteurCentrales;
-                        ececity->tabCentrale[ececity->compteur.compteurCentrales - 1].capaciteInitiale = ececity->compteur.CapaciteCentrale;
-                        ececity->tabCentrale[ececity->compteur.compteurCentrales - 1].capaciteRestante = ececity->compteur.CapaciteCentrale;
-                        ececity->tabCentrale[ececity->compteur.compteurCentrales - 1].capaciteHabEauEnCours = 0;
-                        ececity->tabCentrale[ececity->compteur.compteurCentrales - 1].capaciteHabElecEnCours = 0;
+                            ececity->tabCentrale[ececity->compteur.compteurCentrales - 1].type = CENTRALE;
+                            ececity->tabCentrale[ececity->compteur.compteurCentrales -
+                                                 1].numeroType = ececity->compteur.compteurCentrales;
+                            ececity->tabCentrale[ececity->compteur.compteurCentrales -
+                                                 1].capaciteInitiale = ececity->compteur.CapaciteCentrale;
+                            ececity->tabCentrale[ececity->compteur.compteurCentrales -
+                                                 1].capaciteRestante = ececity->compteur.CapaciteCentrale;
+                            ececity->tabCentrale[ececity->compteur.compteurCentrales - 1].capaciteHabEauEnCours = 0;
+                            ececity->tabCentrale[ececity->compteur.compteurCentrales - 1].capaciteHabElecEnCours = 0;
+                            ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.centralePrix;
 
+                        }
                     }
                     break;
 
