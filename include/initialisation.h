@@ -1,11 +1,11 @@
-#ifndef PROJETINFO_INITIALISATION_H
-#define PROJETINFO_INITIALISATION_H
+#ifndef ECE_CITY_3_E_INITIALISATION_H
+#define ECE_CITY_3_E_INITIALISATION_H
 
-#include "../include/ECECity.h"
+#include "ECECity.h"
 
-// AFFICHAGE
 
 void InitTOUT(ECECITY* ececity);
+void InitJeu(ECECITY* ececity);
 void InitDisplay(ECECITY* ececity);
 void InitImage(ECECITY* ececity);
 void InitCase(ECECITY* ececity);
@@ -15,9 +15,10 @@ void InitBouton(ECECITY* ececity);
 void InitWrite(ECECITY* ececity);
 void InitCompteur(ECECITY* ececity);
 void InitInfoFichierText(char * monFichier, ECECITY* ececity);
+void InitISO(ECECITY* ececity);
 void ARRETERTOUT(ECECITY* ececity);
 
-// JEU
+
 
 void GestionImpot(ECECITY* ececity);
 void InitPrix(char* monFichier, ECECITY* ececity);
@@ -28,4 +29,4 @@ void augmenterStadeMaison (ECECITY* tbxmaison , int maisonTraitee);
 void diminuerStadeMaison (ECECITY* ececity , int maisonTraitee);
 
 
-#endif //PROJETINFO_INITIALISATION_H
+#endif //ECE_CITY_3_E_INITIALISATION_H

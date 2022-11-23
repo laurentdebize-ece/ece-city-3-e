@@ -1,11 +1,13 @@
 #include "../include/ECECity.h"
 #include <stdlib.h>
 #include <limits.h>
-#include "../include/affichage.h"
+#include "../include/affichageJeu.h"
 #include "../include/musique.h"
 #include "../include/temps.h"
 #include "../include/Graphe.h"
 #include "../include/initialisation.h"
+#include "stdio.h"
+#include <math.h>
 
 
 
@@ -83,7 +85,6 @@ void Gameplay(ECECITY* ececity){
 
     ececity->souris.position = GetMousePosition();
     timerCounter(ececity);
-    calculTimerHabitations(ececity);
     defineTypeCase(ececity);
     defineCurrentJeuProcess(ececity);
 
@@ -121,10 +122,11 @@ void pause(ECECITY* ececity){
 
 
 void defineTypeCase(ECECITY* ececity){
-    if(MouseOnBoard){
-        for (int lignes = 0; lignes < NB_LIGNES; ++lignes) {
+    if(MouseOnIso){
+        for (int lignes = 0; lignes < NB_LIGNES ; ++lignes) {
             for (int colonnes = 0; colonnes < NB_COLONNES; ++colonnes) {
-                if(CheckCollisionPointRec(ececity->souris.position,ececity->tabCase[colonnes][lignes].positionCase)){
+                if(CheckCollisionPointTriangle(ececity->souris.position,ececity->tabCase[colonnes][lignes].cardinal[SUD],ececity->tabCase[colonnes][lignes].cardinal[EST],ececity->tabCase[colonnes][lignes].cardinal[NORD])
+                || CheckCollisionPointTriangle(ececity->souris.position, ececity->tabCase[colonnes][lignes].cardinal[OUEST],ececity->tabCase[colonnes][lignes].cardinal[SUD],ececity->tabCase[colonnes][lignes].cardinal[NORD])){
                     ececity->souris.colonneSouris = colonnes;
                     ececity->souris.ligneSouris = lignes;
                 }
@@ -136,6 +138,7 @@ void defineTypeCase(ECECITY* ececity){
                     if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE){
                         ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type = ROUTE;
                         ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType = ececity->compteur.nbRoutes;
+                        ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.prixRoute;
                         ececity->compteur.nbRoutes++;
                         if(ececity->compteur.nbRoutes == 1){
                             Graphe_AllocGraphe(ececity);
@@ -160,12 +163,11 @@ void defineTypeCase(ECECITY* ececity){
                             ececity->tabHabitations = malloc(sizeof(Case));
                         }
                         else{
-                            ececity->tabHabitations = (Case*)realloc(ececity->tabHabitations, sizeof(Case)*(ececity->compteur.compteurMaisons+1));
+                            ececity->tabHabitations = (Case*)realloc(ececity->tabHabitations, sizeof(Case)*(ececity->compteur.compteurMaisons));
                         }
-                        printf("cm:%d\n",ececity->compteur.compteurMaisons);
-                        ececity->tabHabitations[ececity->compteur.compteurMaisons].type = TerrainVague;
-                        ececity->tabHabitations[ececity->compteur.compteurMaisons].numeroType = ececity->compteur.compteurMaisons;
-                        ececity->tabHabitations[ececity->compteur.compteurMaisons].timerSeconds = TIMENOW;
+                        ececity->tabHabitations[ececity->compteur.compteurMaisons-1].type = TerrainVague;
+                        ececity->tabHabitations[ececity->compteur.compteurMaisons-1].numeroType = ececity->compteur.compteurMaisons;
+                        ececity->tabHabitations[ececity->compteur.compteurMaisons-1].timerSeconds = TIMENOW;
                         }
                     break;
 
@@ -185,10 +187,10 @@ void defineTypeCase(ECECITY* ececity){
                         }
                         else{
                             //realloc tabChateauEau
-                            ececity->tabChateauEau = (Case*)realloc(ececity->tabChateauEau, (ececity->compteur.compteurChateaux + 1)*(sizeof(Case)));
+                            ececity->tabChateauEau = (Case*)realloc(ececity->tabChateauEau, (ececity->compteur.compteurChateaux)*(sizeof(Case)));
                         }
-                        ececity->tabChateauEau[ececity->compteur.compteurChateaux].type = CHATEAUDEAU;
-                        ececity->tabChateauEau[ececity->compteur.compteurChateaux].numeroType = ececity->compteur.compteurChateaux;
+                        ececity->tabChateauEau[ececity->compteur.compteurChateaux - 1].type = CHATEAUDEAU;
+                        ececity->tabChateauEau[ececity->compteur.compteurChateaux - 1].numeroType = ececity->compteur.compteurChateaux;
 
                     }
                     break;
@@ -208,7 +210,7 @@ void defineTypeCase(ECECITY* ececity){
                             ececity->tabCentrale = malloc(sizeof(Case));
                         }
                         else{
-                            ececity->tabCentrale = (Case*)realloc(ececity->tabCentrale, sizeof(Case)*(ececity->compteur.compteurCentrales + 1));
+                            ececity->tabCentrale = (Case*)realloc(ececity->tabCentrale, sizeof(Case)*(ececity->compteur.compteurCentrales));
                         }
                         ececity->tabCentrale[ececity->compteur.compteurCentrales - 1].type = CENTRALE;
                         ececity->tabCentrale[ececity->compteur.compteurCentrales - 1].numeroType = ececity->compteur.compteurCentrales;
@@ -221,9 +223,10 @@ void defineTypeCase(ECECITY* ececity){
             ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].libre = false;
         }
     }
-    else {ececity->souris.colonneSouris = INT_MAX; ececity->souris.ligneSouris = INT_MAX;}
+    else {ececity->souris.colonneSouris = INT_MAX ; ececity->souris.ligneSouris = INT_MAX;}
 
 }
+
 
 void defineCurrentJeuProcess(ECECITY* ececity){
     int boutonActif;
@@ -343,6 +346,9 @@ bool proximiteRoute(ECECITY* ececity, int typeBatiment){
     }
     for (int lignesFormat = 0; lignesFormat < nbLignes; ++lignesFormat) {
         for (int colonnesFormat = 0; colonnesFormat < nbColonnes; ++colonnesFormat) {
+            if(ececity->souris.colonneSouris + colonnesFormat > NB_COLONNES - 1 || ececity->souris.ligneSouris + colonnesFormat > NB_LIGNES - 1){
+                return false;
+            }
             if(ececity->tabCase[ececity->souris.colonneSouris + colonnesFormat][ececity->souris.ligneSouris + lignesFormat].type != VIDE){
                 return false;
             }

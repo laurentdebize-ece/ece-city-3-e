@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include "../include/musique.h"
+#include "musique.h"
 
 
 void MusicMenu(ECECITY* ececity, int* pause){

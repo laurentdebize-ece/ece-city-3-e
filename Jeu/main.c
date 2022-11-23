@@ -1,7 +1,6 @@
-#include "../include/ECECity.h"
-#include "../include/initialisation.h"
-//#include "../include/Gestionfichier.h"
-#include<stdio.h>
+#include "ECECity.h"
+#include "initialisation.h"
+
 
 int main(void)
 {
@@ -11,6 +10,8 @@ int main(void)
     InitTOUT(&ececity);
 
     MainBoucle(&ececity);
+
+
 
     ARRETERTOUT(&ececity);
 
