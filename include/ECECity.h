@@ -13,6 +13,10 @@
 #define SIZEBOARDX 900
 #define SIZEBOARDY 700
 #define MAX_OBJET 300
+#define CAPACENTRALE 5000
+#define CAPAEAU 5000
+#define SOLDEBANQUE 500000
+#define PRIXIMPOT 10
 
 typedef enum{
     COMMUNISTE,
@@ -75,6 +79,8 @@ typedef enum {
     IMAGEACCUEIL,
     IMAGEJEU,
     IMAGEROUTE,
+    IMAGECHATEAUEAU,
+    IMAGECENTRALEELEC,
     NB_IMAGES,
 }NomImage;
 
@@ -207,6 +213,7 @@ typedef struct{
     int compteurMaisons;
     int compteurChateaux;
     int compteurCentrales;
+    int timerImpots;
 }Compteur;
 
 typedef struct {
@@ -289,6 +296,7 @@ typedef struct{
 typedef struct{
     Font font;
     int fontSize;
+    Vector2 positions;
     Color fontColor;
 }Write;
 
@@ -339,5 +347,7 @@ void defineCurrentJeuProcess(ECECITY* ececity);
 bool proximiteRoute(ECECITY* ececity, int typeBatiment);
 bool construire(ECECITY* ececity);
 void calculTimerHabitations(ECECITY* ececity);
+void calculHabitant(ECECITY* ececity);
+void CalculImpotChaqueMois(ECECITY* ececity);
 
 #endif //ECE_CITY_3_E_H_INCLUDED

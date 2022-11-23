@@ -20,13 +20,14 @@ void ARRETERTOUT(ECECITY* ececity);
 
 
 
-void GestionImpot(ECECITY* ececity);
 void InitPrix(char* monFichier, ECECITY* ececity);
-void InitTerrainVague(ECECITY* ececity);
-void EvolutionTerrainVague(ECECITY* ececity);
-void GestionImpot(ECECITY* ececity);
-void augmenterStadeMaison (ECECITY* tbxmaison , int maisonTraitee);
+
 void diminuerStadeMaison (ECECITY* ececity , int maisonTraitee);
+void augmenterStadeMaison (ECECITY* tbxmaison , int maisonTraitee);
+
+
+
+
 
 
 #endif //ECE_CITY_3_E_INITIALISATION_H

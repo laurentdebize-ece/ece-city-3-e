@@ -80,8 +80,8 @@ void InitImage(ECECITY* ececity){
 
     ececity->tabImage[IMAGEROUTE].Image = LoadImage("../Images/route.png");
     ececity->tabImage[IMAGEROUTE].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEROUTE].Image);
-    ececity->tabImage[IMAGEROUTE].format.width = 260;
-    ececity->tabImage[IMAGEROUTE].format.height = 260;
+    ececity->tabImage[IMAGEROUTE].format.width = 200;
+    ececity->tabImage[IMAGEROUTE].format.height = 100;
     ececity->tabImage[IMAGEROUTE].format.x = ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.x;
     ececity->tabImage[IMAGEROUTE].format.y = ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.y;
     ececity->tabImage[IMAGEROUTE].format = (Rectangle){ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.x,ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.y,ececity->tabImage[IMAGEROUTE].format.width,ececity->tabImage[IMAGEROUTE].format.height};
@@ -98,6 +98,9 @@ void InitCase(ECECITY* ececity){
             ececity->tabCase[colonnes][lignes].numeroConnexeEau = 0;
             ececity->tabCase[colonnes][lignes].numeroConnexeElec = 0;
             ececity->tabCase[colonnes][lignes].proximiteRoute = false;
+            ececity->tabCase[colonnes][lignes].positionCase = (Rectangle) {(float) colonnes * MAP_TILE_SIZE + (float)(ececity->display.width - SIZEBOARDX) / 2,
+                                                                   (float) lignes * MAP_TILE_SIZE+(float)(ececity->display.height-SIZEBOARDY)/2,
+                                                                           MAP_TILE_SIZE, MAP_TILE_SIZE };
         }
     }
     ececity->tabHabitations = NULL;
@@ -285,6 +288,9 @@ void InitCompteur(ECECITY* ececity){
     ececity->compteur.compteurMaisons = 0;
     ececity->compteur.compteurChateaux = 0;
     ececity->compteur.compteurCentrales = 0;
+    ececity->compteur.CapaciteCentrale = CAPACENTRALE;
+    ececity->compteur.CapaciteEau = CAPAEAU;
+    ececity->compteur.soldeBanque = SOLDEBANQUE;
 }
 
 void InitInfoFichierText(char* monFichier, ECECITY* ececity)
@@ -381,46 +387,40 @@ void EvolutionTerrainVague(ECECITY* ececity){
 
     if (ececity->compteur.temporel >= 15){
 
-        ececity->compteur.compteurCabanes= ececity->compteur.compteurCabanes + 1;
-        ececity->compteur.nbHabitantsTotal = ececity->compteur.nbHabitantsTotal + 10;
+void InitPrix(char* monFichier, ECECITY* ececity){
 
+    int CaractereLu, ligne = 1;
+    char* prix;
 
+    FILE * ifs = fopen(monFichier,"r");
 
-        //eau electricité else if
+    if (!ifs)
+    {
+        printf("Erreur de lecture fichier\n");
+        exit(-1);
+    }
+
+    while (CaractereLu!=EOF && ligne<6) // pour lire à partir de la ligne 4
+    {
+        CaractereLu=fgetc(ifs);
+        if (CaractereLu=='\n')
+            ligne++;
 
     }
 
-    if (ececity->compteur.temporel >= 30){
-
-        ececity->compteur.compteurMaisons= ececity->compteur.compteurMaisons + 1;
-        ececity->compteur.nbHabitantsTotal = ececity->compteur.nbHabitantsTotal + 50;
-
-        //eau/electricité
-    }
-
-    if (ececity->compteur.temporel >= 45){
-
-        ececity->compteur.compteurImmeubles= ececity->compteur.compteurImmeubles + 1;
-        ececity->compteur.nbHabitantsTotal = ececity->compteur.nbHabitantsTotal + 100;
-
-        //eau/electricité
-    }
+    fscanf(ifs,"%d  ",&ececity->prix.prixRoute);
+    fscanf(ifs,"\n");
+    fscanf(ifs,"%d  ",&ececity->prix.prixTerrainVague);
+    fscanf(ifs,"\n");
+    fscanf(ifs,"%d  ",&ececity->prix.chateauPrix);
+    fscanf(ifs,"\n");
+    fscanf(ifs,"%d  ",&ececity->prix.centralePrix);
 
 
-    if (ececity->compteur.temporel >= 60){
-
-        ececity->compteur.compteurGratteCiel= ececity->compteur.compteurGratteCiel + 1;
-        ececity->compteur.nbHabitantsTotal = ececity->compteur.nbHabitantsTotal + 1000;
-
-        //eau/electricité
-    }
+    fclose(ifs);
 }
+
 */
-void GestionImpot(ECECITY* ececity){
-
-    ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.Impots * ececity->compteur.nbHabitantsTotal;
-  // Vérification faillite
-}
 
 //avant on resort une maison dont son compteur == 15 ou modulo 15 si il y a pas de reset de maison
 void augmenterStadeMaison (ECECITY* tbxmaison , int maisonTraitee){//affichage
@@ -448,7 +448,6 @@ void augmenterStadeMaison (ECECITY* tbxmaison , int maisonTraitee){//affichage
             tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 1000;
         }
         tbxmaison->tabHabitations[maisonTraitee].type = typearrivee;
-
         for (int j = 0; j < NB_LIGNES; j++) {
             for (int i = 0; i < NB_COLONNES; i++) {
                 if(tbxmaison->tabCase[i][j].type == typedepart && tbxmaison->tabCase[i][j].numeroType == tbxmaison->tabHabitations[maisonTraitee].numeroType){
@@ -456,7 +455,6 @@ void augmenterStadeMaison (ECECITY* tbxmaison , int maisonTraitee){//affichage
                 }
             }
         }
-
     }
 }
 void diminuerStadeMaison (ECECITY* ececity , int maisonTraitee){//affichage
@@ -483,7 +481,6 @@ void diminuerStadeMaison (ECECITY* ececity , int maisonTraitee){//affichage
         ececity->tabHabitations[maisonTraitee].capaciteInitiale = 100;
     }
     ececity->tabHabitations[maisonTraitee].type = typearrivee;
-
     for (int j = 0; j < NB_LIGNES; j++) {
         for (int i = 0; i < NB_COLONNES; i++) {
             if(ececity->tabCase[i][j].type == typedepart && ececity->tabCase[i][j].numeroType == ececity->tabHabitations[maisonTraitee].numeroType){
