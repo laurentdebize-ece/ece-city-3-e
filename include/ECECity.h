@@ -20,6 +20,7 @@
 
 typedef enum {
     MENU,
+    ChoixMode,
     Jeu,
     END,
     NB_PROCESS,
@@ -32,6 +33,13 @@ typedef enum {
     CHARGER,
     CREDITS,
 } MenuProcess;
+
+typedef enum {
+    NOTHING,
+    COMMUNISME,
+    CAPITALISME,
+   EXITChoixJeu,
+} ChoixJeuProcess;
 
 typedef enum {
     NONE,
@@ -59,6 +67,7 @@ typedef enum{
 typedef enum {
     IMAGEACCUEIL,
     IMAGEJEU,
+    IMAGECHOIXJEU,
     IMAGEROUTE,
     IMAGECHATEAUEAU,
     IMAGECENTRALEELEC,
@@ -77,7 +86,16 @@ typedef enum{
     BOUTON_CHARGER,
     BOUTON_Credits,
     NB_BOUTON_MENU,
+
 }NomBoutonMenu;
+
+typedef enum {
+    Bouton_Communiste,
+    Bouton_Capitaliste,
+    EXITChoix,
+    NB_BOUTON_ChoixJeu,
+
+}NomBoutonChoixModeJeu;
 
 typedef enum{
     BOUTON_ROUTE,
@@ -110,6 +128,12 @@ static const char *boutonJeuText[] = {
         "CENTRALE\0",
         "PAUSE\0",
         "EXIT\0",
+};
+
+static const char *boutonChoixJeu[] = {
+        "COMMUNISME\0",
+        "CAPITALISME\0",
+        "BACK TO MENU\0",
 };
 
 static const char *boutonFinText[] = {
@@ -281,6 +305,7 @@ typedef struct {
     int currentProcess;
     int currentMenuProcess;
     int currentJeuProcess;
+    int currentChoixJeuProcess;
     ElementSauvegarde jeu;
     Graphe* graphe;
     Case tabCase[NB_COLONNES][NB_LIGNES];
@@ -302,6 +327,7 @@ typedef struct {
 
 void MainBoucle(ECECITY* ececity);
 void Menu(ECECITY* ececity);
+void ChoixModeJeu(ECECITY* ececity);
 void Charger(ECECITY* ececity);
 void Gameplay(ECECITY* ececity);
 int calculRoute( ECECITY* ececity, int typeCalcul);

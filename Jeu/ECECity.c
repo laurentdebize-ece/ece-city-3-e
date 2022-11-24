@@ -15,6 +15,17 @@ void MainBoucle(ECECITY* ececity){
             case MENU:
                 Menu(ececity);
                 break;
+             case ChoixMode :
+                if (!ececity->currentChoixJeuProcess) {
+                    ChoixModeJeu(ececity);
+                    ececity->currentProcess = ChoixMode;
+                }else if (ececity->currentChoixJeuProcess== EXITChoixJeu) {
+                    ececity->currentProcess = MENU;
+                }else if (ececity->currentChoixJeuProcess== true){
+                    ececity->currentProcess = Jeu;
+                }
+
+                break;
             case Jeu:
                 if(!ececity->IsGameBreak){
                     Gameplay(ececity);
@@ -37,7 +48,6 @@ void Menu(ECECITY* ececity){
 
     int pause = 0;
     timerCounter(ececity);
-
     AffichageMenu(ececity);
     MusicMenu(ececity, &pause);
     ececity->souris.position = GetMousePosition();
@@ -53,29 +63,79 @@ void Menu(ECECITY* ececity){
             }
         }
     }
-    switch(ececity->currentMenuProcess){
-        case NADA:
-        case CREDITS:
-            break;
-        case START:
-            ececity->currentProcess = Jeu;
-            ececity->currentJeuProcess = NONE;
-            ececity->currentMenuProcess = NADA;
-            resetTimer(ececity);
-            break;
-        case QUIT:
-            ececity->IsCodeRunning = false;
-            ececity->currentMenuProcess = NADA;
-            break;
-        case CHARGER:
-            Charger(ececity);
-            ececity->currentMenuProcess = NADA;
-            //fonction charger
-            break;
 
-        default:
-            break;
+         switch (ececity->currentMenuProcess) {
+             case NADA:
+             case CREDITS:
+                 break;
+             case START:
+                    ChoixModeJeu(ececity);
+                     ececity->currentProcess = ChoixMode;
+                     ececity->currentJeuProcess = NONE;
+                     ececity->currentMenuProcess = NADA;
+                     resetTimer(ececity);
+
+                break;
+             case QUIT:
+                ececity->IsCodeRunning = false;
+                ececity->currentMenuProcess = NADA;
+                break;
+             case CHARGER:
+                Charger(ececity);
+                 ececity->currentMenuProcess = NADA;
+                 //fonction charger
+                 break;
+             default:
+                break;
+         }
+
+
+
+}
+
+void ChoixModeJeu(ECECITY* ececity){
+
+    AffichageChoixMode(ececity);
+    ececity->currentChoixJeuProcess = false;
+    ececity->souris.position = GetMousePosition();
+    for (int bouton = 0; bouton < NB_BOUTON_ChoixJeu; ++bouton) {
+        if (CheckCollisionPointRec(ececity->souris.position, ececity->tabBouton[ChoixMode][bouton].recBouton)) {
+            if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                if (ececity->currentChoixJeuProcess == NOTHING) {
+                    ececity->currentChoixJeuProcess = bouton + 1;
+                } else {
+                    ececity->currentChoixJeuProcess = NOTHING;
+                }
+            }
+        }
     }
+
+    switch(ececity->currentChoixJeuProcess){
+
+       case COMMUNISME :
+
+           // fonction communisme
+
+           ececity->currentChoixJeuProcess = true;
+           ececity->currentProcess = Jeu;
+
+           break;
+       case CAPITALISME :
+
+           // fonction capitaliste
+
+           ececity->currentProcess = Jeu;
+           ececity->currentChoixJeuProcess = true;
+
+
+           break;
+       case EXITChoixJeu :
+
+           ececity->currentProcess = MENU;
+           //ececity->currentChoixJeuProcess = true;
+
+        break;
+   }
 
 }
 

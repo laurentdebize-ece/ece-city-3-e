@@ -69,6 +69,16 @@ void InitImage(ECECITY* ececity){
     ececity->tabImage[IMAGEJEU].format.y = 0;
     UnloadImage(ececity->tabImage[IMAGEJEU].Image);
 
+    ececity->tabImage[IMAGECHOIXJEU].Image = LoadImage("../Images/Communisme.Capitalisme.png");
+    ececity->tabImage[IMAGECHOIXJEU].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGECHOIXJEU].Image);
+    ececity->tabImage[IMAGECHOIXJEU].format.width = 919;
+    ececity->tabImage[IMAGECHOIXJEU].format.height = 721;
+    ececity->tabImage[IMAGECHOIXJEU].format.x = 0;
+    ececity->tabImage[IMAGECHOIXJEU].format.y = 0;
+    ececity->tabImage[IMAGECHOIXJEU].format = (Rectangle){0,0,ececity->tabImage[IMAGECHOIXJEU].format.width,ececity->tabImage[IMAGECHOIXJEU].format.height};
+    UnloadImage(ececity->tabImage[IMAGECHOIXJEU].Image);
+
+
     ececity->tabImage[IMAGEROUTE].Image = LoadImage("../Images/route.png");
     ececity->tabImage[IMAGEROUTE].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEROUTE].Image);
     ececity->tabImage[IMAGEROUTE].format.width = 200;
@@ -85,8 +95,8 @@ void InitCase(ECECITY* ececity){
             ececity->tabCase[colonnes][lignes].type = 0;
             ececity->tabCase[colonnes][lignes].libre = true;
             ececity->tabCase[colonnes][lignes].numeroType = 0;
-            ececity->tabCase[colonnes][lignes].centraleAssignee = 0;
-            ececity->tabCase[colonnes][lignes].chateauAssignee = 0;
+            //ececity->tabCase[colonnes][lignes].centraleAssignee = 0;
+           // ececity->tabCase[colonnes][lignes].chateauAssignee = 0;
             ececity->tabCase[colonnes][lignes].numeroConnexeEau = 0;
             ececity->tabCase[colonnes][lignes].numeroConnexeElec = 0;
             ececity->tabCase[colonnes][lignes].proximiteRoute = false;
@@ -118,13 +128,18 @@ void InitBouton(ECECITY* ececity){
         ececity->tabBouton[END][bouton].nom = boutonFinText[bouton];
     }
 
+    for (int bouton = 0; bouton < NB_BOUTON_ChoixJeu; ++bouton) {
+        ececity->tabBouton[ChoixMode][ bouton].recBouton = (Rectangle){(float) ececity->display.width/ 2 - 150,(float)(300+(bouton*200)), 400, 150};
+        ececity->tabBouton[ChoixMode][bouton].nom = boutonChoixJeu[bouton];
+    }
+
 }
 
 void InitMusique(ECECITY* ececity){
 
     InitAudioDevice();
 
-    assert(IsAudioDeviceReady());
+ //   assert(IsAudioDeviceReady());
 
     ececity->tabMusic[MusiqueAccueil].music = LoadMusicStream("../MUSIQUE/SimCityMusique.wav");
     ececity->tabMusic[ClicSouris].music = LoadMusicStream("../Musique/ClicSouris.wav");
@@ -142,6 +157,7 @@ void InitMusique(ECECITY* ececity){
 }
 
 void InitTime(ECECITY* ececity){
+
 
     ececity->time.framesCounter = 0;
     ececity->time.constructionTime = 15; // tps en secondes
@@ -233,7 +249,7 @@ void InitPrix(char* monFichier, ECECITY* ececity){
         printf("Erreur de lecture fichier\n");
         exit(-1);
     }
-    while (CaractereLu!=EOF && ligne<4) // pour lire à partir de la ligne 4
+    while (CaractereLu!=EOF && ligne<6) // pour lire à partir de la ligne 4
     {
         CaractereLu=fgetc(ifs);
         if (CaractereLu=='\n')
@@ -248,8 +264,10 @@ void InitPrix(char* monFichier, ECECITY* ececity){
     fscanf(ifs,"%d  ",&ececity->prix.chateauPrix);
     fscanf(ifs,"\n");
     fscanf(ifs,"%d  ",&ececity->prix.centralePrix);
+    fscanf(ifs,"\n");
+    fscanf(ifs,"%d  ",&ececity->compteur.soldeBanque); // INIT BANQUE
 
-    printf("%d",ececity->prix.prixRoute);
+
 
     fclose(ifs);
 }

@@ -23,6 +23,34 @@ void AffichageMenu(ECECITY* ececity){
     EndDrawing();
 }
 
+void AffichageChoixMode( ECECITY* ececity){
+
+    BeginDrawing();
+
+    ClearBackground(RAYWHITE);
+
+    for (int image = IMAGECHOIXJEU; image < IMAGEROUTE ; ++image) {
+        DrawTexture(ececity->tabImage[image].TextureImage, (int)ececity->tabImage[image].format.x, (int)ececity->tabImage[image].format.y, WHITE);
+    }
+
+            DrawText("Choisis ton mode de jeu :", (int)(ececity->display.width/3 - MeasureText("Choisis ton mode de jeu",100)/2),
+             ececity->display.height/9, 120, WHITE);
+
+    AfficherBoutonModeJeu(ececity);
+
+    EndDrawing();
+
+}
+void AfficherEvolution(ECECITY* ececity){
+
+   int temps =  ececity->time.constructionTime;
+   temps =0; // le moment ou l'on place un terrain vague =0 pour chaque terrain vague placé
+
+
+
+
+
+}
 
 void AffichageGamePlay(ECECITY* ececity){
 
@@ -30,7 +58,7 @@ void AffichageGamePlay(ECECITY* ececity){
 
     ClearBackground(RAYWHITE);
 
-    for (int image = IMAGEJEU; image < NB_IMAGES; ++image) {
+    for (int image = IMAGEJEU; image < IMAGECHOIXJEU; ++image) {
         DrawTexture(ececity->tabImage[image].TextureImage, (int)ececity->tabImage[image].format.x, (int)ececity->tabImage[image].format.y, WHITE);
     }
 
@@ -53,6 +81,7 @@ void AffichageGamePlay(ECECITY* ececity){
 
                         case CONSTRUCTIONROUTE:
                             colorRect = (ececity->souris.colonneSouris == colonnes && ececity->souris.ligneSouris == lignes) ?  DARKGRAY : BLANK;
+
                             break;
 
                         case CONSTRUCTIONMAISON:
@@ -61,6 +90,7 @@ void AffichageGamePlay(ECECITY* ececity){
                                     && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesMaison
                                     && lignes - ececity->souris.ligneSouris >= 0
                                     ) ?  LIGHTGRAY : BLANK;
+                            // evolution
                             break;
 
                         case CONSTRUCTIONCHATEAUDEAU:
@@ -141,6 +171,30 @@ void AfficherCaseInfo(ECECITY* ececity){
         DrawText(TextFormat("Case [%d] [%d]", ececity->souris.colonneSouris, ececity->souris.ligneSouris), 10, 45, 30, LIME);
     }
 }
+void AfficherBoutonModeJeu( ECECITY* ececity){
+
+
+    ececity->write.fontSize = 45;
+
+    for (int bouton = 0; bouton < NB_BOUTON_ChoixJeu; ++bouton) {
+
+        if (ececity->currentProcess == ChoixMode) {
+            DrawRectangleRec(ececity->tabBouton[ChoixMode][bouton].recBouton,
+                             (CheckCollisionPointRec(ececity->souris.position,
+                                                     ececity->tabBouton[ChoixMode][bouton].recBouton)) ? BLACK : WHITE);
+        }
+
+
+        DrawRectangleLines((int)ececity->tabBouton[ececity->currentProcess][bouton].recBouton.x, (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.y,
+                 (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.width, (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.height,(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[ececity->currentProcess][bouton].recBouton)) ? WHITE : BLACK);
+
+        DrawText(ececity->tabBouton[ececity->currentProcess][bouton].nom,(int) (ececity->tabBouton[ececity->currentProcess][bouton].recBouton.x +
+             ececity->tabBouton[ececity->currentProcess][bouton].recBouton.width / 2 -(float) MeasureText(ececity->tabBouton[ececity->currentProcess][bouton].nom,
+            ececity->write.fontSize) / 2),(int) (ececity->tabBouton[ececity->currentProcess][bouton].recBouton.y +ececity->tabBouton[ececity->currentProcess][bouton].recBouton.height / 2 -(float) (ececity->write.fontSize) / 2),ececity->write.fontSize, (CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[ececity->currentProcess][bouton].recBouton))? DARKGRAY : DARKBLUE);
+
+    }
+
+}
 
 void AfficherBouton(ECECITY* ececity){
 
@@ -150,6 +204,9 @@ void AfficherBouton(ECECITY* ececity){
             NB_BOUTON = NB_BOUTON_MENU;
             ececity->write.fontSize = 30;
             break;
+        case ChoixMode :
+            NB_BOUTON = NB_BOUTON_ChoixJeu;
+            ececity->write.fontSize = 30;
         case Jeu:
             NB_BOUTON = NB_BOUTON_JEU;
             ececity->write.fontSize = 15;
@@ -163,6 +220,7 @@ void AfficherBouton(ECECITY* ececity){
         if (ececity->currentProcess == MENU){
             DrawRectangleRec(ececity->tabBouton[MENU][bouton].recBouton, (CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[MENU][bouton].recBouton)) ? SKYBLUE : LIGHTGRAY);
         }
+
         DrawRectangleLines((int)ececity->tabBouton[ececity->currentProcess][bouton].recBouton.x, (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.y,
                            (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.width, (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.height,
                            (CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[ececity->currentProcess][bouton].recBouton)) ? BLUE : GRAY);
@@ -172,4 +230,6 @@ void AfficherBouton(ECECITY* ececity){
                  (int)(ececity->tabBouton[ececity->currentProcess][bouton].recBouton.y + ececity->tabBouton[ececity->currentProcess][bouton].recBouton.height / 2  - (float)(ececity->write.fontSize)/ 2),
                  ececity->write.fontSize,(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[ececity->currentProcess][bouton].recBouton)) ? MAGENTA : RED);
     }
+
+
 }
