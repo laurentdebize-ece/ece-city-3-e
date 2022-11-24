@@ -1,4 +1,4 @@
-#include "initialisation.h"
+#include "../include/initialisation.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
@@ -103,6 +103,16 @@ void InitImage(ECECITY* ececity){
     ececity->tabImage[IMAGEPOPULATION].format.y = 20;
     ececity->tabImage[IMAGEPOPULATION].format = (Rectangle){ececity->tabImage[IMAGEPOPULATION].format.x,ececity->tabImage[IMAGEPOPULATION].format.y,ececity->tabImage[IMAGEPOPULATION].format.width,ececity->tabImage[IMAGEPOPULATION].format.height};
     UnloadImage(ececity->tabImage[IMAGEPOPULATION].Image);
+
+    ececity->tabImage[IMAGECHOIXJEU].Image = LoadImage("../Images/Communisme.Capitalisme.png");
+    ececity->tabImage[IMAGECHOIXJEU].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGECHOIXJEU].Image);
+    ececity->tabImage[IMAGECHOIXJEU].format.width = 919;
+    ececity->tabImage[IMAGECHOIXJEU].format.height = 721;
+    ececity->tabImage[IMAGECHOIXJEU].format.x = 0;
+    ececity->tabImage[IMAGECHOIXJEU].format.y = 0;
+    ececity->tabImage[IMAGECHOIXJEU].format = (Rectangle){0,0,ececity->tabImage[IMAGECHOIXJEU].format.width,ececity->tabImage[IMAGECHOIXJEU].format.height};
+    UnloadImage(ececity->tabImage[IMAGECHOIXJEU].Image);
+
 
     ececity->tabImage[IMAGEROUTE].Image = LoadImage("../Images/route.png");
     ececity->tabImage[IMAGEROUTE].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEROUTE].Image);
@@ -254,6 +264,12 @@ void InitISO(ECECITY* ececity){
         ececity->tabCase[NB_COLONNES - 1][lignes].cardinal[OUEST].y = ececity->tabCase[NB_COLONNES - 1][lignes].positionCase.y;
     }
 
+
+    for (int lignes = 0; lignes < NB_LIGNES; ++lignes) {
+        for (int colonnes = 0; colonnes < NB_COLONNES; ++colonnes) {
+            printf("casenormal [%d] [%d] x = %f, y = %f\n",colonnes,lignes,ececity->tabCase[colonnes][lignes].positionCase.x,ececity->tabCase[colonnes][lignes].positionCase.y);
+        }
+    }
 }
 
 
@@ -300,6 +316,11 @@ void InitBouton(ECECITY* ececity){
     for (int bouton = 0; bouton < NB_BOUTON_FIN; ++bouton) {
         ececity->tabBouton[END][bouton].recBouton = (Rectangle){(float) ececity->display.width/ 2 - 150,(float)(300+(bouton*200)), 300, 150};
         ececity->tabBouton[END][bouton].nom = boutonFinText[bouton];
+    }
+
+    for (int bouton = 0; bouton < NB_BOUTON_ChoixJeu; ++bouton) {
+        ececity->tabBouton[ChoixMode][ bouton].recBouton = (Rectangle){(float) ececity->display.width/ 2 - 150,(float)(300+(bouton*200)), 400, 150};
+        ececity->tabBouton[ChoixMode][bouton].nom = boutonChoixJeu[bouton];
     }
 
 }
@@ -461,8 +482,7 @@ void InitPrix(char* monFichier, ECECITY* ececity){
         printf("Erreur de lecture fichier\n");
         exit(-1);
     }
-
-    while (CaractereLu!=EOF && ligne<6) // pour lire à partir de la ligne 4
+    while (CaractereLu!=EOF && ligne<4) // pour lire à partir de la ligne 4
     {
         CaractereLu=fgetc(ifs);
         if (CaractereLu=='\n')
@@ -478,6 +498,7 @@ void InitPrix(char* monFichier, ECECITY* ececity){
     fscanf(ifs,"\n");
     fscanf(ifs,"%d  ",&ececity->prix.centralePrix);
 
+    printf("%d",ececity->prix.prixRoute);
 
     fclose(ifs);
 }

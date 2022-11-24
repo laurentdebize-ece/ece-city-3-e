@@ -6,7 +6,8 @@
 #include "../include/temps.h"
 #include "../include/Graphe.h"
 #include "../include/initialisation.h"
-#include<stdio.h>
+#include "stdio.h"
+#include <math.h>
 
 
 
@@ -15,6 +16,17 @@ void MainBoucle(ECECITY* ececity){
         switch (ececity->currentProcess) {
             case MENU:
                 Menu(ececity);
+                break;
+             case ChoixMode :
+                if (!ececity->currentChoixJeuProcess) {
+                    ChoixModeJeu(ececity);
+                    ececity->currentProcess = ChoixMode;
+                }else if (ececity->currentChoixJeuProcess== EXITChoixJeu) {
+                    ececity->currentProcess = MENU;
+                }else if (ececity->currentChoixJeuProcess== true){
+                    ececity->currentProcess = Jeu;
+                }
+
                 break;
             case Jeu:
                 JEU(ececity);
@@ -79,28 +91,79 @@ void Menu(ECECITY* ececity) {
         }
 
     }
-    switch(ececity->currentMenuProcess){
-        case NONE:
-        case CREDITS:
-            break;
-        case STARTGAME:
-            ececity->currentProcess = Jeu;
-            ececity->currentJeuProcess = NONE;
-            ececity->currentMenuProcess = NONE;
-            resetTimer(ececity);
-            break;
-        case GAMEOVER:
-            ececity->IsCodeRunning = false;
-            ececity->currentMenuProcess = NONE;
-            break;
-        case CHARGER:
-            Charger(ececity);
-            ececity->currentMenuProcess = NONE;
-            //fonction charger
-            break;
-        default:
-            break;
+
+         switch (ececity->currentMenuProcess) {
+             case NADA:
+             case CREDITS:
+                 break;
+             case START:
+                    ChoixModeJeu(ececity);
+                     ececity->currentProcess = ChoixMode;
+                     ececity->currentJeuProcess = NONE;
+                     ececity->currentMenuProcess = NADA;
+                     resetTimer(ececity);
+
+                break;
+             case QUIT:
+                ececity->IsCodeRunning = false;
+                ececity->currentMenuProcess = NADA;
+                break;
+             case CHARGER:
+                Charger(ececity);
+                 ececity->currentMenuProcess = NADA;
+                 //fonction charger
+                 break;
+             default:
+                break;
+         }
+
+
+
+}
+
+void ChoixModeJeu(ECECITY* ececity){
+
+    AffichageChoixMode(ececity);
+    ececity->currentChoixJeuProcess = false;
+    ececity->souris.position = GetMousePosition();
+    for (int bouton = 0; bouton < NB_BOUTON_ChoixJeu; ++bouton) {
+        if (CheckCollisionPointRec(ececity->souris.position, ececity->tabBouton[ChoixMode][bouton].recBouton)) {
+            if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                if (ececity->currentChoixJeuProcess == NOTHING) {
+                    ececity->currentChoixJeuProcess = bouton + 1;
+                } else {
+                    ececity->currentChoixJeuProcess = NOTHING;
+                }
+            }
+        }
     }
+
+    switch(ececity->currentChoixJeuProcess){
+
+       case COMMUNISME :
+
+           // fonction communisme
+
+           ececity->currentChoixJeuProcess = true;
+           ececity->currentProcess = Jeu;
+
+           break;
+       case CAPITALISME :
+
+           // fonction capitaliste
+
+           ececity->currentProcess = Jeu;
+           ececity->currentChoixJeuProcess = true;
+
+
+           break;
+       case EXITChoixJeu :
+
+           ececity->currentProcess = MENU;
+           //ececity->currentChoixJeuProcess = true;
+
+        break;
+   }
 
 }
 
@@ -152,6 +215,7 @@ void calculTimerHabitations(ECECITY* ececity){
            // si le compteur compteur actuel par rapport à celui de l'habitation > 15 s
            // alors lancer l'evolution de la maison + reinitialiser le compteur TIME + remettre à jour l'affichage
            if (t - ececity->tabHabitations[i].timerSeconds >= ececity->time.constructionTime ){
+               printf("15s , maison %d\n", i);
                evolutionConstruction(ececity, i, ececity->compteur);
                ececity->tabHabitations[i].timerSeconds = TIMENOW;
            }
@@ -181,7 +245,9 @@ void CalculImpotChaqueMois(ECECITY* ececity){
     }
     else{
         ececity->compteur.timerImpots = TIMENOW;
+        printf("HAB %d\n", ececity->compteur.nbHabitantsTotal);
     }
+
 }
 
 void pause(ECECITY* ececity){
@@ -244,6 +310,7 @@ void defineTypeCase(ECECITY* ececity){
                                 ececity->tabHabitations = (Case *) realloc(ececity->tabHabitations, sizeof(Case) *
                                                                                                     (ececity->compteur.compteurMaisons));
                             }
+                            printf("cm:%d\n", ececity->compteur.compteurMaisons);
                             ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].type = TerrainVague;
                             ececity->tabHabitations[ececity->compteur.compteurMaisons -
                                                     1].numeroType = ececity->compteur.compteurMaisons;
@@ -310,6 +377,7 @@ void defineTypeCase(ECECITY* ececity){
                                                                                                ececity->souris.ligneSouris].numeroType = ececity->compteur.compteurCentrales;
                                 }
                             }
+                            //alloc tabCentrale
                             if (ececity->compteur.compteurCentrales == 1) {
                                 ececity->tabCentrale = malloc(sizeof(Case));
                             } else {
