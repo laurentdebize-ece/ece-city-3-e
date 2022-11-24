@@ -1,6 +1,9 @@
-#include "../include/temps.h"
+#include "temps.h"
+#include <math.h>
+#include "stdio.h"
 
 void timerCounter(ECECITY* ececity){
+
     ececity->time.framesCounter++;
     ececity->time.timeDebut = 0;
     ececity->time.seconds = ececity->time.framesCounter / ececity->display.FPS; //en secondes

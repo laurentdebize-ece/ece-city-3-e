@@ -1,8 +1,9 @@
-#ifndef PROJETINFO_TEMPS_H
-#define PROJETINFO_TEMPS_H
-#include "../include/ECECity.h"
+#ifndef ECE_CITY_3_E_TEMPS_H
+#define ECE_CITY_3_E_TEMPS_H
+
+#include "ECECity.h"
 
 void timerCounter(ECECITY* ececity);
 void resetTimer(ECECITY* ececity);
 
-#endif //PROJETINFO_TEMPS_H
+#endif //ECE_CITY_3_E_TEMPS_H

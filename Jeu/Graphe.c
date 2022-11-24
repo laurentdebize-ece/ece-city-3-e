@@ -1,11 +1,13 @@
 #include "Graphe.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 pSommet *Graph_CreateArc(pSommet *sommet, int s1, int s2) {
 
     pArc Newarc = (pArc) malloc(sizeof(struct Arc));
     Newarc->arc_suivant = NULL;
-    Newarc->sommet1 = s1;
-    Newarc->sommet2 = s2;
+    Newarc->sommet1 = s1 + 1;
+    Newarc->sommet2 = s2 + 1;
 
     if (sommet[s1]->arc == NULL) {
         sommet[s1]->arc = Newarc;
@@ -60,7 +62,8 @@ void Graphe_AllocGraphe(ECECITY* ececity) {
 
 
 void Graphe_ReallocGraphe(ECECITY* ececity) {
-    ececity->graphe->pSommet = (pSommet *) realloc(ececity->graphe->pSommet, sizeof(pSommet) * ececity->graphe->ordre);
+
+    ececity->graphe->pSommet = (pSommet *) realloc(ececity->graphe->pSommet, ececity->graphe->ordre * sizeof(pSommet));
 
     ececity->graphe->pSommet[ececity->graphe->ordre - 1] = (pSommet) malloc(sizeof(struct Sommet));
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->id = ececity->graphe->ordre;
@@ -84,15 +87,9 @@ void buildGraphe(ECECITY* ececity) {
         for (int sommet1 = 0; sommet1 < ececity->graphe->ordre; ++sommet1) {
             for (int sommet2 = 0; sommet2 < ececity->graphe->ordre; ++sommet2) {
                 if(sommet1 != sommet2){
-                    if(proximiteSommet(ececity->graphe->pSommet[sommet1], ececity->graphe->pSommet[sommet2])
-                    && arcExiste(ececity->graphe->pSommet[sommet1], ececity->graphe->pSommet[sommet2]) == false
-                    && arcExiste(ececity->graphe->pSommet[sommet2], ececity->graphe->pSommet[sommet1]) == false){
-                        int numCC = ececity->graphe->pSommet[sommet2]->numCC;
-                        for (int i = 0; i < ececity->graphe->ordre; ++i) {
-                            if(ececity->graphe->pSommet[i]->numCC == numCC){
-                                ececity->graphe->pSommet[i]->numCC = ececity->graphe->pSommet[sommet1]->numCC; //actualisation des numCC pour eviter les cycles
-                            }
-                        }
+                    if(proximiteSommet(ececity->graphe->pSommet[sommet1], ececity->graphe->pSommet[sommet2]) == true
+                       && arcExiste(ececity->graphe->pSommet[sommet1], ececity->graphe->pSommet[sommet2]) == false
+                       && arcExiste(ececity->graphe->pSommet[sommet2], ececity->graphe->pSommet[sommet1]) == false){
                         ececity->graphe->pSommet = Graph_CreateArc(ececity->graphe->pSommet, ececity->graphe->pSommet[sommet1]->id - 1, ececity->graphe->pSommet[sommet2]->id - 1);
                         ececity->graphe->pSommet = Graph_CreateArc(ececity->graphe->pSommet, ececity->graphe->pSommet[sommet2]->id - 1, ececity->graphe->pSommet[sommet1]->id - 1);
                         ececity->graphe->taille++;

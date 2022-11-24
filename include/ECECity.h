@@ -1,22 +1,33 @@
-#ifndef PROJETINFO_ECECITY_H
-#define PROJETINFO_ECECITY_H
+#ifndef ECE_CITY_3_E_H_INCLUDED
+#define ECE_CITY_3_E_H_INCLUDED
 
 #include "raylib.h"
+
+#define MouseOnIso (GetMousePosition().y >= ((ececity->infoIso.coeffDirecteur * GetMousePosition().x) + ececity->infoIso.ligne) && GetMousePosition().y >= - (ececity->infoIso.coeffDirecteur * GetMousePosition().x) + ececity->infoIso.colonnemax && GetMousePosition().y <= - (ececity->infoIso.coeffDirecteur * GetMousePosition().x) + ececity->infoIso.colonne && GetMousePosition().y <= (ececity->infoIso.coeffDirecteur * GetMousePosition().x) + ececity->infoIso.lignemax) ? 1 : 0
+
 
 #define TIMENOW (ececity->time.timer.hoursCounter*3600 + ececity->time.timer.minutesCounter*60 + ececity->time.timer.secondsCounter)
 #define MAP_TILE_SIZE 20
 #define NB_COLONNES 45
 #define NB_LIGNES 35
-#define SIZEBOARDX 1024
-#define SIZEBOARDY 768
+#define SIZEBOARDX 900
+#define SIZEBOARDY 700
 #define MAX_OBJET 300
 #define CAPACENTRALE 5000
 #define CAPAEAU 5000
+#define SOLDEBANQUE 500000
+#define PRIXIMPOT 10
 
+typedef enum{
+    COMMUNISTE,
+    CAPITALISTE,
+}ModeJeu;
 
-
-
-#define MouseOnBoard (GetMousePosition().x > (float)(1920-SIZEBOARDX)/2  && GetMousePosition().x < (float)(NB_COLONNES)*MAP_TILE_SIZE+(float)(1920-SIZEBOARDX)/2 && GetMousePosition().y > (float)(1065-SIZEBOARDY)/2 && GetMousePosition().y < (float)(NB_LIGNES)*MAP_TILE_SIZE+(float)(1065-SIZEBOARDY)/2)? 1 : 0
+typedef enum{
+    NIVEAU0,
+    NIVEAU1,
+    NIVEAU2,
+}NiveauJeu;
 
 typedef enum {
     MENU,
@@ -63,6 +74,14 @@ typedef enum{
     CENTRALE,
     RUINE,
 }typeCase;
+
+typedef enum{
+    OUEST,
+    EST,
+    NORD,
+    SUD,
+    NB_CARDINAL,
+}Cardinal;
 
 typedef enum {
     IMAGEACCUEIL,
@@ -143,10 +162,19 @@ static const char *boutonFinText[] = {
 };
 
 
-
+typedef struct{
+   Vector2 debut;
+   Vector2 fin;
+   float coeffDirecteur;
+   float ligne;
+   float colonne;
+   float lignemax;
+   float colonnemax;
+}Isometric;
 
 typedef struct{
     Rectangle positionCase;
+    Vector2 cardinal[NB_CARDINAL];
     int type;
     bool libre;
     bool proximiteRoute;
@@ -161,9 +189,6 @@ typedef struct{
     int timerSeconds;
 } Case;
 
-typedef struct{
-
-}InfoBatiment;
 
 enum SommetCouleur {
     UNEXPLORED,
@@ -212,12 +237,12 @@ typedef struct{
     int compteurMaisons;
     int compteurChateaux;
     int compteurCentrales;
+    int timerImpots;
 }Compteur;
 
 typedef struct {
     int typeJeu;//1- si communisme 2- si capitalisme
     int typeCalcul;// 1 eau, 2 elec.
-
 }ElementSauvegarde;
 
 typedef struct{
@@ -307,6 +332,7 @@ typedef struct {
     int currentJeuProcess;
     int currentChoixJeuProcess;
     ElementSauvegarde jeu;
+    Isometric infoIso;
     Graphe* graphe;
     Case tabCase[NB_COLONNES][NB_LIGNES];
     Case* tabHabitations;
@@ -347,5 +373,7 @@ void defineCurrentJeuProcess(ECECITY* ececity);
 bool proximiteRoute(ECECITY* ececity, int typeBatiment);
 bool construire(ECECITY* ececity);
 void calculTimerHabitations(ECECITY* ececity);
+void calculHabitant(ECECITY* ececity);
+void CalculImpotChaqueMois(ECECITY* ececity);
 
-#endif //PROJETINFO_ECECITY_H
+#endif //ECE_CITY_3_E_H_INCLUDED

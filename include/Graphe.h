@@ -1,10 +1,7 @@
-#ifndef GRAPHE_H_INCLUDED
-#define GRAPHE_H_INCLUDED
+#ifndef ECE_CITY_3_E_GRAPHE_H
+#define ECE_CITY_3_E_GRAPHE_H
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "ECECity.h"
-
 
 void Graphe_AllocGraphe(ECECITY* ececity);
 void Graphe_ReallocGraphe(ECECITY* ececity);
@@ -18,4 +15,4 @@ bool arcExiste(pSommet sommet1, pSommet sommet2);
 void Graphe_DisplayArcs(Graphe* graphe);
 void Graphe_DisplaySommet(Graphe* graphe);
 
-#endif // GRAPHE_H_INCLUDED
+#endif // ECE_CITY_3_E_GRAPHE_H
