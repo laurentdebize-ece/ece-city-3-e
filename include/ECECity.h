@@ -18,17 +18,7 @@
 #define SOLDEBANQUE 500000
 #define PRIXIMPOT 10
 
-typedef enum{
-    COMMUNISTE,
-    CAPITALISTE,
-    NB_TYPE,
-}ModeJeu;
 
-typedef enum{
-    NIVEAU0,
-    NIVEAU1,
-    NIVEAU2,
-}NiveauJeu;
 
 typedef enum {
     MENU,
@@ -40,7 +30,8 @@ typedef enum {
 
 typedef enum {
     CREDITS,
-    CHARGER,
+    COMMUNISTE,
+    CAPITALISTE,
     NIVEAU0,
     NIVEAU1,
     NIVEAU2,
@@ -51,6 +42,7 @@ typedef enum {
     STARTGAME,
     GAMEPAUSE,
     GAMEOVER,
+    CHARGER,
     SAUVEGARDE,
     NONE,
 } JeuProcess;
@@ -78,11 +70,11 @@ typedef enum{
 
 typedef enum {
     IMAGEACCUEIL,
+    IMAGECHOIXJEU,
     IMAGEJEU,
     IMAGECLOCK,
     IMAGEARGENT,
     IMAGEPOPULATION,
-    IMAGECHOIXJEU,
     IMAGEROUTE,
     IMAGECHATEAUEAU,
     IMAGECENTRALEELEC,
@@ -104,11 +96,10 @@ typedef enum{
 }NomBoutonMenu;
 
 typedef enum {
-    Bouton_Communiste,
-    Bouton_Capitaliste,
-    EXITChoix,
-    NB_BOUTON_ChoixJeu,
-
+    BOUTON_COMMUNISTE,
+    BOUTON_CAPITALISTE,
+    BOUTON_EXIT_CHOIX,
+    NB_BOUTON_CHOIX,
 }NomBoutonChoixModeJeu;
 
 typedef enum{
@@ -153,7 +144,7 @@ static const char *boutonJeuText[] = {
 static const char *boutonChoixJeu[] = {
         "COMMUNISME\0",
         "CAPITALISME\0",
-        "BACK TO MENU\0",
+        "EXIT\0",
 };
 
 static const char *boutonFinText[] = {

@@ -50,6 +50,7 @@ void InitJeu(ECECITY* ececity){
     ececity->IsCodeRunning = true;
     ececity->currentProcess = MENU;
     ececity->currentMenuProcess = NONE;
+    ececity->currentChoixJeuProcess = NONE;
     ececity->currentJeuProcess = NONE;
     ececity->jeu.typeCalcul = 0;
     ececity->jeu.typeJeu = COMMUNISTE;
@@ -67,6 +68,15 @@ void InitImage(ECECITY* ececity){
     ececity->tabImage[IMAGEACCUEIL].format.y = 0;
     ececity->tabImage[IMAGEACCUEIL].format = (Rectangle){0,0,ececity->tabImage[IMAGEACCUEIL].format.width,ececity->tabImage[IMAGEACCUEIL].format.height};
     UnloadImage(ececity->tabImage[IMAGEACCUEIL].Image);
+
+    ececity->tabImage[IMAGECHOIXJEU].Image = LoadImage("../Images/ChoixCommuCapi.png");
+    ececity->tabImage[IMAGECHOIXJEU].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGECHOIXJEU].Image);
+    ececity->tabImage[IMAGECHOIXJEU].format.width = 1920;
+    ececity->tabImage[IMAGECHOIXJEU].format.height = 1065;
+    ececity->tabImage[IMAGECHOIXJEU].format.x = 0;
+    ececity->tabImage[IMAGECHOIXJEU].format.y = 0;
+    ececity->tabImage[IMAGECHOIXJEU].format = (Rectangle){0,0,ececity->tabImage[IMAGECHOIXJEU].format.width,ececity->tabImage[IMAGECHOIXJEU].format.height};
+    UnloadImage(ececity->tabImage[IMAGECHOIXJEU].Image);
 
     ececity->tabImage[IMAGEJEU].Image = LoadImage("../Images/fondMap.png");
     ececity->tabImage[IMAGEJEU].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEJEU].Image);
@@ -104,14 +114,6 @@ void InitImage(ECECITY* ececity){
     ececity->tabImage[IMAGEPOPULATION].format = (Rectangle){ececity->tabImage[IMAGEPOPULATION].format.x,ececity->tabImage[IMAGEPOPULATION].format.y,ececity->tabImage[IMAGEPOPULATION].format.width,ececity->tabImage[IMAGEPOPULATION].format.height};
     UnloadImage(ececity->tabImage[IMAGEPOPULATION].Image);
 
-    ececity->tabImage[IMAGECHOIXJEU].Image = LoadImage("../Images/Communisme.Capitalisme.png");
-    ececity->tabImage[IMAGECHOIXJEU].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGECHOIXJEU].Image);
-    ececity->tabImage[IMAGECHOIXJEU].format.width = 919;
-    ececity->tabImage[IMAGECHOIXJEU].format.height = 721;
-    ececity->tabImage[IMAGECHOIXJEU].format.x = 0;
-    ececity->tabImage[IMAGECHOIXJEU].format.y = 0;
-    ececity->tabImage[IMAGECHOIXJEU].format = (Rectangle){0,0,ececity->tabImage[IMAGECHOIXJEU].format.width,ececity->tabImage[IMAGECHOIXJEU].format.height};
-    UnloadImage(ececity->tabImage[IMAGECHOIXJEU].Image);
 
 
     ececity->tabImage[IMAGEROUTE].Image = LoadImage("../Images/route.png");
@@ -281,9 +283,9 @@ void InitBouton(ECECITY* ececity){
         ececity->tabBouton[MENU][bouton].nom = boutonMenuText[bouton];
     }
 
-    for (int bouton = 0; bouton < NB_BOUTON_JEU; ++bouton) {
-        ececity->tabBouton[Jeu][bouton].recBouton = (Rectangle){(float) ececity->display.width - 250,300+(float)(100*bouton), 200, 100};
-        ececity->tabBouton[Jeu][bouton].nom = boutonJeuText[bouton];
+    for (int bouton = 0; bouton < NB_BOUTON_CHOIX; ++bouton) {
+        ececity->tabBouton[ChoixMode][bouton].recBouton = (Rectangle){(float) ececity->display.width/ 2 - 150,(float)(300+(bouton*200)), 400, 150};
+        ececity->tabBouton[ChoixMode][bouton].nom = boutonChoixJeu[bouton];
     }
 
     ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton = (Rectangle){(float) ececity->display.width - 250,300, 200, 100};
@@ -316,11 +318,6 @@ void InitBouton(ECECITY* ececity){
     for (int bouton = 0; bouton < NB_BOUTON_FIN; ++bouton) {
         ececity->tabBouton[END][bouton].recBouton = (Rectangle){(float) ececity->display.width/ 2 - 150,(float)(300+(bouton*200)), 300, 150};
         ececity->tabBouton[END][bouton].nom = boutonFinText[bouton];
-    }
-
-    for (int bouton = 0; bouton < NB_BOUTON_ChoixJeu; ++bouton) {
-        ececity->tabBouton[ChoixMode][ bouton].recBouton = (Rectangle){(float) ececity->display.width/ 2 - 150,(float)(300+(bouton*200)), 400, 150};
-        ececity->tabBouton[ChoixMode][bouton].nom = boutonChoixJeu[bouton];
     }
 
 }

@@ -8,5 +8,7 @@ void AffichageGamePlay(ECECITY* ececity);
 void AfficherIso(ECECITY* ececity);
 void AfficherCaseInfo(ECECITY* ececity);
 void AfficherBouton(ECECITY* ececity);
+void AfficherBoutonModeJeu(ECECITY *ececity);
+void AffichageChoixMode( ECECITY* ececity);
 
 #endif //ECE_CITY_3_E_AFFICHAGEJEU_H
