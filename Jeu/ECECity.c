@@ -6,8 +6,7 @@
 #include "../include/temps.h"
 #include "../include/Graphe.h"
 #include "../include/initialisation.h"
-#include "stdio.h"
-#include <math.h>
+#include<stdio.h>
 
 
 
@@ -18,12 +17,7 @@ void MainBoucle(ECECITY* ececity){
                 Menu(ececity);
                 break;
             case Jeu:
-                if(!ececity->IsGameBreak){
-                    Gameplay(ececity);
-                }
-                else {
-                    pause(ececity);
-                }
+                JEU(ececity);
                 break;
             case END:
                 //Faillite - Fin
@@ -35,7 +29,7 @@ void MainBoucle(ECECITY* ececity){
     }
 }
 
-void Menu(ECECITY* ececity){
+void Menu(ECECITY* ececity) {
 
     int pause = 0;
     timerCounter(ececity);
@@ -44,73 +38,109 @@ void Menu(ECECITY* ececity){
     MusicMenu(ececity, &pause);
     ececity->souris.position = GetMousePosition();
     for (int bouton = 0; bouton < NB_BOUTON_MENU; ++bouton) {
-        if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[MENU][bouton].recBouton)){
-            if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
-                if(ececity->currentMenuProcess == NADA){
-                    ececity->currentMenuProcess = bouton + 1;
-                }
-                else{
-                    ececity->currentMenuProcess = NADA;
-                }
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) &&
+            CheckCollisionPointRec(ececity->souris.position, ececity->tabBouton[MENU][bouton].recBouton)) {
+            switch (bouton) {
+                case BOUTON_STARTGAME:
+                    if (ececity->currentMenuProcess != STARTGAME) {
+                        ececity->currentMenuProcess = STARTGAME;
+                    } else if (CheckCollisionPointRec(ececity->souris.position,
+                                                      ececity->tabBouton[MENU][BOUTON_STARTGAME].recBouton)) {
+                        ececity->currentMenuProcess = NONE;
+                    }
+                    break;
+                case BOUTON_EXIT_MENU:
+                    if (ececity->currentMenuProcess != GAMEOVER) {
+                        ececity->currentMenuProcess = GAMEOVER;
+                    } else if (CheckCollisionPointRec(ececity->souris.position,
+                                                      ececity->tabBouton[MENU][BOUTON_EXIT_MENU].recBouton)) {
+                        ececity->currentMenuProcess = NONE;
+                    }
+                    break;
+                case BOUTON_CHARGER:
+                    if (ececity->currentMenuProcess != CHARGER) {
+                        ececity->currentMenuProcess = CHARGER;
+                    } else if (CheckCollisionPointRec(ececity->souris.position,
+                                                      ececity->tabBouton[MENU][BOUTON_CHARGER].recBouton)) {
+                        ececity->currentMenuProcess = NONE;
+                    }
+                    break;
+                case BOUTON_CREDITS:
+                    if (ececity->currentMenuProcess != CREDITS) {
+                        ececity->currentMenuProcess = CREDITS;
+                    } else if (CheckCollisionPointRec(ececity->souris.position,
+                                                      ececity->tabBouton[MENU][BOUTON_CREDITS].recBouton)) {
+                        ececity->currentMenuProcess = NONE;
+                    }
+                    break;
+                default:
+                    break;
             }
         }
+
     }
     switch(ececity->currentMenuProcess){
-        case NADA:
+        case NONE:
         case CREDITS:
             break;
-        case START:
+        case STARTGAME:
             ececity->currentProcess = Jeu;
             ececity->currentJeuProcess = NONE;
-            ececity->currentMenuProcess = NADA;
+            ececity->currentMenuProcess = NONE;
             resetTimer(ececity);
             break;
-        case QUIT:
+        case GAMEOVER:
             ececity->IsCodeRunning = false;
-            ececity->currentMenuProcess = NADA;
+            ececity->currentMenuProcess = NONE;
             break;
         case CHARGER:
             Charger(ececity);
-            ececity->currentMenuProcess = NADA;
+            ececity->currentMenuProcess = NONE;
             //fonction charger
             break;
-
         default:
             break;
     }
 
 }
 
+void JEU(ECECITY* ececity){
+    switch (ececity->currentJeuProcess) {
+        case NONE:
+        case CONSTRUCTIONROUTE:
+        case CONSTRUCTIONMAISON:
+        case CONSTRUCTIONCHATEAUDEAU:
+        case CONSTRUCTIONCENTRALE:
+        case GAMEOVER:
+        case NIVEAU0:
+        case NIVEAU1:
+        case NIVEAU2:
+            Gameplay(ececity);
+            break;
+        case GAMEPAUSE:
+            pause(ececity);
+            break;
+    }
+}
+
 void Gameplay(ECECITY* ececity){
 
     ececity->souris.position = GetMousePosition();
     timerCounter(ececity);
-    calculHabitant( ececity);
+    calculHabitant(ececity);
     CalculImpotChaqueMois(ececity);
     calculTimerHabitations(ececity);
     defineTypeCase(ececity);
     defineCurrentJeuProcess(ececity);
 
-    switch (ececity->currentJeuProcess) {
-
-        case GAMEPAUSE:
-            ececity->IsGameBreak = true;
-            break;
-        case GAMEOVER:
-            Graphe_DisplaySommet(ececity->graphe);
-            ececity->IsCodeRunning = false;
-            break;
-    }
-
-
-    if(ececity->currentJeuProcess == GAMEPAUSE){
-        ececity->IsGameBreak = true;
-        ececity->currentJeuProcess = NONE;
-        //affichage bouton
+    if(ececity->currentJeuProcess == GAMEOVER){
+        ececity->IsCodeRunning = false;
     }
     AffichageGamePlay(ececity);
 
 }
+
+
 
 void calculTimerHabitations(ECECITY* ececity){
    int t = TIMENOW;
@@ -122,7 +152,6 @@ void calculTimerHabitations(ECECITY* ececity){
            // si le compteur compteur actuel par rapport à celui de l'habitation > 15 s
            // alors lancer l'evolution de la maison + reinitialiser le compteur TIME + remettre à jour l'affichage
            if (t - ececity->tabHabitations[i].timerSeconds >= ececity->time.constructionTime ){
-               printf("15s , maison %d\n", i);
                evolutionConstruction(ececity, i, ececity->compteur);
                ececity->tabHabitations[i].timerSeconds = TIMENOW;
            }
@@ -143,18 +172,22 @@ void calculHabitant(ECECITY* ececity){
     ececity->compteur.nbHabitantsTotal = nbhab;
 }
 void CalculImpotChaqueMois(ECECITY* ececity){
-    int t = TIMENOW;
-    if(t - ececity->compteur.timerImpots >= ececity->time.constructionTime){
-        ececity->compteur.soldeBanque =  ececity->compteur.soldeBanque + ececity->compteur.nbHabitantsTotal * PRIXIMPOT;
-        ececity->compteur.timerImpots = TIMENOW;
-        printf("HAB %d\n", ececity->compteur.nbHabitantsTotal);
+    if(ececity->compteur.nbHabitantsTotal > 0){
+        if(TIMENOW - ececity->compteur.timerImpots >= ececity->time.constructionTime){
+            printf("%d\n",ececity->prix.prixImpots);
+            ececity->compteur.soldeBanque = ececity->compteur.soldeBanque + ececity->compteur.nbHabitantsTotal * ececity->prix.prixImpots;
+            ececity->compteur.timerImpots = TIMENOW;
+        }
     }
-
+    else{
+        ececity->compteur.timerImpots = TIMENOW;
+    }
 }
 
 void pause(ECECITY* ececity){
-    if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][PAUSE].recBouton) && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
-        ececity->IsGameBreak = false;
+    ececity->souris.position = GetMousePosition();
+    if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_PAUSE].recBouton) && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
+        ececity->currentJeuProcess = NONE;
     }
     AffichageGamePlay(ececity);
 }
@@ -211,7 +244,6 @@ void defineTypeCase(ECECITY* ececity){
                                 ececity->tabHabitations = (Case *) realloc(ececity->tabHabitations, sizeof(Case) *
                                                                                                     (ececity->compteur.compteurMaisons));
                             }
-                            printf("cm:%d\n", ececity->compteur.compteurMaisons);
                             ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].type = TerrainVague;
                             ececity->tabHabitations[ececity->compteur.compteurMaisons -
                                                     1].numeroType = ececity->compteur.compteurMaisons;
@@ -278,7 +310,6 @@ void defineTypeCase(ECECITY* ececity){
                                                                                                ececity->souris.ligneSouris].numeroType = ececity->compteur.compteurCentrales;
                                 }
                             }
-                            //alloc tabCentrale
                             if (ececity->compteur.compteurCentrales == 1) {
                                 ececity->tabCentrale = malloc(sizeof(Case));
                             } else {
@@ -317,34 +348,81 @@ void defineCurrentJeuProcess(ECECITY* ececity){
     for (int boutonJeu = 0; boutonJeu < NB_BOUTON_JEU; ++boutonJeu) {
         if (CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][boutonJeu].recBouton)){
             if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
-                boutonActif = boutonJeu + 1;
-                if(ececity->currentJeuProcess == boutonActif){
-                    ececity->currentJeuProcess = NONE;
-                }
-                else{
-                    switch (boutonJeu) {
-                        case BOUTON_ROUTE:
-                            ececity->currentJeuProcess = CONSTRUCTIONROUTE;
-                            break;
-                        case BOUTON_MAISON:
-                            ececity->currentJeuProcess = CONSTRUCTIONMAISON;
-                            break;
-                        case BOUTON_CHATEAUDEAU:
-                            ececity->currentJeuProcess = CONSTRUCTIONCHATEAUDEAU;
-                            break;
-                        case BOUTON_CENTRALE:
-                            ececity->currentJeuProcess = CONSTRUCTIONCENTRALE;
-                            break;
-                        case PAUSE:
-                            ececity->currentJeuProcess = GAMEPAUSE;
-                            break;
-                        case EXITGAME:
-                            ececity->currentJeuProcess = GAMEOVER;
-                            break;
-                        default:
+                switch (boutonJeu) {
+                    case BOUTON_ROUTE:
+                        if(ececity->currentJeuProcess == CONSTRUCTIONROUTE){
                             ececity->currentJeuProcess = NONE;
-                            break;
-                    }
+                        }
+                        else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton)){
+                            ececity->currentJeuProcess = CONSTRUCTIONROUTE;
+                        }
+                        break;
+                    case BOUTON_MAISON:
+                        if(ececity->currentJeuProcess == CONSTRUCTIONMAISON){
+                            ececity->currentJeuProcess = NONE;
+                        }
+                        else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_MAISON].recBouton)){
+                            ececity->currentJeuProcess = CONSTRUCTIONMAISON;
+                        }
+                        break;
+                    case BOUTON_CHATEAUDEAU:
+                        if(ececity->currentJeuProcess == CONSTRUCTIONCHATEAUDEAU){
+                            ececity->currentJeuProcess = NONE;
+                        }
+                        else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_CHATEAUDEAU].recBouton)){
+                            ececity->currentJeuProcess = CONSTRUCTIONCHATEAUDEAU;
+                        }
+                        break;
+                    case BOUTON_CENTRALE:
+                        if(ececity->currentJeuProcess == CONSTRUCTIONCENTRALE){
+                            ececity->currentJeuProcess = NONE;
+                        }
+                        else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_CENTRALE].recBouton)){
+                            ececity->currentJeuProcess = CONSTRUCTIONCENTRALE;
+                        }
+                        break;
+                    case BOUTON_PAUSE:
+                        if(ececity->currentJeuProcess == GAMEPAUSE){
+                            ececity->currentJeuProcess = NONE;
+                        }
+                        else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_PAUSE].recBouton)){
+                            ececity->currentJeuProcess = GAMEPAUSE;
+                        }
+                        break;
+                    case BOUTON_EXIT_JEU:
+                        if(ececity->currentJeuProcess == GAMEOVER){
+                            ececity->currentJeuProcess = NONE;
+                        }
+                        else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_EXIT_JEU].recBouton)){
+                            ececity->currentJeuProcess = GAMEOVER;
+                        }
+                        break;
+                    case BOUTON_NIVEAU_0:
+                        if(ececity->currentJeuProcess == NIVEAU0){
+                            ececity->currentJeuProcess = NONE;
+                        }
+                        else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_NIVEAU_0].recBouton)){
+                            ececity->currentJeuProcess = NIVEAU0;
+                        }
+                        break;
+                    case BOUTON_NIVEAU_1:
+                        if(ececity->currentJeuProcess == NIVEAU1){
+                            ececity->currentJeuProcess = NONE;
+                        }
+                        else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_NIVEAU_1].recBouton)){
+                            ececity->currentJeuProcess = NIVEAU1;
+                        }
+                        break;
+                    case BOUTON_NIVEAU_2:
+                        if(ececity->currentJeuProcess == NIVEAU2){
+                            ececity->currentJeuProcess = NONE;
+                        }
+                        else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_NIVEAU_2].recBouton)){
+                            ececity->currentJeuProcess = NIVEAU2;
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -357,10 +435,18 @@ void Charger(ECECITY* ececity){
 }
 
 bool construire(ECECITY* ececity){
+    if(!MouseOnIso){
+        return false;
+    }
     if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type != VIDE){
         return false;
     }
     switch (ececity->currentJeuProcess){
+        case CONSTRUCTIONROUTE:
+            if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE){
+                return true;
+            }
+            break;
         case CONSTRUCTIONMAISON:
             for (int lignesMaison = 0; lignesMaison < ececity->formatBatiment.nblignesMaison; ++lignesMaison) {
                 for (int colonnesMaison = 0; colonnesMaison < ececity->formatBatiment.nbcolonnesMaison; ++colonnesMaison) {
@@ -408,6 +494,9 @@ bool proximiteRoute(ECECITY* ececity, int typeBatiment){
 
     int nbLignes = 0;
     int nbColonnes = 0;
+    if(!MouseOnIso){
+        return false;
+    }
     if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == typeBatiment
        || ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type != VIDE){
         return false;
@@ -430,7 +519,7 @@ bool proximiteRoute(ECECITY* ececity, int typeBatiment){
     }
     for (int lignesFormat = 0; lignesFormat < nbLignes; ++lignesFormat) {
         for (int colonnesFormat = 0; colonnesFormat < nbColonnes; ++colonnesFormat) {
-            if(ececity->souris.colonneSouris + colonnesFormat > NB_COLONNES - 1 || ececity->souris.ligneSouris + colonnesFormat > NB_LIGNES - 1){
+            if(ececity->souris.colonneSouris + colonnesFormat > NB_COLONNES - 2 || ececity->souris.ligneSouris + colonnesFormat > NB_LIGNES - 2){
                 return false;
             }
             if(ececity->tabCase[ececity->souris.colonneSouris + colonnesFormat][ececity->souris.ligneSouris + lignesFormat].type != VIDE){

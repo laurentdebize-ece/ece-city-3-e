@@ -1,6 +1,4 @@
 #include "temps.h"
-#include <math.h>
-#include "stdio.h"
 
 void timerCounter(ECECITY* ececity){
 

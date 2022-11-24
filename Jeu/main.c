@@ -11,8 +11,6 @@ int main(void)
 
     MainBoucle(&ececity);
 
-
-
     ARRETERTOUT(&ececity);
 
     return 0;

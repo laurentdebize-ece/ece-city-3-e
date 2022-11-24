@@ -21,13 +21,9 @@
 typedef enum{
     COMMUNISTE,
     CAPITALISTE,
+    NB_TYPE,
 }ModeJeu;
 
-typedef enum{
-    NIVEAU0,
-    NIVEAU1,
-    NIVEAU2,
-}NiveauJeu;
 
 typedef enum {
     MENU,
@@ -36,22 +32,22 @@ typedef enum {
     NB_PROCESS,
 } GameProcess;
 
-typedef enum {
-    NADA,
-    START,
-    QUIT,
-    CHARGER,
-    CREDITS,
-} MenuProcess;
 
 typedef enum {
-    NONE,
+    CREDITS,
+    CHARGER,
+    NIVEAU0,
+    NIVEAU1,
+    NIVEAU2,
     CONSTRUCTIONROUTE,
     CONSTRUCTIONMAISON,
     CONSTRUCTIONCHATEAUDEAU,
     CONSTRUCTIONCENTRALE,
+    STARTGAME,
     GAMEPAUSE,
     GAMEOVER,
+    SAUVEGARDE,
+    NONE,
 } JeuProcess;
 
 typedef enum{
@@ -78,6 +74,9 @@ typedef enum{
 typedef enum {
     IMAGEACCUEIL,
     IMAGEJEU,
+    IMAGECLOCK,
+    IMAGEARGENT,
+    IMAGEPOPULATION,
     IMAGEROUTE,
     IMAGECHATEAUEAU,
     IMAGECENTRALEELEC,
@@ -92,9 +91,9 @@ typedef enum {
 
 typedef enum{
     BOUTON_STARTGAME,
-    BOUTON_EXITGAMEAccueil,
+    BOUTON_EXIT_MENU,
     BOUTON_CHARGER,
-    BOUTON_Credits,
+    BOUTON_CREDITS,
     NB_BOUTON_MENU,
 }NomBoutonMenu;
 
@@ -103,15 +102,18 @@ typedef enum{
     BOUTON_MAISON,
     BOUTON_CHATEAUDEAU,
     BOUTON_CENTRALE,
-    PAUSE,
-    EXITGAME,
+    BOUTON_PAUSE,
+    BOUTON_EXIT_JEU,
+    BOUTON_NIVEAU_0,
+    BOUTON_NIVEAU_1,
+    BOUTON_NIVEAU_2,
     NB_BOUTON_JEU,
 }NomBoutonJeu;
 
 typedef enum{
-    REJOUER,
-    SAUVEGARDE,
-    QUITTER,
+    BOUTON_REJOUER,
+    BOUTON_SAUVEGARDE,
+    BOUTON_EXIT_FIN,
     NB_BOUTON_FIN,
 }NomBoutonFin;
 
@@ -127,8 +129,11 @@ static const char *boutonJeuText[] = {
         "TerrainVague\0",
         "CHATEAUDEAU\0",
         "CENTRALE\0",
-        "PAUSE\0",
+        "BOUTON_PAUSE\0",
         "EXIT\0",
+        "NIVEAU 0\0",
+        "NIVEAU -1\0",
+        "NIVEAU -2\0",
 };
 
 static const char *boutonFinText[] = {
@@ -224,7 +229,7 @@ typedef struct {
 typedef struct{
     int prixTerrainVague;
     int prixRoute;
-    int Impots;
+    int prixImpots;
     int centralePrix;
     int chateauPrix;
 }Prix;
@@ -302,7 +307,6 @@ typedef struct{
 
 typedef struct {
     bool IsCodeRunning;
-    bool IsGameBreak;
     int currentProcess;
     int currentMenuProcess;
     int currentJeuProcess;
@@ -329,6 +333,7 @@ typedef struct {
 void MainBoucle(ECECITY* ececity);
 void Menu(ECECITY* ececity);
 void Charger(ECECITY* ececity);
+void JEU(ECECITY* ececity);
 void Gameplay(ECECITY* ececity);
 int calculRoute( ECECITY* ececity, int typeCalcul);
 void ajouteCelluleRoute(ECECITY* ececity, int colonne, int ligne, int numRoute, int typeCalcul);

@@ -48,14 +48,13 @@ void InitDisplay(ECECITY* ececity){
 void InitJeu(ECECITY* ececity){
 
     ececity->IsCodeRunning = true;
-    ececity->IsGameBreak = false;
     ececity->currentProcess = MENU;
-    ececity->currentMenuProcess = NADA;
+    ececity->currentMenuProcess = NONE;
     ececity->currentJeuProcess = NONE;
     ececity->jeu.typeCalcul = 0;
     ececity->jeu.typeJeu = COMMUNISTE;
-    ececity->souris.ligneSouris = -1;
-    ececity->souris.colonneSouris = -1;
+    ececity->souris.ligneSouris = INT_MAX;
+    ececity->souris.colonneSouris = INT_MAX;
 }
 
 void InitImage(ECECITY* ececity){
@@ -78,6 +77,33 @@ void InitImage(ECECITY* ececity){
     ececity->tabImage[IMAGEJEU].format = (Rectangle){0,0,ececity->tabImage[IMAGEJEU].format.width,ececity->tabImage[IMAGEJEU].format.height};
     UnloadImage(ececity->tabImage[IMAGEJEU].Image);
 
+    ececity->tabImage[IMAGECLOCK].Image = LoadImage("../Images/CLOCK.png");
+    ececity->tabImage[IMAGECLOCK].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGECLOCK].Image);
+    ececity->tabImage[IMAGECLOCK].format.width = 100;
+    ececity->tabImage[IMAGECLOCK].format.height = 60;
+    ececity->tabImage[IMAGECLOCK].format.x = 1575;
+    ececity->tabImage[IMAGECLOCK].format.y = 20;
+    ececity->tabImage[IMAGECLOCK].format = (Rectangle){ececity->tabImage[IMAGECLOCK].format.x,ececity->tabImage[IMAGECLOCK].format.y,ececity->tabImage[IMAGECLOCK].format.width,ececity->tabImage[IMAGECLOCK].format.height};
+    UnloadImage(ececity->tabImage[IMAGECLOCK].Image);
+
+    ececity->tabImage[IMAGEARGENT].Image = LoadImage("../Images/ARGENT.png");
+    ececity->tabImage[IMAGEARGENT].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEARGENT].Image);
+    ececity->tabImage[IMAGEARGENT].format.width = 100;
+    ececity->tabImage[IMAGEARGENT].format.height = 60;
+    ececity->tabImage[IMAGEARGENT].format.x = 1075;
+    ececity->tabImage[IMAGEARGENT].format.y = 20;
+    ececity->tabImage[IMAGEARGENT].format = (Rectangle){ececity->tabImage[IMAGEARGENT].format.x,ececity->tabImage[IMAGEARGENT].format.y,ececity->tabImage[IMAGEARGENT].format.width,ececity->tabImage[IMAGEARGENT].format.height};
+    UnloadImage(ececity->tabImage[IMAGEARGENT].Image);
+
+    ececity->tabImage[IMAGEPOPULATION].Image = LoadImage("../Images/POPULATION.png");
+    ececity->tabImage[IMAGEPOPULATION].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEPOPULATION].Image);
+    ececity->tabImage[IMAGEPOPULATION].format.width = 100;
+    ececity->tabImage[IMAGEPOPULATION].format.height = 60;
+    ececity->tabImage[IMAGEPOPULATION].format.x = 675;
+    ececity->tabImage[IMAGEPOPULATION].format.y = 20;
+    ececity->tabImage[IMAGEPOPULATION].format = (Rectangle){ececity->tabImage[IMAGEPOPULATION].format.x,ececity->tabImage[IMAGEPOPULATION].format.y,ececity->tabImage[IMAGEPOPULATION].format.width,ececity->tabImage[IMAGEPOPULATION].format.height};
+    UnloadImage(ececity->tabImage[IMAGEPOPULATION].Image);
+
     ececity->tabImage[IMAGEROUTE].Image = LoadImage("../Images/route.png");
     ececity->tabImage[IMAGEROUTE].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEROUTE].Image);
     ececity->tabImage[IMAGEROUTE].format.width = 200;
@@ -86,6 +112,18 @@ void InitImage(ECECITY* ececity){
     ececity->tabImage[IMAGEROUTE].format.y = ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.y;
     ececity->tabImage[IMAGEROUTE].format = (Rectangle){ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.x,ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.y,ececity->tabImage[IMAGEROUTE].format.width,ececity->tabImage[IMAGEROUTE].format.height};
     UnloadImage(ececity->tabImage[IMAGEROUTE].Image);
+
+    ececity->tabImage[IMAGECHATEAUEAU].Image = LoadImage("../Images/CentraleEau.png");
+    ececity->tabImage[IMAGECHATEAUEAU].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGECHATEAUEAU].Image);
+    ececity->tabImage[IMAGECHATEAUEAU].format.width = 173;
+    ececity->tabImage[IMAGECHATEAUEAU].format.height = 100;
+    UnloadImage(ececity->tabImage[IMAGECHATEAUEAU].Image);
+
+    ececity->tabImage[IMAGECENTRALEELEC].Image = LoadImage("../Images/CentraleElec.png");
+    ececity->tabImage[IMAGECENTRALEELEC].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGECENTRALEELEC].Image);
+    ececity->tabImage[IMAGECENTRALEELEC].format.width = 173;
+    ececity->tabImage[IMAGECENTRALEELEC].format.height = 100;
+    UnloadImage(ececity->tabImage[IMAGECENTRALEELEC].Image);
 }
 
 void InitCase(ECECITY* ececity){
@@ -111,11 +149,11 @@ void InitCase(ECECITY* ececity){
 
 void InitISO(ECECITY* ececity){
 
-    ececity->infoIso.debut.x = 215;
-    ececity->infoIso.debut.y = 525;
+    ececity->infoIso.debut.x = 265;
+    ececity->infoIso.debut.y = 563;
 
-    ececity->infoIso.fin.x = 973;
-    ececity->infoIso.fin.y = 82;
+    ececity->infoIso.fin.x = 1039;
+    ececity->infoIso.fin.y = 111;
 
     ececity->infoIso.coeffDirecteur = (ececity->infoIso.fin.y - ececity->infoIso.debut.y) / (ececity->infoIso.fin.x - ececity->infoIso.debut.x);
 
@@ -216,12 +254,6 @@ void InitISO(ECECITY* ececity){
         ececity->tabCase[NB_COLONNES - 1][lignes].cardinal[OUEST].y = ececity->tabCase[NB_COLONNES - 1][lignes].positionCase.y;
     }
 
-
-    for (int lignes = 0; lignes < NB_LIGNES; ++lignes) {
-        for (int colonnes = 0; colonnes < NB_COLONNES; ++colonnes) {
-            printf("casenormal [%d] [%d] x = %f, y = %f\n",colonnes,lignes,ececity->tabCase[colonnes][lignes].positionCase.x,ececity->tabCase[colonnes][lignes].positionCase.y);
-        }
-    }
 }
 
 
@@ -237,6 +269,33 @@ void InitBouton(ECECITY* ececity){
         ececity->tabBouton[Jeu][bouton].recBouton = (Rectangle){(float) ececity->display.width - 250,300+(float)(100*bouton), 200, 100};
         ececity->tabBouton[Jeu][bouton].nom = boutonJeuText[bouton];
     }
+
+    ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton = (Rectangle){(float) ececity->display.width - 250,300, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_ROUTE].nom = boutonJeuText[BOUTON_ROUTE];
+
+    ececity->tabBouton[Jeu][BOUTON_MAISON].recBouton = (Rectangle){(float) ececity->display.width - 250,400, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_MAISON].nom = boutonJeuText[BOUTON_MAISON];
+
+    ececity->tabBouton[Jeu][BOUTON_CHATEAUDEAU].recBouton = (Rectangle){(float) ececity->display.width - 250,500, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_CHATEAUDEAU].nom = boutonJeuText[BOUTON_CHATEAUDEAU];
+
+    ececity->tabBouton[Jeu][BOUTON_CENTRALE].recBouton = (Rectangle){(float) ececity->display.width - 250,600, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_CENTRALE].nom = boutonJeuText[BOUTON_CENTRALE];
+
+    ececity->tabBouton[Jeu][BOUTON_PAUSE].recBouton = (Rectangle){(float) ececity->display.width - 250,700, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_PAUSE].nom = boutonJeuText[BOUTON_PAUSE];
+
+    ececity->tabBouton[Jeu][BOUTON_EXIT_JEU].recBouton = (Rectangle){(float) ececity->display.width - 250,800, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_EXIT_JEU].nom = boutonJeuText[BOUTON_EXIT_JEU];
+
+    ececity->tabBouton[Jeu][BOUTON_NIVEAU_0].recBouton = (Rectangle){(float) ececity->display.width - 550,650, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_NIVEAU_0].nom = boutonJeuText[BOUTON_NIVEAU_0];
+
+    ececity->tabBouton[Jeu][BOUTON_NIVEAU_1].recBouton = (Rectangle){(float) ececity->display.width - 550,750, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_NIVEAU_1].nom = boutonJeuText[BOUTON_NIVEAU_1];
+
+    ececity->tabBouton[Jeu][BOUTON_NIVEAU_2].recBouton = (Rectangle){(float) ececity->display.width - 550,850, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_NIVEAU_2].nom = boutonJeuText[BOUTON_NIVEAU_2];
 
     for (int bouton = 0; bouton < NB_BOUTON_FIN; ++bouton) {
         ececity->tabBouton[END][bouton].recBouton = (Rectangle){(float) ececity->display.width/ 2 - 150,(float)(300+(bouton*200)), 300, 150};
@@ -288,6 +347,7 @@ void InitCompteur(ECECITY* ececity){
     ececity->compteur.compteurMaisons = 0;
     ececity->compteur.compteurChateaux = 0;
     ececity->compteur.compteurCentrales = 0;
+    ececity->compteur.nbHabitantsTotal = 0;
     ececity->compteur.CapaciteCentrale = CAPACENTRALE;
     ececity->compteur.CapaciteEau = CAPAEAU;
     ececity->compteur.soldeBanque = SOLDEBANQUE;
@@ -321,6 +381,8 @@ void InitInfoFichierText(char* monFichier, ECECITY* ececity)
     fscanf(ifs,"%d",&ececity->prix.chateauPrix);
     fscanf(ifs,"\n");
     fscanf(ifs,"%d",&ececity->prix.centralePrix);
+    fscanf(ifs,"\n");
+    fscanf(ifs,"%d",&ececity->prix.prixImpots);
     fscanf(ifs,"\n");
 
     //nbhabitants

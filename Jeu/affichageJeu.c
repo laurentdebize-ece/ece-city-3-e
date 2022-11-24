@@ -1,5 +1,4 @@
 #include "affichageJeu.h"
-#include "initialisation.h"
 #include <math.h>
 
 void AffichageMenu(ECECITY* ececity){
@@ -15,8 +14,8 @@ void AffichageMenu(ECECITY* ececity){
     if (ececity->currentMenuProcess == CREDITS){
         DrawText("(c) ECE CITY by Aurelien, Jules, Eva and Thomas", 15, 15, 50, BLACK);
     }
-     DrawText("WELCOME TO ECE CITY", (int)(ececity->display.width/3 - MeasureText("WELCOME TO ECE CITY",100)/2),
-          ececity->display.height/11, 120, RED);
+     DrawText("WELCOME TO ECE CITY", (int)(ececity->display.width/2 - MeasureText("WELCOME TO ECE CITY",100)/2),
+          ececity->display.height/11, 100, RED);
 
     AfficherBouton(ececity);
 
@@ -31,99 +30,303 @@ void AffichageGamePlay(ECECITY* ececity){
 
     ClearBackground(RAYWHITE);
 
-    for (int image = IMAGEJEU; image < NB_IMAGES; ++image) {
+    DrawTexture(ececity->tabImage[IMAGEJEU].TextureImage, (int)ececity->tabImage[IMAGEJEU].format.x, (int)ececity->tabImage[IMAGEJEU].format.y, WHITE);
+
+
+
+    DrawRectangle(1575, 20, MeasureText("Time: %dh %dmin %dsec",20) + 100, MeasureTextEx(ececity->write.font,"Time: %dh %dmin %dsec",20,0).y + 40, BLACK);
+    DrawRectangle(1100, 20, MeasureText("Argent Restant: %d",20) + 125, MeasureTextEx(ececity->write.font,"Argent Restant: %d",20,0).y + 40, BLACK);
+    DrawRectangle(675, 20, MeasureText("Nombre d'habitants: %d",20) + 125, MeasureTextEx(ececity->write.font,"Nombre d'habitants: %d",20,0).y + 40, BLACK);
+
+    for (int image = IMAGECLOCK; image <= IMAGEPOPULATION; ++image) {
         DrawTexture(ececity->tabImage[image].TextureImage, (int)ececity->tabImage[image].format.x, (int)ececity->tabImage[image].format.y, WHITE);
     }
 
+    DrawRectangleLines(1575, 20, MeasureText("Time: %dh %dmin %dsec",20) + 100, MeasureTextEx(ececity->write.font,"Time: %dh %dmin %dsec",20,0).y + 40, BLACK);
+    DrawRectangleLines(1100, 20, MeasureText("Argent Restant: %d",20) + 125, MeasureTextEx(ececity->write.font,"Argent Restant: %d",20,0).y + 40, BLACK);
+    DrawRectangleLines(675, 20, MeasureText("Nombre d'habitants: %d",20) + 125, MeasureTextEx(ececity->write.font,"Nombre d'habitants: %d",20,0).y + 40, BLACK);
 
     DrawText(TextFormat("Time: %dh %dmin %dsec",ececity->time.timer.hoursCounter,
-                        ececity->time.timer.minutesCounter,ececity->time.timer.secondsCounter),1700,40,20,RED);
+                        ececity->time.timer.minutesCounter,ececity->time.timer.secondsCounter),1700,40,20,MAGENTA);
+
+    DrawText(TextFormat("Argent Restant: %d",ececity->compteur.soldeBanque),1175,40,20,MAGENTA);
+    DrawText(TextFormat("Nombre d'habitants: %d",ececity->compteur.nbHabitantsTotal),750,40,20,MAGENTA);
 
     AfficherIso(ececity);
 
 
     Color colorRect;
 
-    for (int lignes = 0; lignes < NB_LIGNES; ++lignes) {
-        for (int colonnes = 0; colonnes < NB_COLONNES; ++colonnes) {
-            DrawPixel(ececity->tabCase[NB_COLONNES - 1][NB_LIGNES - 1].cardinal[SUD].x,ececity->tabCase[NB_COLONNES - 1][NB_LIGNES - 1].cardinal[SUD].y,RED);
-        }
-    }
+    int formatColonne, formatLigne;
 
-    for (int lignes = 0; lignes < NB_LIGNES; ++lignes) {
-        for (int colonnes = 0; colonnes < NB_COLONNES; ++colonnes) {
-            switch (ececity->tabCase[colonnes][lignes].type) {
+    if(ececity->currentJeuProcess != NIVEAU1 && ececity->currentJeuProcess != NIVEAU2){
+        for (int lignes = 0; lignes < NB_LIGNES; ++lignes) {
+            for (int colonnes = 0; colonnes < NB_COLONNES; ++colonnes) {
+                switch (ececity->tabCase[colonnes][lignes].type) {
 
-                case VIDE:
+                    case VIDE:
 
-                    switch (ececity->currentJeuProcess) {
+                        switch (ececity->currentJeuProcess) {
 
-                        case NONE:
-                            colorRect = BLANK;
-                            break;
+                            case NONE:
+                            case GAMEPAUSE:
+                            case NIVEAU0:
+                            case GAMEOVER:
+                                colorRect = BLANK;
+                                break;
 
-                        case CONSTRUCTIONROUTE:
-                            colorRect = (ececity->souris.colonneSouris == colonnes && ececity->souris.ligneSouris == lignes) ?  DARKGRAY : BLANK;
-                            break;
+                            case CONSTRUCTIONROUTE:
+                                if(construire(ececity)){
+                                    colorRect = (ececity->souris.colonneSouris == colonnes && ececity->souris.ligneSouris == lignes) ?  DARKGRAY : BLANK;
+                                }
+                                else{
+                                    colorRect = (ececity->souris.colonneSouris == colonnes && ececity->souris.ligneSouris == lignes) ?  RED : BLANK;
+                                }
+                                break;
 
-                        case CONSTRUCTIONMAISON:
-                            colorRect = (colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesMaison
-                                         && colonnes - ececity->souris.colonneSouris >= 0
-                                         && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesMaison
-                                         && lignes - ececity->souris.ligneSouris >= 0
-                                        ) ?  LIGHTGRAY : BLANK;
-                            break;
+                            case CONSTRUCTIONMAISON:
+                                if(construire(ececity)){
+                                    colorRect = (colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesMaison
+                                                 && colonnes - ececity->souris.colonneSouris >= 0
+                                                 && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesMaison
+                                                 && lignes - ececity->souris.ligneSouris >= 0
+                                                ) ?  LIGHTGRAY : BLANK;
+                                }
+                                else{
+                                    colorRect = (colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesMaison
+                                                 && colonnes - ececity->souris.colonneSouris >= 0
+                                                 && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesMaison
+                                                 && lignes - ececity->souris.ligneSouris >= 0
+                                                ) ?  RED : BLANK;
+                                }
+                                break;
 
-                        case CONSTRUCTIONCHATEAUDEAU:
-                            colorRect = (colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesChateaux && colonnes - ececity->souris.colonneSouris >= 0 && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesChateaux && lignes - ececity->souris.ligneSouris >= 0) ?  BLUE : BLANK;
-                            break;
+                            case CONSTRUCTIONCHATEAUDEAU:
+                                if(construire(ececity)){
+                                    colorRect = (colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesChateaux && colonnes - ececity->souris.colonneSouris >= 0 && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesChateaux && lignes - ececity->souris.ligneSouris >= 0) ?  BLUE : BLANK;
+                                }
+                                else{
+                                    colorRect = (colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesChateaux && colonnes - ececity->souris.colonneSouris >= 0 && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesChateaux && lignes - ececity->souris.ligneSouris >= 0) ?  RED : BLANK;
+                                }
+                                break;
 
-                        case CONSTRUCTIONCENTRALE:
-                            colorRect = (colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesCentrales && colonnes - ececity->souris.colonneSouris >= 0 && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesCentrales && lignes - ececity->souris.ligneSouris >= 0) ?  GOLD : BLANK;
-                            break;
+                            case CONSTRUCTIONCENTRALE:
+                                if(construire(ececity)){
+                                    colorRect = (colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesCentrales && colonnes - ececity->souris.colonneSouris >= 0 && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesCentrales && lignes - ececity->souris.ligneSouris >= 0) ?  GOLD : BLANK;
+                                }
+                                else{
+                                    colorRect = (colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesCentrales && colonnes - ececity->souris.colonneSouris >= 0 && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesCentrales && lignes - ececity->souris.ligneSouris >= 0) ?  RED : BLANK;
+                                }
+                                if(MouseOnIso){
+                                    DrawTexture(ececity->tabImage[IMAGECENTRALEELEC].TextureImage,ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.x,ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.y , WHITE);
+                                }
+                                break;
 
-                        default:
-                            break;
+                            default:
+                                break;
 
 
-                    }
-                    DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[EST], ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
-                    DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST], ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
-                    break;
+                        }
+                        DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[EST], ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                        DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST], ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                        break;
 
-                case ROUTE:
-                    DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[EST], ececity->tabCase[colonnes][lignes].cardinal[NORD], DARKGRAY);
-                    DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST], ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[NORD], DARKGRAY);
-                    break;
+                    case ROUTE:
+                        if(ececity->currentJeuProcess != CONSTRUCTIONROUTE){
+                            switch(ececity->currentJeuProcess){
+                                case CONSTRUCTIONMAISON:
+                                    formatColonne = ececity->formatBatiment.nbcolonnesMaison;
+                                    formatLigne = ececity->formatBatiment.nblignesMaison;
+                                    break;
+                                case CONSTRUCTIONCHATEAUDEAU:
+                                    formatColonne = ececity->formatBatiment.nbcolonnesChateaux;
+                                    formatLigne = ececity->formatBatiment.nblignesChateaux;
+                                    break;
+                                case CONSTRUCTIONCENTRALE:
+                                    formatColonne = ececity->formatBatiment.nbcolonnesCentrales;
+                                    formatLigne = ececity->formatBatiment.nblignesCentrales;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if(colonnes - ececity->souris.colonneSouris < formatColonne
+                               && colonnes - ececity->souris.colonneSouris >= 0
+                               && lignes - ececity->souris.ligneSouris < formatLigne
+                               && lignes - ececity->souris.ligneSouris >= 0){
+                                colorRect = RED;
+                            }
+                            else{
+                                colorRect = DARKGRAY;
+                            }
+                        }
+                        else{
+                            if(colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesRoute
+                               && colonnes - ececity->souris.colonneSouris >= 0
+                               && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesRoute
+                               && lignes - ececity->souris.ligneSouris >= 0){
+                                colorRect = RED;
+                            }
+                            else{
+                                colorRect = DARKGRAY;
+                            }
+                        }
+                        DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[EST], ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                        DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST], ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                        break;
 
-                case TerrainVague:
-                    DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[EST], ececity->tabCase[colonnes][lignes].cardinal[NORD], LIGHTGRAY);
-                    DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST], ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[NORD], LIGHTGRAY);
-                    break;
+                    case TerrainVague:
+                    case CABANE:
+                    case MAISON:
+                    case IMMEUBLE:
+                    case GRATTE_CIEL:
+                        if(ececity->currentJeuProcess != CONSTRUCTIONMAISON){
+                            switch(ececity->currentJeuProcess){
+                                case CONSTRUCTIONROUTE:
+                                    formatColonne = ececity->formatBatiment.nbcolonnesRoute;
+                                    formatLigne = ececity->formatBatiment.nblignesRoute;
+                                    break;
+                                case CONSTRUCTIONCHATEAUDEAU:
+                                    formatColonne = ececity->formatBatiment.nbcolonnesChateaux;
+                                    formatLigne = ececity->formatBatiment.nblignesChateaux;
+                                    break;
+                                case CONSTRUCTIONCENTRALE:
+                                    formatColonne = ececity->formatBatiment.nbcolonnesCentrales;
+                                    formatLigne = ececity->formatBatiment.nblignesCentrales;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if(colonnes - ececity->souris.colonneSouris < formatColonne
+                               && colonnes - ececity->souris.colonneSouris >= 0
+                               && lignes - ececity->souris.ligneSouris < formatLigne
+                               && lignes - ececity->souris.ligneSouris >= 0){
+                                colorRect = RED;
+                            }
+                            else{
+                                colorRect = LIGHTGRAY;
+                            }
+                        }
+                        else{
+                            if(colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesMaison
+                               && colonnes - ececity->souris.colonneSouris >= 0
+                               && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesMaison
+                               && lignes - ececity->souris.ligneSouris >= 0){
+                                colorRect = RED;
+                            }
+                            else{
+                                colorRect = LIGHTGRAY;
+                            }
+                        }
+                        DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[EST], ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                        DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST], ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                        break;
 
-                case CHATEAUDEAU:
-                    DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[EST], ececity->tabCase[colonnes][lignes].cardinal[NORD], BLUE);
-                    DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST], ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[NORD], BLUE);
-                    break;
+                    case CHATEAUDEAU:
+                        if(ececity->currentJeuProcess != CONSTRUCTIONCHATEAUDEAU){
+                            switch(ececity->currentJeuProcess){
+                                case CONSTRUCTIONROUTE:
+                                    formatColonne = ececity->formatBatiment.nbcolonnesRoute;
+                                    formatLigne = ececity->formatBatiment.nblignesRoute;
+                                    break;
+                                case CONSTRUCTIONMAISON:
+                                    formatColonne = ececity->formatBatiment.nbcolonnesMaison;
+                                    formatLigne = ececity->formatBatiment.nblignesMaison;
+                                    break;
+                                case CONSTRUCTIONCENTRALE:
+                                    formatColonne = ececity->formatBatiment.nbcolonnesCentrales;
+                                    formatLigne = ececity->formatBatiment.nblignesCentrales;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if(colonnes - ececity->souris.colonneSouris < formatColonne
+                               && colonnes - ececity->souris.colonneSouris >= 0
+                               && lignes - ececity->souris.ligneSouris < formatLigne
+                               && lignes - ececity->souris.ligneSouris >= 0){
+                                colorRect = RED;
+                            }
+                            else{
+                                colorRect = BLUE;
+                            }
+                        }
+                        else{
+                            if(colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesChateaux
+                               && colonnes - ececity->souris.colonneSouris >= 0
+                               && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesChateaux
+                               && lignes - ececity->souris.ligneSouris >= 0){
+                                colorRect = RED;
+                            }
+                            else{
+                                colorRect = BLUE;
+                            }
+                        }
+                        DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[EST], ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                        DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST], ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                        break;
 
-                case CENTRALE:
-                    DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[EST], ececity->tabCase[colonnes][lignes].cardinal[NORD], GOLD);
-                    DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST], ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[NORD], GOLD);
-                    break;
+                    case CENTRALE:
+                        if(ececity->currentJeuProcess != CONSTRUCTIONCENTRALE){
+                            switch(ececity->currentJeuProcess){
+                                case CONSTRUCTIONROUTE:
+                                    formatColonne = ececity->formatBatiment.nbcolonnesRoute;
+                                    formatLigne = ececity->formatBatiment.nblignesRoute;
+                                    break;
+                                case CONSTRUCTIONCHATEAUDEAU:
+                                    formatColonne = ececity->formatBatiment.nbcolonnesChateaux;
+                                    formatLigne = ececity->formatBatiment.nblignesChateaux;
+                                    break;
+                                case CONSTRUCTIONMAISON:
+                                    formatColonne = ececity->formatBatiment.nbcolonnesMaison;
+                                    formatLigne = ececity->formatBatiment.nblignesMaison;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if(colonnes - ececity->souris.colonneSouris < formatColonne
+                               && colonnes - ececity->souris.colonneSouris >= 0
+                               && lignes - ececity->souris.ligneSouris < formatLigne
+                               && lignes - ececity->souris.ligneSouris >= 0){
+                                colorRect = RED;
+                            }
+                            else{
+                                colorRect = GOLD;
+                            }
+                        }
+                        else{
+                            if(colonnes - ececity->souris.colonneSouris < ececity->formatBatiment.nbcolonnesCentrales
+                               && colonnes - ececity->souris.colonneSouris >= 0
+                               && lignes - ececity->souris.ligneSouris < ececity->formatBatiment.nblignesCentrales
+                               && lignes - ececity->souris.ligneSouris >= 0){
+                                colorRect = RED;
+                            }
+                            else{
+                                colorRect = GOLD;
+                            }
+                        }
+                        DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[EST], ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                        DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST], ececity->tabCase[colonnes][lignes].cardinal[SUD], ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                        break;
 
-                default:
-                    break;
+                    default:
+                        break;
 
+                }
             }
         }
+    }
+    else{
+        DrawText("Aurelien a toi de completer",0,500,30,(ececity->currentJeuProcess == NIVEAU1)? BLUE : GOLD);
     }
 
     AfficherBouton(ececity);
 
-    AfficherCaseInfo(ececity);
+    if(ececity->currentJeuProcess != GAMEPAUSE){
+        AfficherCaseInfo(ececity);
+    }
 
     EndDrawing();
 }
+
 
 void AfficherIso(ECECITY* ececity){
     DrawText(TextFormat("xsouris:%.2f , ysouris:%.2f", ececity->souris.position.x, ececity->souris.position.y), 10, 85, 30, LIME);
@@ -158,39 +361,54 @@ void AfficherIso(ECECITY* ececity){
 void AfficherCaseInfo(ECECITY* ececity){
 
     if(MouseOnIso){
-        if(ececity->souris.colonneSouris != -1 && ececity->souris.ligneSouris != -1){
-            char* nomCase;
-            switch (ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type) {
-                case VIDE:
-                    nomCase = "Vide\0";
-                    break;
+        char* nomCase;
+        switch (ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type) {
+            case VIDE:
+                nomCase = "Vide\0";
+                break;
 
-                case ROUTE:
-                    nomCase = "Route\0";
-                    break;
+            case ROUTE:
+                nomCase = "Route\0";
+                break;
 
-                case TerrainVague:
-                    nomCase = "TerrainVague\0";
-                    break;
+            case TerrainVague:
+                nomCase = "TerrainVague\0";
+                break;
 
-                case CHATEAUDEAU:
-                    nomCase = "Chateau d'eau\0";
-                    break;
+            case CABANE:
+                nomCase = "Cabane\0";
+                break;
 
-                case CENTRALE:
-                    nomCase = "Centrale\0";
-                    break;
-            }
+            case MAISON:
+                nomCase = "Maison\0";
+                break;
 
-            DrawText(TextFormat("type: %s",nomCase), 10, 10, 30, DARKPURPLE);
-            DrawText(TextFormat("Case [%d] [%d]", ececity->souris.colonneSouris, ececity->souris.ligneSouris), 10, 45, 30, LIME);
+            case IMMEUBLE:
+                nomCase = "Immeuble\0";
+                break;
+
+            case GRATTE_CIEL:
+                nomCase = "GRATTE_CIEL\0";
+                break;
+
+            case CHATEAUDEAU:
+                nomCase = "CHATEAUDEAU\0";
+                break;
+
+            case CENTRALE:
+                nomCase = "Centrale\0";
+                break;
         }
+
+        DrawText(TextFormat("type: %s",nomCase), 10, 10, 30, DARKPURPLE);
+        DrawText(TextFormat("Case [%d] [%d]", ececity->souris.colonneSouris, ececity->souris.ligneSouris), 10, 45, 30, LIME);
     }
 }
 
 void AfficherBouton(ECECITY* ececity){
 
     int NB_BOUTON = 0;
+    int debutBouton = 0;
     switch (ececity->currentProcess) {
         case MENU:
             NB_BOUTON = NB_BOUTON_MENU;
@@ -205,7 +423,10 @@ void AfficherBouton(ECECITY* ececity){
             ececity->write.fontSize = 30;
             break;
     }
-    for (int bouton = 0; bouton < NB_BOUTON; ++bouton) {
+    if (ececity->currentJeuProcess == NIVEAU1 || ececity->currentJeuProcess == NIVEAU2){
+        debutBouton = BOUTON_NIVEAU_0;
+    }
+    for (int bouton = debutBouton; bouton < NB_BOUTON; ++bouton) {
         if (ececity->currentProcess == MENU){
             DrawRectangleRec(ececity->tabBouton[MENU][bouton].recBouton, (CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[MENU][bouton].recBouton)) ? SKYBLUE : LIGHTGRAY);
         }
