@@ -1,4 +1,4 @@
-#include "../include/initialisation.h"
+#include "initialisation.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
@@ -267,11 +267,7 @@ void InitISO(ECECITY* ececity){
     }
 
 
-    for (int lignes = 0; lignes < NB_LIGNES; ++lignes) {
-        for (int colonnes = 0; colonnes < NB_COLONNES; ++colonnes) {
-            printf("casenormal [%d] [%d] x = %f, y = %f\n",colonnes,lignes,ececity->tabCase[colonnes][lignes].positionCase.x,ececity->tabCase[colonnes][lignes].positionCase.y);
-        }
-    }
+
 }
 
 

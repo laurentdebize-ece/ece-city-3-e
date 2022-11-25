@@ -68,6 +68,7 @@ typedef enum{
     NB_CARDINAL,
 }Cardinal;
 
+
 typedef enum {
     IMAGEACCUEIL,
     IMAGECHOIXJEU,
@@ -79,6 +80,7 @@ typedef enum {
     IMAGECHATEAUEAU,
     IMAGECENTRALEELEC,
     NB_IMAGES,
+
 }NomImage;
 
 typedef enum {
@@ -101,6 +103,7 @@ typedef enum {
     BOUTON_EXIT_CHOIX,
     NB_BOUTON_CHOIX,
 }NomBoutonChoixModeJeu;
+
 
 typedef enum{
     BOUTON_ROUTE,

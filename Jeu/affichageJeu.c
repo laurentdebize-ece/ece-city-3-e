@@ -69,6 +69,8 @@ void AffichageGamePlay(ECECITY* ececity){
     DrawText(TextFormat("Argent Restant: %d", ececity->compteur.soldeBanque), 1175, 40, 20, MAGENTA);
     DrawText(TextFormat("Nombre d'habitants: %d", ececity->compteur.nbHabitantsTotal), 750, 40, 20, MAGENTA);
 
+
+
     AfficherIso(ececity);
 
 
@@ -431,45 +433,80 @@ void AfficherCaseInfo(ECECITY *ececity) {
 
     if (MouseOnIso) {
         char *nomCase;
+        int capainit = 0;
+        int capaEau =0;
+        int capaElec = 0;
+        int capaRest = 0;
         switch (ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type) {
             case VIDE:
                 nomCase = "Vide\0";
+                capainit = 0;
+                capaRest = 0;
+                DrawText(TextFormat("type: %s", nomCase), 10, 10, 30, DARKPURPLE);
                 break;
 
             case ROUTE:
                 nomCase = "Route\0";
+                DrawText(TextFormat("type: %s", nomCase), 10, 10, 30, DARKPURPLE);
+
                 break;
 
             case TerrainVague:
                 nomCase = "TerrainVague\0";
+                capainit = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteInitiale;
+                capaEau = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabEauEnCours;
+                capaElec = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabElecEnCours;
+                DrawText(TextFormat("type: %s (Eau %d, Elec %d)", nomCase,capaEau, capaElec), 10, 10, 30, DARKPURPLE);
                 break;
 
             case CABANE:
                 nomCase = "Cabane\0";
+                capainit = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteInitiale;
+                capaEau = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabEauEnCours;
+                capaElec = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabElecEnCours;
+                DrawText(TextFormat("type: %s (Eau %d, Elec %d)", nomCase,capaEau, capaElec), 10, 10, 30, DARKPURPLE);
                 break;
 
             case MAISON:
                 nomCase = "Maison\0";
+                capainit = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteInitiale;
+                capaEau = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabEauEnCours;
+                capaElec = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabElecEnCours;
+                DrawText(TextFormat("type: %s (Eau %d, Elec %d)", nomCase,capaEau, capaElec), 10, 10, 30, DARKPURPLE);
                 break;
 
             case IMMEUBLE:
                 nomCase = "Immeuble\0";
+                capainit = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteInitiale;
+                capaEau = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabEauEnCours;
+                capaElec = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabElecEnCours;
+                DrawText(TextFormat("type: %s (Eau %d, Elec %d)", nomCase,capaEau, capaElec), 10, 10, 30, DARKPURPLE);
                 break;
 
             case GRATTE_CIEL:
                 nomCase = "GRATTE_CIEL\0";
+                capainit = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteInitiale;
+                capaEau = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabEauEnCours;
+                capaElec = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabElecEnCours;
+                DrawText(TextFormat("type: %s (Eau %d, Elec %d)", nomCase,capaEau, capaElec), 10, 10, 30, DARKPURPLE);
                 break;
 
             case CHATEAUDEAU:
                 nomCase = "CHATEAUDEAU\0";
+                capainit = ececity->tabChateauEau[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteInitiale;
+                capaRest = ececity->tabChateauEau[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteRestante;
+                DrawText(TextFormat("type: %s (%d/%d)", nomCase,capaRest, capainit), 10, 10, 30, DARKPURPLE);
                 break;
 
             case CENTRALE:
                 nomCase = "Centrale\0";
+                capainit = ececity->tabCentrale[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteInitiale;
+                capaRest = ececity->tabCentrale[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteRestante;
+                DrawText(TextFormat("type: %s (%d/%d)", nomCase,capaRest, capainit), 10, 10, 30, DARKPURPLE);
                 break;
         }
 
-        DrawText(TextFormat("type: %s", nomCase), 10, 10, 30, DARKPURPLE);
+
         DrawText(TextFormat("Case [%d] [%d]", ececity->souris.colonneSouris, ececity->souris.ligneSouris), 10,
                  45, 30, LIME);
     }

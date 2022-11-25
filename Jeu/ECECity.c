@@ -9,7 +9,7 @@
 #include "stdio.h"
 #include <math.h>
 
-
+#include "../include/Gestionfichier.h"
 
 void MainBoucle(ECECITY* ececity){
     while(ececity->IsCodeRunning){
@@ -20,6 +20,7 @@ void MainBoucle(ECECITY* ececity){
             case ChoixMode :
                 ChoixModeJeu(ececity);
                 break;
+
             case Jeu:
                 JEU(ececity);
                 break;
@@ -171,6 +172,7 @@ void JEU(ECECITY* ececity){
     }
 }
 
+
 void Gameplay(ECECITY* ececity){
 
     ececity->souris.position = GetMousePosition();
@@ -205,11 +207,11 @@ void calculTimerHabitations(ECECITY* ececity){
                ececity->tabHabitations[i].timerSeconds = TIMENOW;
            }
        }
-/*       ecritureFichierTab( "tabChateau",  ececity->tabChateauEau, ececity->compteur.compteurChateaux);
+       ecritureFichierTab( "tabChateau",  ececity->tabChateauEau, ececity->compteur.compteurChateaux);
        ecritureFichierTab("tabMaison", ececity->tabHabitations, ececity->compteur.compteurMaisons);
        ecritureFichierTab("tabcentrales", ececity->tabCentrale, ececity->compteur.compteurCentrales);
        ecritureFichierGrille("resultat1.txt", *ececity);
-*/
+
 
    }
 }
@@ -230,7 +232,7 @@ void CalculImpotChaqueMois(ECECITY* ececity){
     }
     else{
         ececity->compteur.timerImpots = TIMENOW;
-        printf("HAB %d\n", ececity->compteur.nbHabitantsTotal);
+
     }
 
 }
@@ -305,6 +307,7 @@ void defineTypeCase(ECECITY* ececity){
                             ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].capaciteHabElecEnCours = 0;
                             ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].capaciteRestante = 0;
                             ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.prixTerrainVague;
+
 
                         }
                     }
@@ -1158,6 +1161,7 @@ void calculCommunisme ( ECECITY* ececity, int maisonTraitee, Compteur c){
     if(ececity->tabHabitations[maisonTraitee].capaciteHabEauEnCours < ececity->tabHabitations[maisonTraitee].capaciteInitiale || ececity->tabHabitations[maisonTraitee].capaciteHabElecEnCours < ececity->tabHabitations[maisonTraitee].capaciteInitiale){
         // regression de l habitation
         diminuerStadeMaison(ececity,maisonTraitee);
+        // FAIRE affichage nouvelle maison (Thomas)
         int nbmaxRoutesEau = calculRoute(ececity, 1);
         int nbmaxRoutesElec = calculRoute(ececity, 2);
         // recalcul de la repartition en eau et elec suite a regression
@@ -1178,6 +1182,7 @@ void calculCommunisme ( ECECITY* ececity, int maisonTraitee, Compteur c){
             calculDistributionEau(ececity, nbmaxRoutesEau,c);
             calculDistributionElec(ececity, nbmaxRoutesElec, c);
         }
+        // FAIRE affichage nouvelle maison (Thomas)
 
     }
 
@@ -1187,6 +1192,7 @@ void calculCapitalisme ( ECECITY* ececity, int maisonTraitee, Compteur c){
     // on fait progresser l habitation et on refait un calcul de repartition de l eau et elec
 
     augmenterStadeMaison(ececity, maisonTraitee);
+    // FAIRE affichage nouvelle maison (Thomas)
     int nbmaxRoutesEau = calculRoute(ececity, 1);
     int nbmaxRoutesElec = calculRoute(ececity, 2);
 
@@ -1196,6 +1202,7 @@ void calculCapitalisme ( ECECITY* ececity, int maisonTraitee, Compteur c){
     // si l habitation n est pas pleine en eau et elec, elle ne peut rester a ce stade donc on la remet a son stade initial
     if(ececity->tabHabitations[maisonTraitee].capaciteHabEauEnCours < ececity->tabHabitations[maisonTraitee].capaciteInitiale || ececity->tabHabitations[maisonTraitee].capaciteHabElecEnCours < ececity->tabHabitations[maisonTraitee].capaciteInitiale){
         diminuerStadeMaison(ececity,maisonTraitee);
+        // FAIRE affichage nouvelle maison (Thomas)
         calculDistributionEau(ececity, nbmaxRoutesEau,c);
         calculDistributionElec(ececity, nbmaxRoutesElec, c);
     }
