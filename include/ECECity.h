@@ -181,6 +181,8 @@ typedef struct{
     int capaciteHabElecEnCours;// capacité de remplissage d'une habitation en elec
     int capaciteHabEauEnCours;// capacité de remplissage d'une habitation en eau
     int distance;
+    bool estUtileEau;
+    bool estUtileElec;
     int timerSeconds;
 } Case;
 
@@ -219,6 +221,9 @@ typedef struct Graphe
 {
     int taille;
     int ordre;
+    int predligne;
+    int predcolonne;
+
     pSommet* pSommet;
 } Graphe;
 
@@ -356,8 +361,8 @@ int calculRoute( ECECITY* ececity, int typeCalcul);
 void ajouteCelluleRoute(ECECITY* ececity, int colonne, int ligne, int numRoute, int typeCalcul);
 void rechercheHabitationRoute(int listeMaison[MAX_OBJET], int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], int typeCalcul);
 // void calculDistributionElec_old(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
-int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[NB_COLONNES][NB_LIGNES] );
-int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int distanceEnCours, Case matrice[NB_COLONNES][NB_LIGNES]);
+int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], bool liste[NB_COLONNES][NB_LIGNES] );
+int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int distanceEnCours, Case matrice[NB_COLONNES][NB_LIGNES], bool liste[NB_COLONNES][NB_LIGNES]);
 void calculDistributionEau(ECECITY* ececity, int nbMaxRoute, Compteur c);
 void calculDistributionElec(ECECITY* ececity, int nbMaxRoute, Compteur c);
 void calculCommunisme ( ECECITY* ececity, int maisonTraitee, Compteur c);
