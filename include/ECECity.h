@@ -78,6 +78,7 @@ typedef enum {
     IMAGEROUTE,
     IMAGECHATEAUEAU,
     IMAGECENTRALEELEC,
+    IMAGETERRAINVAGUE,
     NB_IMAGES,
 }NomImage;
 

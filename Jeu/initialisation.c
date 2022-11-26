@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <math.h>
+#include <limits.h>
 
 
 
@@ -35,8 +36,8 @@ void InitTOUT(ECECITY* ececity){
 
 void InitDisplay(ECECITY* ececity){
 
-    ececity->display.width = 1920;//1920
-    ececity->display.height = 1065;//1065
+    ececity->display.width = 1600;//1920
+    ececity->display.height = 800;//1065
     ececity->display.FPS = 60;
 
     InitWindow(ececity->display.width, ececity->display.height,NULL);
@@ -125,17 +126,25 @@ void InitImage(ECECITY* ececity){
     ececity->tabImage[IMAGEROUTE].format = (Rectangle){ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.x,ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.y,ececity->tabImage[IMAGEROUTE].format.width,ececity->tabImage[IMAGEROUTE].format.height};
     UnloadImage(ececity->tabImage[IMAGEROUTE].Image);
 
-    ececity->tabImage[IMAGECHATEAUEAU].Image = LoadImage("../Images/CentraleEau.png");
+    ececity->tabImage[IMAGECHATEAUEAU].Image = LoadImage("../Images/eau.png");
     ececity->tabImage[IMAGECHATEAUEAU].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGECHATEAUEAU].Image);
     ececity->tabImage[IMAGECHATEAUEAU].format.width = 173;
     ececity->tabImage[IMAGECHATEAUEAU].format.height = 100;
     UnloadImage(ececity->tabImage[IMAGECHATEAUEAU].Image);
 
-    ececity->tabImage[IMAGECENTRALEELEC].Image = LoadImage("../Images/CentraleElec.png");
+    ececity->tabImage[IMAGECENTRALEELEC].Image = LoadImage("../Images/elec.png");
     ececity->tabImage[IMAGECENTRALEELEC].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGECENTRALEELEC].Image);
     ececity->tabImage[IMAGECENTRALEELEC].format.width = 173;
     ececity->tabImage[IMAGECENTRALEELEC].format.height = 100;
     UnloadImage(ececity->tabImage[IMAGECENTRALEELEC].Image);
+
+    ececity->tabImage[IMAGETERRAINVAGUE].Image = LoadImage("../Images/terrainvague.png");
+    ececity->tabImage[IMAGETERRAINVAGUE].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGETERRAINVAGUE].Image);
+    ececity->tabImage[IMAGETERRAINVAGUE].format.width = 173;
+    ececity->tabImage[IMAGETERRAINVAGUE].format.height = 100;
+    UnloadImage(ececity->tabImage[IMAGETERRAINVAGUE].Image);
+
+
 }
 
 void InitCase(ECECITY* ececity){

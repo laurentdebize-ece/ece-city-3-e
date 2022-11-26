@@ -109,8 +109,11 @@ void AffichageGamePlay(ECECITY* ececity){
                                                  && lignes - ececity->souris.ligneSouris <
                                                     ececity->formatBatiment.nblignesMaison
                                                  && lignes - ececity->souris.ligneSouris >= 0
+
                                                 ) ? LIGHTGRAY : BLANK;
+
                                 }
+
                                 else{
                                     colorRect = (colonnes - ececity->souris.colonneSouris <
                                                  ececity->formatBatiment.nbcolonnesMaison
@@ -119,6 +122,12 @@ void AffichageGamePlay(ECECITY* ececity){
                                                     ececity->formatBatiment.nblignesMaison
                                                  && lignes - ececity->souris.ligneSouris >= 0
                                                 ) ? RED : BLANK;
+                                }
+                                if (MouseOnIso) {
+                                DrawTexture(ececity->tabImage[IMAGETERRAINVAGUE].TextureImage,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.x-5,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.y-30,
+                                                WHITE);
                                 }
                                 break;
 
@@ -138,6 +147,12 @@ void AffichageGamePlay(ECECITY* ececity){
                                                  lignes - ececity->souris.ligneSouris <
                                                  ececity->formatBatiment.nblignesChateaux &&
                                                  lignes - ececity->souris.ligneSouris >= 0) ? RED : BLANK;
+                                }
+                                if (MouseOnIso) {
+                                    DrawTexture(ececity->tabImage[IMAGECHATEAUEAU].TextureImage,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.x+5,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.y-80,
+                                                WHITE);
                                 }
                                 break;
 
@@ -160,8 +175,8 @@ void AffichageGamePlay(ECECITY* ececity){
                                 }
                                 if (MouseOnIso) {
                                     DrawTexture(ececity->tabImage[IMAGECENTRALEELEC].TextureImage,
-                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.x,
-                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.y,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.x + 30,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.y - 130,
                                                 WHITE);
                                 }
                                 break;
