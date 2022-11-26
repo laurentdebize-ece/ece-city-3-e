@@ -186,6 +186,14 @@ typedef struct{
     int timerSeconds;
 } Case;
 
+typedef struct{
+    int sourceType;
+    int sourceNumType;
+    int destType;
+    int destNumType;
+    int distance;
+    bool chemin[NB_COLONNES][NB_LIGNES];
+} cheminEau;
 
 enum SommetCouleur {
     UNEXPLORED,

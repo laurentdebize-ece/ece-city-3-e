@@ -795,6 +795,7 @@ int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[N
     for (int j = 0; j < NB_LIGNES; j++) {
         for (int i = 0; i < NB_COLONNES; i++) {
             liste[i][j] = false;
+            listeMini[i][j] = false;
         }
     }
 
@@ -878,20 +879,6 @@ int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[N
     }
 
     if (distanceMini < INT_MAX){//si on eu un résultat
- /*       printf("------------>>> fin calcDist route %d src type %d numt %d dest typ %d numty %d\n", numRoute, caseSource.type, caseSource.numeroType, caseCible.type, caseCible.numeroType);
-        for (int j = 0; j < NB_LIGNES; j++) {
-            for (int i = 0; i < NB_COLONNES; i++) {
-                if (liste[i][j]) {
-                    printf("1");
-                }
-                else {
-                    printf ("0");
-                }
-            }
-            printf("\n");
-
-        }
-        printf(" \ndistance = %d\n", distanceMini);*/
         return distanceMini;
     }
     else{
@@ -999,152 +986,6 @@ int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int d
     }
 }
 
-/*
-int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[NB_COLONNES][NB_LIGNES] ){
-    int distanceMini = INT_MAX;
-
-    int distIni = 0;
-    for (int j = 0; j < NB_LIGNES; j++) {
-        for (int i = 0; i < NB_COLONNES; i++) {
-            // on reinitialise la marque de chaque case sur la route
-            for (int k = 0; k < NB_LIGNES; k++) {
-                for (int l = 0; l < NB_COLONNES; l++) {// init marquage des cellules du chemin
-                    if (matrice[l][k].type == ROUTE && matrice[l][k].numeroConnexeEau == numRoute){
-                        matrice[l][k].libre = true;
-                    }
-                }
-            }
-            // pour chaque cellule de la matrice :
-            //	si la cellule est de type "route" et que son numero est numRoute
-            //	   pour chaque cellule autour de la cellule en cours,
-            //		on recherche si une cellule correspond a caseSource
-            //		si oui on lance le calcul de la distance à partir de cette cellule sur le route
-            //			si ce calcul donne un resultat positif, si il est inférieur aux calculs precedents, on le stocke.
-            if (matrice[i][j].type == ROUTE && matrice[i][j].numeroConnexeEau == numRoute){
-                if (j - 1 >= 0){
-                    if (matrice[i][j - 1].type == caseSource.type && matrice[i][j - 1].numeroType == caseSource.numeroType){
-                        int retour = sousCalcDistance(i, j, caseCible, numRoute, distIni, matrice);
-                        if (retour > 0 && retour < distanceMini){
-                            distanceMini = retour;
-                        }
-                    }
-                }
-                if (j + 1 < NB_LIGNES){
-                    if (matrice[i][j + 1].type == caseSource.type && matrice[i][j + 1].numeroType == caseSource.numeroType){
-                        int retour = sousCalcDistance(i, j, caseCible, numRoute, distIni, matrice);
-                        if (retour > 0 && retour < distanceMini){
-                            distanceMini = retour;
-                        }
-                    }
-                }
-                if (i - 1 >= 0){
-                    if (matrice[i - 1][j].type == caseSource.type && matrice[i - 1][j].numeroType == caseSource.numeroType){
-                        int retour = sousCalcDistance(i, j, caseCible, numRoute, distIni, matrice);
-                        if (retour > 0 && retour < distanceMini){
-                            distanceMini = retour;
-                        }
-                    }
-                }
-                if (i + 1 < NB_COLONNES){
-                    if (matrice[i + 1][j].type == caseSource.type && matrice[i + 1][j].numeroType == caseSource.numeroType){
-                        int retour = sousCalcDistance(i, j, caseCible, numRoute, distIni, matrice);
-                        if (retour > 0 && retour < distanceMini){
-                            distanceMini = retour;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    if (distanceMini < INT_MAX){//si on eu un résultat
-        return distanceMini;
-    }
-    else{
-        return -1;
-    }
-}
-
-// Pour le calcul de la distance
-// entree : ligneEnCours, colonneEnCours, caseCible, numRoute, distanceEnCours
-int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int distanceEnCours, Case matrice[NB_COLONNES][NB_LIGNES]){
-
-    // on marque la case en cours de traitement
-    matrice[colonne][ligne].libre = false;
-    // si un case a proximite correspondant a la destination, on retourne la distance calculee
-    if (ligne - 1 >=0){
-        if (matrice[colonne][ligne - 1].type == caseCible.type && matrice[colonne][ligne - 1].numeroType == caseCible.numeroType){
-            return distanceEnCours + 1;
-        }
-    }
-    if (ligne + 1 < NB_LIGNES){
-        if (matrice[colonne][ligne + 1].type == caseCible.type && matrice[colonne][ligne + 1].numeroType == caseCible.numeroType){
-            return distanceEnCours + 1;
-        }
-    }
-
-    if (colonne - 1 >= 0){
-        if (matrice[colonne - 1][ligne].type == caseCible.type && matrice[colonne - 1][ligne].numeroType == caseCible.numeroType){
-            return distanceEnCours + 1;
-        }
-    }
-    if (colonne + 1 < NB_COLONNES ){
-        if (matrice[colonne + 1][ligne].type == caseCible.type && matrice[colonne + 1][ligne].numeroType == caseCible.numeroType){
-            return distanceEnCours + 1;
-        }
-    }
-
-    // si aucune case a proximite ne correspond a la destination, on lance le parcours en profondeur sur les cases a proximite etant sur la meme route
-    // si un resultat est obtenu (on a trouve via ce parcours une distance vers la case destination), on retourne la distance
-    int dist = INT_MAX;
-    if (ligne - 1 >=0){
-        if (matrice[colonne][ligne - 1].type == ROUTE && matrice[colonne][ligne - 1].numeroConnexeEau == numRoute && matrice[colonne][ligne - 1].libre == true){
-            int retour = sousCalcDistance(colonne, ligne - 1, caseCible, numRoute, distanceEnCours + 1, matrice);
-            if (retour > 0 && retour < dist){
-                dist = retour;
-            }
-        }
-    }
-    if (ligne + 1 < NB_LIGNES){
-        if (matrice[colonne][ligne + 1].type == ROUTE && matrice[colonne][ligne + 1].numeroConnexeEau == numRoute && matrice[colonne][ligne + 1].libre == true){
-            int retour = sousCalcDistance(colonne, ligne + 1, caseCible, numRoute, distanceEnCours + 1, matrice);
-            if (retour > 0 && retour < dist){
-                dist = retour;
-            }
-        }
-    }
-    if (colonne - 1 >=0 ){
-        if (matrice[colonne - 1][ligne].type == ROUTE && matrice[colonne - 1][ligne].numeroConnexeEau == numRoute && matrice[colonne - 1][ligne].libre == true){
-            int retour = sousCalcDistance(colonne - 1, ligne, caseCible, numRoute, distanceEnCours + 1, matrice);
-            if (retour > 0 && retour < dist){
-                dist = retour;
-            }
-        }
-    }
-    if (colonne + 1 < NB_COLONNES ){
-        if (matrice[colonne + 1][ligne].type == ROUTE && matrice[colonne + 1][ligne].numeroConnexeEau == numRoute && matrice[colonne + 1][ligne].libre == true){
-            int retour = sousCalcDistance(colonne + 1, ligne, caseCible, numRoute, distanceEnCours + 1, matrice);
-            if (retour > 0 && retour < dist){
-                dist = retour;
-            }
-        }
-    }
-    // si les chemins n'ont pas abouti, on sort et on retourne -1
-    if (dist < INT_MAX){//si on eu un résultat
-        return dist;
-    }
-    else{
-        return -1;
-    }
-}
-*/
-
-
-
-
-
-
-
-
 // fonction qui calcule la repartition d eau entre les maisons de chaque route
 // a partir de chaque chateau d eau, on remplit d'abord la maison la plus proche, puis la suivante, ...
 void calculDistributionEau(ECECITY* ececity, int nbMaxRoute, Compteur c){
@@ -1161,7 +1002,7 @@ void calculDistributionEau(ECECITY* ececity, int nbMaxRoute, Compteur c){
         ececity->tabHabitations[i].capaciteHabEauEnCours = 0;
         ececity->tabHabitations[i].distance = 0;
     }
-    // reinittialisation de la matrice des chemins les plus courts
+    // reinitialisation de la matrice des chemins les plus courts
     for (int p = 0; p < NB_LIGNES; p++) {
         for (int n = 0; n < NB_COLONNES; n++) {
             ececity->tabCase[n][p].estUtileEau = false;
@@ -1173,13 +1014,15 @@ void calculDistributionEau(ECECITY* ececity, int nbMaxRoute, Compteur c){
         int listeMaison[MAX_OBJET];
         rechercheHabitationRoute(listeMaison, r, ececity->tabCase, 1);
 
+        cheminEau listeOrdonneeHabitation[MAX_OBJET];
+        int habiDernier = 0;
         //   - pour chaque chateauEau i (parcourt du numero tabChateauEau) sur cette route r, on reparti l eau
         for (int i = 0; i < c.compteurChateaux; i++){
             if(ececity->tabChateauEau[i].numeroConnexeEau == r){
 
                 // creer un tableau de la liste ordonnee des maisons sur cette route par rapport a leur distance a ce chateau d'eau
-                Case listeOrdonneeHabitation[MAX_OBJET];
-                int habiDernier = 0;
+
+
                 Case caseDepart;
                 caseDepart.type = CHATEAUDEAU;
                 caseDepart.numeroType = i + 1;
@@ -1187,7 +1030,7 @@ void calculDistributionEau(ECECITY* ececity, int nbMaxRoute, Compteur c){
 
                 // pour chaque habitation h de listeMaison sur la route
                 for (int h = 0; h < c.compteurMaisons; h++){
-                    if (listeMaison[h] == 1){ // la maison est sur le reseau
+                    if (listeMaison[h] == 1){ // la maison est sur le route
                         Case caseArrivee;
                         caseArrivee.type = ececity->tabHabitations[h].type;
                         caseArrivee.numeroType = ececity->tabHabitations[h].numeroType;
@@ -1209,15 +1052,29 @@ void calculDistributionEau(ECECITY* ececity, int nbMaxRoute, Compteur c){
                                 // decaler les case suivantes
                                 for (int z = habiDernier - 1; z >= k; z--){  // z indiceposition
 
-                                    listeOrdonneeHabitation[z+1].type = listeOrdonneeHabitation[z].type;
-                                    listeOrdonneeHabitation[z+1].numeroType = listeOrdonneeHabitation[z].numeroType;
+                                    listeOrdonneeHabitation[z+1].sourceType = listeOrdonneeHabitation[z].sourceType;
+                                    listeOrdonneeHabitation[z+1].sourceNumType = listeOrdonneeHabitation[z].sourceNumType;
+                                    listeOrdonneeHabitation[z+1].destType = listeOrdonneeHabitation[z].destType;
+                                    listeOrdonneeHabitation[z+1].destNumType = listeOrdonneeHabitation[z].destNumType;
                                     listeOrdonneeHabitation[z+1].distance = listeOrdonneeHabitation[z].distance;
+                                    for (int p = 0; p < NB_LIGNES; p++) {
+                                        for (int n = 0; n < NB_COLONNES; n++) {
+                                            listeOrdonneeHabitation[z+1].chemin[n][p] = listeOrdonneeHabitation[z].chemin[n][p];
+                                        }
+                                    }
                                 }
                             }
                             // affecter la cellule
-                            listeOrdonneeHabitation[k].type = ececity->tabHabitations[h].type;
-                            listeOrdonneeHabitation[k].numeroType = ececity->tabHabitations[h].numeroType;
+                            listeOrdonneeHabitation[k].sourceType = caseDepart.type;
+                            listeOrdonneeHabitation[k].sourceNumType = caseDepart.numeroType;
+                            listeOrdonneeHabitation[k].destType = ececity->tabHabitations[h].type;
+                            listeOrdonneeHabitation[k].destNumType = ececity->tabHabitations[h].numeroType;
                             listeOrdonneeHabitation[k].distance = d;
+                            for (int p = 0; p < NB_LIGNES; p++) {
+                                for (int n = 0; n < NB_COLONNES; n++) {
+                                    listeOrdonneeHabitation[k].chemin[n][p] = lst[n][p];
+                                }
+                            }
                             habiDernier = habiDernier  + 1;
                         }
 
@@ -1225,57 +1082,50 @@ void calculDistributionEau(ECECITY* ececity, int nbMaxRoute, Compteur c){
 
                 }
 
-                // apres avoir parcouru toutes les maisons, la liste ordonnee est complete
-                // calcul de la repartition d'eau par maison (on remplit la maison la plus proche, puis la suivante, ... jusqu'a epuisement des ressource du chateau d'eau
-                int d = -1;
-                for (int j = 0; j < habiDernier; j++){
-                    if (ececity->tabChateauEau[i].capaciteRestante >= ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteInitiale - ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteHabEauEnCours){ // le chateau a plus d'eau que d'habitants
-                        ececity->tabChateauEau[i].capaciteRestante = ececity->tabChateauEau[i].capaciteRestante - (ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteInitiale - ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteHabEauEnCours);
-                        ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteHabEauEnCours = ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteInitiale;
-                        Case caseArrivee;
-                        caseArrivee.type = listeOrdonneeHabitation[j].type;
-                        caseArrivee.numeroType = listeOrdonneeHabitation[j].numeroType;
+            }
+        }
 
-                        // recuperation des cases du chemin le plus court
-                        d = calculDistance (caseDepart, caseArrivee, r, ececity->tabCase, lst);
-                    } else { // le chateau a moins d'eau que d'habitants
-                        if (ececity->tabChateauEau[i].capaciteRestante > 0){
-                            ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteHabEauEnCours = ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteHabEauEnCours + ececity->tabChateauEau[i].capaciteRestante;
-                            ececity->tabChateauEau[i].capaciteRestante = 0;
-                            Case caseArrivee;
-                            caseArrivee.type = listeOrdonneeHabitation[j].type;
-                            caseArrivee.numeroType = listeOrdonneeHabitation[j].numeroType;
-
-                            // recuperation des cases du chemin le plus court
-                            d = calculDistance (caseDepart, caseArrivee, r, ececity->tabCase, lst);
-                        }
-
-                    }
+        // apres avoir parcouru toutes les maisons, la liste ordonnee est complete
+        // calcul de la repartition d'eau par maison (on remplit la maison la plus proche, puis la suivante, ... jusqu'a epuisement des ressource du chateau d'eau
+        int d = -1;
+        for (int j = 0; j < habiDernier; j++){
+            if (ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteInitiale > ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteHabEauEnCours){
+                if (ececity->tabChateauEau[listeOrdonneeHabitation[j].sourceNumType - 1].capaciteRestante >= ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteInitiale - ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteHabEauEnCours){ // le chateau a plus d'eau que d'habitants
+                    ececity->tabChateauEau[listeOrdonneeHabitation[j].sourceNumType - 1].capaciteRestante = ececity->tabChateauEau[listeOrdonneeHabitation[j].sourceNumType - 1].capaciteRestante - (ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteInitiale - ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteHabEauEnCours);
+                    ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteHabEauEnCours = ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteInitiale;
                     // stockage du chemin le plus court dans la matrice
                     for (int p = 0; p < NB_LIGNES; p++) {
                         for (int n = 0; n < NB_COLONNES; n++) {
-                            if (lst[n][p]){
+                            if (listeOrdonneeHabitation[j].chemin[n][p]){
                                 ececity->tabCase[n][p].estUtileEau = true;
                             }
                         }
                     }
-                }
-  /*              printf("------------ chemin cumule = \n");
-                for (int j = 0; j < NB_LIGNES; j++) {
-                    for (int i = 0; i < NB_COLONNES; i++) {
-                        if (ececity->tabCase[i][j].estUtileEau) {
-                            printf("1");
-                        }
-                        else {
-                            printf ("0");
+                } else { // le chateau a moins d'eau que d'habitants
+                    if (ececity->tabChateauEau[listeOrdonneeHabitation[j].sourceNumType - 1].capaciteRestante > 0){
+                        ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteHabEauEnCours = ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteHabEauEnCours + ececity->tabChateauEau[listeOrdonneeHabitation[j].sourceNumType - 1].capaciteRestante;
+                        ececity->tabChateauEau[listeOrdonneeHabitation[j].sourceNumType - 1].capaciteRestante = 0;
+                        // stockage du chemin le plus court dans la matrice
+                        for (int p = 0; p < NB_LIGNES; p++) {
+                            for (int n = 0; n < NB_COLONNES; n++) {
+                                if (listeOrdonneeHabitation[j].chemin[n][p]){
+                                    ececity->tabCase[n][p].estUtileEau = true;
+                                }
+                            }
                         }
                     }
-                    printf("\n");
-                }*/
+
+                }
+
+
             }
+
         }
     }
 }
+
+
+
 // fonction qui calcule la repartition d electricite entre les maisons de chaque route
 // pour chaque route on calcule la capacite cumulee des centrales. On repartit ensuite l electricite en commencant par les maisons deja pleines en eau pour eviter qu elles regressent. on repartie le reste de la capacite en elec indifferemment selon leur numero d ordre.
 // si la capacite des centrales ne couvre pas toutes les maisons pleines en eau, des maisons risquent donc de regresser. on cherche a minimiser l impact de ces regressions sur le nb d habitants : on va donc d abord repartir l electricite sur les grosses habitations (qui perdent le plus d habitants en cas de regression), puis les plus petites, ...
