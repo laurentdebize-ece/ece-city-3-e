@@ -68,6 +68,7 @@ typedef enum{
     NB_CARDINAL,
 }Cardinal;
 
+
 typedef enum {
     IMAGEACCUEIL,
     IMAGECHOIXJEU,
@@ -80,6 +81,7 @@ typedef enum {
     IMAGECENTRALEELEC,
     IMAGETERRAINVAGUE,
     NB_IMAGES,
+
 }NomImage;
 
 typedef enum {
@@ -102,6 +104,7 @@ typedef enum {
     BOUTON_EXIT_CHOIX,
     NB_BOUTON_CHOIX,
 }NomBoutonChoixModeJeu;
+
 
 typedef enum{
     BOUTON_ROUTE,
@@ -179,9 +182,19 @@ typedef struct{
     int capaciteHabElecEnCours;// capacité de remplissage d'une habitation en elec
     int capaciteHabEauEnCours;// capacité de remplissage d'une habitation en eau
     int distance;
+    bool estUtileEau;
+    bool estUtileElec;
     int timerSeconds;
 } Case;
 
+typedef struct{
+    int sourceType;
+    int sourceNumType;
+    int destType;
+    int destNumType;
+    int distance;
+    bool chemin[NB_COLONNES][NB_LIGNES];
+} cheminEau;
 
 enum SommetCouleur {
     UNEXPLORED,
@@ -217,6 +230,9 @@ typedef struct Graphe
 {
     int taille;
     int ordre;
+    int predligne;
+    int predcolonne;
+
     pSommet* pSommet;
 } Graphe;
 
@@ -354,8 +370,8 @@ int calculRoute( ECECITY* ececity, int typeCalcul);
 void ajouteCelluleRoute(ECECITY* ececity, int colonne, int ligne, int numRoute, int typeCalcul);
 void rechercheHabitationRoute(int listeMaison[MAX_OBJET], int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], int typeCalcul);
 // void calculDistributionElec_old(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
-int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[NB_COLONNES][NB_LIGNES] );
-int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int distanceEnCours, Case matrice[NB_COLONNES][NB_LIGNES]);
+int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], bool liste[NB_COLONNES][NB_LIGNES] );
+int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int distanceEnCours, Case matrice[NB_COLONNES][NB_LIGNES], bool liste[NB_COLONNES][NB_LIGNES]);
 void calculDistributionEau(ECECITY* ececity, int nbMaxRoute, Compteur c);
 void calculDistributionElec(ECECITY* ececity, int nbMaxRoute, Compteur c);
 void calculCommunisme ( ECECITY* ececity, int maisonTraitee, Compteur c);

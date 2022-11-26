@@ -9,7 +9,7 @@
 #include "stdio.h"
 #include <math.h>
 
-
+#include "../include/Gestionfichier.h"
 
 void MainBoucle(ECECITY* ececity){
     while(ececity->IsCodeRunning){
@@ -20,6 +20,7 @@ void MainBoucle(ECECITY* ececity){
             case ChoixMode :
                 ChoixModeJeu(ececity);
                 break;
+
             case Jeu:
                 JEU(ececity);
                 break;
@@ -171,6 +172,7 @@ void JEU(ECECITY* ececity){
     }
 }
 
+
 void Gameplay(ECECITY* ececity){
 
     ececity->souris.position = GetMousePosition();
@@ -205,11 +207,11 @@ void calculTimerHabitations(ECECITY* ececity){
                ececity->tabHabitations[i].timerSeconds = TIMENOW;
            }
        }
-/*       ecritureFichierTab( "tabChateau",  ececity->tabChateauEau, ececity->compteur.compteurChateaux);
+       ecritureFichierTab( "tabChateau",  ececity->tabChateauEau, ececity->compteur.compteurChateaux);
        ecritureFichierTab("tabMaison", ececity->tabHabitations, ececity->compteur.compteurMaisons);
        ecritureFichierTab("tabcentrales", ececity->tabCentrale, ececity->compteur.compteurCentrales);
        ecritureFichierGrille("resultat1.txt", *ececity);
-*/
+
 
    }
 }
@@ -230,7 +232,7 @@ void CalculImpotChaqueMois(ECECITY* ececity){
     }
     else{
         ececity->compteur.timerImpots = TIMENOW;
-        printf("HAB %d\n", ececity->compteur.nbHabitantsTotal);
+
     }
 
 }
@@ -305,6 +307,7 @@ void defineTypeCase(ECECITY* ececity){
                             ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].capaciteHabElecEnCours = 0;
                             ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].capaciteRestante = 0;
                             ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.prixTerrainVague;
+
 
                         }
                     }
@@ -784,10 +787,17 @@ void calculDistributionElec_old(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabC
 */
 
 // Calcule la distance mini entre 2 cases le long d'un route
-// entree : caseSource, caseCible, numRoute
-
-int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[NB_COLONNES][NB_LIGNES] ){
+// entree : caseSource, caseCible, numRoute, liste
+// la liste contient l'ensemble des cases sur le chemin le plus court
+int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], bool liste[NB_COLONNES][NB_LIGNES] ){
     int distanceMini = INT_MAX;
+    bool listeMini[NB_COLONNES][NB_LIGNES];
+    for (int j = 0; j < NB_LIGNES; j++) {
+        for (int i = 0; i < NB_COLONNES; i++) {
+            liste[i][j] = false;
+            listeMini[i][j] = false;
+        }
+    }
 
     int distIni = 0;
     for (int j = 0; j < NB_LIGNES; j++) {
@@ -798,6 +808,7 @@ int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[N
                     if (matrice[l][k].type == ROUTE && matrice[l][k].numeroConnexeEau == numRoute){
                         matrice[l][k].libre = true;
                     }
+                    listeMini[l][k] = false;
                 }
             }
             // pour chaque cellule de la matrice :
@@ -809,72 +820,103 @@ int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[N
             if (matrice[i][j].type == ROUTE && matrice[i][j].numeroConnexeEau == numRoute){
                 if (j - 1 >= 0){
                     if (matrice[i][j - 1].type == caseSource.type && matrice[i][j - 1].numeroType == caseSource.numeroType){
-                        int retour = sousCalcDistance(i, j, caseCible, numRoute, distIni, matrice);
+                        int retour = sousCalcDistance(i, j, caseCible, numRoute, distIni, matrice, listeMini);
+                        listeMini[i][j] = true;
                         if (retour > 0 && retour < distanceMini){
                             distanceMini = retour;
+                            for (int p = 0; p < NB_LIGNES; p++) {
+                                for (int t = 0; t < NB_COLONNES; t++) {
+                                    liste[t][p] = listeMini[t][p];
+                                }
+                            }
                         }
                     }
                 }
                 if (j + 1 < NB_LIGNES){
                     if (matrice[i][j + 1].type == caseSource.type && matrice[i][j + 1].numeroType == caseSource.numeroType){
-                        int retour = sousCalcDistance(i, j, caseCible, numRoute, distIni, matrice);
+                        int retour = sousCalcDistance(i, j, caseCible, numRoute, distIni, matrice, listeMini);
+                        listeMini[i][j] = true;
                         if (retour > 0 && retour < distanceMini){
                             distanceMini = retour;
+                            for (int p = 0; p < NB_LIGNES; p++) {
+                                for (int t = 0; t < NB_COLONNES; t++) {
+                                    liste[t][p] = listeMini[t][p];
+                                }
+                            }
                         }
                     }
                 }
                 if (i - 1 >= 0){
                     if (matrice[i - 1][j].type == caseSource.type && matrice[i - 1][j].numeroType == caseSource.numeroType){
-                        int retour = sousCalcDistance(i, j, caseCible, numRoute, distIni, matrice);
+                        int retour = sousCalcDistance(i, j, caseCible, numRoute, distIni, matrice, listeMini);
+                        listeMini[i][j] = true;
                         if (retour > 0 && retour < distanceMini){
                             distanceMini = retour;
+                            for (int p = 0; p < NB_LIGNES; p++) {
+                                for (int t = 0; t < NB_COLONNES; t++) {
+                                    liste[t][p] = listeMini[t][p];
+                                }
+                            }
                         }
                     }
                 }
                 if (i + 1 < NB_COLONNES){
                     if (matrice[i + 1][j].type == caseSource.type && matrice[i + 1][j].numeroType == caseSource.numeroType){
-                        int retour = sousCalcDistance(i, j, caseCible, numRoute, distIni, matrice);
+                        int retour = sousCalcDistance(i, j, caseCible, numRoute, distIni, matrice, listeMini);
+                        listeMini[i][j] = true;
                         if (retour > 0 && retour < distanceMini){
                             distanceMini = retour;
+                            for (int p = 0; p < NB_LIGNES; p++) {
+                                for (int t = 0; t < NB_COLONNES; t++) {
+                                    liste[t][p] = listeMini[t][p];
+                                }
+                            }
                         }
                     }
                 }
             }
         }
     }
+
     if (distanceMini < INT_MAX){//si on eu un résultat
         return distanceMini;
     }
     else{
         return -1;
     }
+
 }
 
 // Pour le calcul de la distance
 // entree : ligneEnCours, colonneEnCours, caseCible, numRoute, distanceEnCours
-int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int distanceEnCours, Case matrice[NB_COLONNES][NB_LIGNES]){
+int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int distanceEnCours, Case matrice[NB_COLONNES][NB_LIGNES], bool liste[NB_COLONNES][NB_LIGNES]){
 
     // on marque la case en cours de traitement
     matrice[colonne][ligne].libre = false;
+//    liste[colonne][ligne] = true;
     // si un case a proximite correspondant a la destination, on retourne la distance calculee
     if (ligne - 1 >=0){
         if (matrice[colonne][ligne - 1].type == caseCible.type && matrice[colonne][ligne - 1].numeroType == caseCible.numeroType){
+            liste[colonne][ligne] = true;
             return distanceEnCours + 1;
         }
     }
     if (ligne + 1 < NB_LIGNES){
         if (matrice[colonne][ligne + 1].type == caseCible.type && matrice[colonne][ligne + 1].numeroType == caseCible.numeroType){
+            liste[colonne][ligne] = true;
             return distanceEnCours + 1;
         }
     }
 
     if (colonne - 1 >= 0){
         if (matrice[colonne - 1][ligne].type == caseCible.type && matrice[colonne - 1][ligne].numeroType == caseCible.numeroType){
+            liste[colonne][ligne] = true;
             return distanceEnCours + 1;
         }
     }
     if (colonne + 1 < NB_COLONNES ){
         if (matrice[colonne + 1][ligne].type == caseCible.type && matrice[colonne + 1][ligne].numeroType == caseCible.numeroType){
+            liste[colonne][ligne] = true;
             return distanceEnCours + 1;
         }
     }
@@ -884,35 +926,56 @@ int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int d
     int dist = INT_MAX;
     if (ligne - 1 >=0){
         if (matrice[colonne][ligne - 1].type == ROUTE && matrice[colonne][ligne - 1].numeroConnexeEau == numRoute && matrice[colonne][ligne - 1].libre == true){
-            int retour = sousCalcDistance(colonne, ligne - 1, caseCible, numRoute, distanceEnCours + 1, matrice);
+
+            int retour = sousCalcDistance(colonne, ligne - 1, caseCible, numRoute, distanceEnCours + 1, matrice, liste);
+            liste[colonne][ligne] = true;
             if (retour > 0 && retour < dist){
                 dist = retour;
+            }
+            else{
+                liste[colonne][ligne - 1] = false;
             }
         }
     }
     if (ligne + 1 < NB_LIGNES){
         if (matrice[colonne][ligne + 1].type == ROUTE && matrice[colonne][ligne + 1].numeroConnexeEau == numRoute && matrice[colonne][ligne + 1].libre == true){
-            int retour = sousCalcDistance(colonne, ligne + 1, caseCible, numRoute, distanceEnCours + 1, matrice);
+
+            int retour = sousCalcDistance(colonne, ligne + 1, caseCible, numRoute, distanceEnCours + 1, matrice, liste);
+            liste[colonne][ligne] = true;
             if (retour > 0 && retour < dist){
                 dist = retour;
+            }
+            else{
+                liste[colonne][ligne + 1] = false;
             }
         }
     }
     if (colonne - 1 >=0 ){
         if (matrice[colonne - 1][ligne].type == ROUTE && matrice[colonne - 1][ligne].numeroConnexeEau == numRoute && matrice[colonne - 1][ligne].libre == true){
-            int retour = sousCalcDistance(colonne - 1, ligne, caseCible, numRoute, distanceEnCours + 1, matrice);
+
+            int retour = sousCalcDistance(colonne - 1, ligne, caseCible, numRoute, distanceEnCours + 1, matrice, liste);
+            liste[colonne][ligne] = true;
             if (retour > 0 && retour < dist){
                 dist = retour;
+            }
+            else{
+                liste[colonne - 1][ligne] = false;
             }
         }
     }
     if (colonne + 1 < NB_COLONNES ){
         if (matrice[colonne + 1][ligne].type == ROUTE && matrice[colonne + 1][ligne].numeroConnexeEau == numRoute && matrice[colonne + 1][ligne].libre == true){
-            int retour = sousCalcDistance(colonne + 1, ligne, caseCible, numRoute, distanceEnCours + 1, matrice);
+
+            int retour = sousCalcDistance(colonne + 1, ligne, caseCible, numRoute, distanceEnCours + 1, matrice, liste);
+            liste[colonne][ligne] = true;
             if (retour > 0 && retour < dist){
                 dist = retour;
             }
+            else{
+                liste[colonne + 1][ligne] = false;
+            }
         }
+
     }
     // si les chemins n'ont pas abouti, on sort et on retourne -1
     if (dist < INT_MAX){//si on eu un résultat
@@ -939,32 +1002,41 @@ void calculDistributionEau(ECECITY* ececity, int nbMaxRoute, Compteur c){
         ececity->tabHabitations[i].capaciteHabEauEnCours = 0;
         ececity->tabHabitations[i].distance = 0;
     }
-//- pour chaque route on recherche la liste des habitations sur cette route
+    // reinitialisation de la matrice des chemins les plus courts
+    for (int p = 0; p < NB_LIGNES; p++) {
+        for (int n = 0; n < NB_COLONNES; n++) {
+            ececity->tabCase[n][p].estUtileEau = false;
+        }
+    }
+    //- pour chaque route on recherche la liste des habitations sur cette route
     for (int r = 1; r <= nbMaxRoute; r++){
         // calcul de la liste des habitations sur la route r
         int listeMaison[MAX_OBJET];
         rechercheHabitationRoute(listeMaison, r, ececity->tabCase, 1);
 
+        cheminEau listeOrdonneeHabitation[MAX_OBJET];
+        int habiDernier = 0;
         //   - pour chaque chateauEau i (parcourt du numero tabChateauEau) sur cette route r, on reparti l eau
         for (int i = 0; i < c.compteurChateaux; i++){
             if(ececity->tabChateauEau[i].numeroConnexeEau == r){
 
                 // creer un tableau de la liste ordonnee des maisons sur cette route par rapport a leur distance a ce chateau d'eau
-                Case listeOrdonneeHabitation[MAX_OBJET];
-                int habiDernier = 0;
+
+
                 Case caseDepart;
                 caseDepart.type = CHATEAUDEAU;
                 caseDepart.numeroType = i + 1;
+                bool lst[NB_COLONNES][NB_LIGNES];
 
                 // pour chaque habitation h de listeMaison sur la route
                 for (int h = 0; h < c.compteurMaisons; h++){
-                    if (listeMaison[h] == 1){ // la maison est sur le reseau
+                    if (listeMaison[h] == 1){ // la maison est sur le route
                         Case caseArrivee;
                         caseArrivee.type = ececity->tabHabitations[h].type;
                         caseArrivee.numeroType = ececity->tabHabitations[h].numeroType;
 
                         // calcul de la distance de l habitation au chateau d eau
-                        int d = calculDistance (caseDepart, caseArrivee, r, ececity->tabCase);
+                        int d = calculDistance (caseDepart, caseArrivee, r, ececity->tabCase, lst);
 
                         // positionner l'habitation en cours dans la file
                         if (d >= 0){
@@ -980,15 +1052,29 @@ void calculDistributionEau(ECECITY* ececity, int nbMaxRoute, Compteur c){
                                 // decaler les case suivantes
                                 for (int z = habiDernier - 1; z >= k; z--){  // z indiceposition
 
-                                    listeOrdonneeHabitation[z+1].type = listeOrdonneeHabitation[z].type;
-                                    listeOrdonneeHabitation[z+1].numeroType = listeOrdonneeHabitation[z].numeroType;
+                                    listeOrdonneeHabitation[z+1].sourceType = listeOrdonneeHabitation[z].sourceType;
+                                    listeOrdonneeHabitation[z+1].sourceNumType = listeOrdonneeHabitation[z].sourceNumType;
+                                    listeOrdonneeHabitation[z+1].destType = listeOrdonneeHabitation[z].destType;
+                                    listeOrdonneeHabitation[z+1].destNumType = listeOrdonneeHabitation[z].destNumType;
                                     listeOrdonneeHabitation[z+1].distance = listeOrdonneeHabitation[z].distance;
+                                    for (int p = 0; p < NB_LIGNES; p++) {
+                                        for (int n = 0; n < NB_COLONNES; n++) {
+                                            listeOrdonneeHabitation[z+1].chemin[n][p] = listeOrdonneeHabitation[z].chemin[n][p];
+                                        }
+                                    }
                                 }
                             }
                             // affecter la cellule
-                            listeOrdonneeHabitation[k].type = ececity->tabHabitations[h].type;
-                            listeOrdonneeHabitation[k].numeroType = ececity->tabHabitations[h].numeroType;
+                            listeOrdonneeHabitation[k].sourceType = caseDepart.type;
+                            listeOrdonneeHabitation[k].sourceNumType = caseDepart.numeroType;
+                            listeOrdonneeHabitation[k].destType = ececity->tabHabitations[h].type;
+                            listeOrdonneeHabitation[k].destNumType = ececity->tabHabitations[h].numeroType;
                             listeOrdonneeHabitation[k].distance = d;
+                            for (int p = 0; p < NB_LIGNES; p++) {
+                                for (int n = 0; n < NB_COLONNES; n++) {
+                                    listeOrdonneeHabitation[k].chemin[n][p] = lst[n][p];
+                                }
+                            }
                             habiDernier = habiDernier  + 1;
                         }
 
@@ -996,22 +1082,50 @@ void calculDistributionEau(ECECITY* ececity, int nbMaxRoute, Compteur c){
 
                 }
 
-                // apres avoir parcouru toutes les maisons, la liste ordonnee est complete
-                // calcul de la repartition d'eau par maison (on remplit la maison la plus proche, puis la suivante, ... jusqu'a epuisement des ressource du chateau d'eau
-
-                for (int j = 0; j < habiDernier; j++){
-                    if (ececity->tabChateauEau[i].capaciteRestante >= ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteInitiale - ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteHabEauEnCours){ // le chateau a plus d'eau que d'habitants
-                        ececity->tabChateauEau[i].capaciteRestante = ececity->tabChateauEau[i].capaciteRestante - (ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteInitiale - ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteHabEauEnCours);
-                        ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteHabEauEnCours = ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteInitiale;
-                    } else { // le chateau a moins d'eau que d'habitants
-                        ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteHabEauEnCours = ececity->tabHabitations[listeOrdonneeHabitation[j].numeroType - 1].capaciteHabEauEnCours + ececity->tabChateauEau[i].capaciteRestante;
-                        ececity->tabChateauEau[i].capaciteRestante = 0;
-                    }
-                }
             }
+        }
+
+        // apres avoir parcouru toutes les maisons, la liste ordonnee est complete
+        // calcul de la repartition d'eau par maison (on remplit la maison la plus proche, puis la suivante, ... jusqu'a epuisement des ressource du chateau d'eau
+        int d = -1;
+        for (int j = 0; j < habiDernier; j++){
+            if (ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteInitiale > ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteHabEauEnCours){
+                if (ececity->tabChateauEau[listeOrdonneeHabitation[j].sourceNumType - 1].capaciteRestante >= ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteInitiale - ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteHabEauEnCours){ // le chateau a plus d'eau que d'habitants
+                    ececity->tabChateauEau[listeOrdonneeHabitation[j].sourceNumType - 1].capaciteRestante = ececity->tabChateauEau[listeOrdonneeHabitation[j].sourceNumType - 1].capaciteRestante - (ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteInitiale - ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteHabEauEnCours);
+                    ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteHabEauEnCours = ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteInitiale;
+                    // stockage du chemin le plus court dans la matrice
+                    for (int p = 0; p < NB_LIGNES; p++) {
+                        for (int n = 0; n < NB_COLONNES; n++) {
+                            if (listeOrdonneeHabitation[j].chemin[n][p]){
+                                ececity->tabCase[n][p].estUtileEau = true;
+                            }
+                        }
+                    }
+                } else { // le chateau a moins d'eau que d'habitants
+                    if (ececity->tabChateauEau[listeOrdonneeHabitation[j].sourceNumType - 1].capaciteRestante > 0){
+                        ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteHabEauEnCours = ececity->tabHabitations[listeOrdonneeHabitation[j].destNumType - 1].capaciteHabEauEnCours + ececity->tabChateauEau[listeOrdonneeHabitation[j].sourceNumType - 1].capaciteRestante;
+                        ececity->tabChateauEau[listeOrdonneeHabitation[j].sourceNumType - 1].capaciteRestante = 0;
+                        // stockage du chemin le plus court dans la matrice
+                        for (int p = 0; p < NB_LIGNES; p++) {
+                            for (int n = 0; n < NB_COLONNES; n++) {
+                                if (listeOrdonneeHabitation[j].chemin[n][p]){
+                                    ececity->tabCase[n][p].estUtileEau = true;
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+
+            }
+
         }
     }
 }
+
+
+
 // fonction qui calcule la repartition d electricite entre les maisons de chaque route
 // pour chaque route on calcule la capacite cumulee des centrales. On repartit ensuite l electricite en commencant par les maisons deja pleines en eau pour eviter qu elles regressent. on repartie le reste de la capacite en elec indifferemment selon leur numero d ordre.
 // si la capacite des centrales ne couvre pas toutes les maisons pleines en eau, des maisons risquent donc de regresser. on cherche a minimiser l impact de ces regressions sur le nb d habitants : on va donc d abord repartir l electricite sur les grosses habitations (qui perdent le plus d habitants en cas de regression), puis les plus petites, ...
@@ -1026,7 +1140,12 @@ void calculDistributionElec(ECECITY* ececity, int nbMaxRoute, Compteur c){
     for (int i = 0; i < c.compteurCentrales; i++){
         ececity->tabCentrale[i].capaciteRestante = c.CapaciteCentrale;
     }
-
+    // reinitialisation de la matrice des chemins les plus courts
+    for (int p = 0; p < NB_LIGNES; p++) {
+        for (int n = 0; n < NB_COLONNES; n++) {
+            ececity->tabCase[n][p].estUtileElec = false;
+        }
+    }
 //- pour chaque route
     for (int r = 0; r <= nbMaxRoute; r++){
         // 1 - compter les centrales sur la route pour faire la somme des capacités.
@@ -1053,7 +1172,7 @@ void calculDistributionElec(ECECITY* ececity, int nbMaxRoute, Compteur c){
         int capaDistribuee = 0;
         // si 1 >= 2 (capa centrales > besoin des habitations pleines en eau)
         if (capaciteTotaleCentraleRoute >= nbHabitantsHabitCompletesEau){
-            // on replit d abord en elec les maisons deja pleines en eau
+            // on remplit d abord en elec les maisons deja pleines en eau
             for (int h = 0; h < c.compteurMaisons; h++){
                 if (listeMaison[h] == 1 && ececity->tabHabitations[h].capaciteHabEauEnCours == ececity->tabHabitations[h].capaciteInitiale){ // la maison numero h est sur la route et est complete en eau
                     ececity->tabHabitations[h].capaciteHabElecEnCours = ececity->tabHabitations[h].capaciteInitiale;
@@ -1138,7 +1257,37 @@ void calculDistributionElec(ECECITY* ececity, int nbMaxRoute, Compteur c){
             }
         }
 
+        // calcul cumule des chemins entre les centrales qui distribuent et les maisons qui recoivent
+        for (int i = 0; i < c.compteurCentrales; i++){
+            if (ececity->tabCentrale[i].numeroConnexeElec == r && ececity->tabCentrale[i].capaciteRestante < c.CapaciteCentrale){ // pour chaque centrale sur la route qui distribue
+                for (int h = 0; h < c.compteurMaisons; h++){
+                    if (listeMaison[h] == 1 && ececity->tabHabitations[h].capaciteHabElecEnCours == ececity->tabHabitations[h].capaciteInitiale){ // pour chaque habitation alimentee en elec sur la route
+                        // stockage du chemin entre la centrale et la maison
+                        Case caseDepart;
+                        caseDepart.type = CENTRALE;
+                        caseDepart.numeroType = i + 1;
+                        bool lst[NB_COLONNES][NB_LIGNES];
+                        Case caseArrivee;
+                        caseArrivee.type = ececity->tabHabitations[h].type;
+                        caseArrivee.numeroType = ececity->tabHabitations[h].numeroType;
 
+                        // recuperation des cases du chemin le plus court
+                        int d = calculDistance (caseDepart, caseArrivee, r, ececity->tabCase, lst);
+                        if (d > 0){
+                            // stockage du chemin le plus court dans la matrice
+                            for (int p = 0; p < NB_LIGNES; p++) {
+                                for (int n = 0; n < NB_COLONNES; n++) {
+                                    if (lst[n][p]){
+                                        ececity->tabCase[n][p].estUtileElec = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
     }
 }
 
@@ -1158,6 +1307,7 @@ void calculCommunisme ( ECECITY* ececity, int maisonTraitee, Compteur c){
     if(ececity->tabHabitations[maisonTraitee].capaciteHabEauEnCours < ececity->tabHabitations[maisonTraitee].capaciteInitiale || ececity->tabHabitations[maisonTraitee].capaciteHabElecEnCours < ececity->tabHabitations[maisonTraitee].capaciteInitiale){
         // regression de l habitation
         diminuerStadeMaison(ececity,maisonTraitee);
+        // FAIRE affichage nouvelle maison (Thomas)
         int nbmaxRoutesEau = calculRoute(ececity, 1);
         int nbmaxRoutesElec = calculRoute(ececity, 2);
         // recalcul de la repartition en eau et elec suite a regression
@@ -1178,6 +1328,7 @@ void calculCommunisme ( ECECITY* ececity, int maisonTraitee, Compteur c){
             calculDistributionEau(ececity, nbmaxRoutesEau,c);
             calculDistributionElec(ececity, nbmaxRoutesElec, c);
         }
+        // FAIRE affichage nouvelle maison (Thomas)
 
     }
 
@@ -1187,6 +1338,7 @@ void calculCapitalisme ( ECECITY* ececity, int maisonTraitee, Compteur c){
     // on fait progresser l habitation et on refait un calcul de repartition de l eau et elec
 
     augmenterStadeMaison(ececity, maisonTraitee);
+    // FAIRE affichage nouvelle maison (Thomas)
     int nbmaxRoutesEau = calculRoute(ececity, 1);
     int nbmaxRoutesElec = calculRoute(ececity, 2);
 
@@ -1196,6 +1348,7 @@ void calculCapitalisme ( ECECITY* ececity, int maisonTraitee, Compteur c){
     // si l habitation n est pas pleine en eau et elec, elle ne peut rester a ce stade donc on la remet a son stade initial
     if(ececity->tabHabitations[maisonTraitee].capaciteHabEauEnCours < ececity->tabHabitations[maisonTraitee].capaciteInitiale || ececity->tabHabitations[maisonTraitee].capaciteHabElecEnCours < ececity->tabHabitations[maisonTraitee].capaciteInitiale){
         diminuerStadeMaison(ececity,maisonTraitee);
+        // FAIRE affichage nouvelle maison (Thomas)
         calculDistributionEau(ececity, nbmaxRoutesEau,c);
         calculDistributionElec(ececity, nbmaxRoutesElec, c);
     }
