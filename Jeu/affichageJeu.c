@@ -74,6 +74,11 @@ void AffichageGamePlay(ECECITY* ececity){
                     (int) ececity->tabImage[image].format.y, WHITE);
     }
 
+    for (int image = BOUTONEAU; image <= BOUTONEXIT; ++image) {
+        DrawTexture(ececity->tabImage[image].TextureImage, (int) ececity->tabImage[image].format.x,
+                    (int) ececity->tabImage[image].format.y, WHITE);
+    }
+
     DrawRectangleLines(1575, 20, MeasureText("Time: %dh %dmin %dsec", 20) + 100,
                        MeasureTextEx(ececity->write.font, "Time: %dh %dmin %dsec", 20, 0).y + 40, WHITE);
     DrawRectangleLines(1100, 20, MeasureText("Argent Restant: %d", 20) + 125,
@@ -737,7 +742,7 @@ void AfficherBouton(ECECITY *ececity) {
             break;
         case Jeu:
             NB_BOUTON = NB_BOUTON_JEU;
-            ececity->write.fontSize = 15;
+            ececity->write.fontSize = 20;
             break;
 
         case END:
@@ -777,7 +782,7 @@ void AfficherBouton(ECECITY *ececity) {
                             (float) (ececity->write.fontSize) / 2),
                      ececity->write.fontSize, (CheckCollisionPointRec(ececity->souris.position,
                                                                       ececity->tabBouton[ececity->currentProcess][bouton].recBouton))
-                                              ? MAGENTA : RED);
+                                              ? RED : WHITE);
         }
     }
 }
