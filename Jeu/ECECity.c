@@ -12,6 +12,7 @@
 
 
 void MainBoucle(ECECITY* ececity){
+    InitTOUT(ececity);
     while(ececity->IsCodeRunning){
         switch (ececity->currentProcess) {
             case MENU:
@@ -222,18 +223,15 @@ void Gameplay(ECECITY* ececity){
     defineTypeCase(ececity);
     defineCurrentJeuProcess(ececity);
 
-    if(ececity->currentJeuProcess == GAMEOVER){
-        ececity->IsCodeRunning = false;
-    }
 
     switch (ececity->currentJeuProcess) {
         case NONE:
-        case GAMEOVER:
         case NIVEAU0:
         case NIVEAU1:
         case NIVEAU2:
+        case INFO:
             for (int boutonJeu = 0; boutonJeu < NB_BOUTON_JEU; ++boutonJeu) {
-                if (boutonJeu <= BOUTON_NIVEAU_2 && boutonJeu >= BOUTON_OUTIL){
+                if (boutonJeu <= BOUTON_INFOCASE && boutonJeu >= BOUTON_OUTIL){
                     ececity->tabBouton[Jeu][boutonJeu].actif = true;
                 }
                 else{
@@ -247,7 +245,7 @@ void Gameplay(ECECITY* ececity){
         case CONSTRUCTIONCHATEAUDEAU:
         case CONSTRUCTIONCENTRALE:
             for (int boutonJeu = 0; boutonJeu < NB_BOUTON_JEU; ++boutonJeu) {
-                if (boutonJeu <= BOUTON_NIVEAU_2){
+                if (boutonJeu <= BOUTON_INFOCASE){
                     ececity->tabBouton[Jeu][boutonJeu].actif = true;
                 }
                 else{
@@ -275,6 +273,15 @@ void Gameplay(ECECITY* ececity){
                 }
             }
             break;
+        case GAMEOVER:
+            ececity->currentProcess = END;
+            for (int boutonJeu = 0; boutonJeu < NB_BOUTON_JEU; ++boutonJeu) {
+                ececity->tabBouton[Jeu][boutonJeu].actif = false;
+            }
+            for (int boutonFin = 0; boutonFin < NB_BOUTON_FIN; ++boutonFin) {
+                ececity->tabBouton[END][boutonFin].actif = true;
+            }
+            break;
         default:
             break;
     }
@@ -283,9 +290,7 @@ void Gameplay(ECECITY* ececity){
 }
 
 void GameOver(ECECITY* ececity){
-    ECECITY Newececity = {0};
     AffichageGameOver(ececity);
-
     ececity->souris.position = GetMousePosition();
     for (int bouton = 0; bouton < NB_BOUTON_FIN; ++bouton) {
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)
@@ -293,7 +298,9 @@ void GameOver(ECECITY* ececity){
             && ececity->tabBouton[END][bouton].actif == true) {
             switch (bouton) {
                 case BOUTON_REJOUER:
-                    InitTOUT(&Newececity);
+                    ARRETERTOUT(ececity);
+                    InitTOUT(ececity);
+                    ececity->currentProcess = ChoixMode;
                     break;
                 case BOUTON_EXIT_FIN:
                     if (CheckCollisionPointRec(ececity->souris.position,
@@ -552,7 +559,7 @@ void defineCurrentJeuProcess(ECECITY* ececity){
                         }
                         break;
                     case BOUTON_OUTIL:
-                        if(ececity->currentJeuProcess == CONSTRUCTION){
+                        if(ececity->currentJeuProcess >= CONSTRUCTION && ececity->currentJeuProcess <= CONSTRUCTIONCENTRALE){
                             ececity->currentJeuProcess = NONE;
                         }
                         else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_OUTIL].recBouton)){
@@ -594,6 +601,14 @@ void defineCurrentJeuProcess(ECECITY* ececity){
                         }
                         else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_NIVEAU_2].recBouton)){
                             ececity->currentJeuProcess = NIVEAU2;
+                        }
+                        break;
+                    case BOUTON_INFOCASE:
+                        if(ececity->currentJeuProcess == INFO){
+                            ececity->currentJeuProcess = NONE;
+                        }
+                        else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_INFOCASE].recBouton)){
+                            ececity->currentJeuProcess = INFO;
                         }
                         break;
                     case BOUTON_SAUVEGARDE:

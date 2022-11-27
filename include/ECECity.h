@@ -22,7 +22,6 @@ typedef enum {
     MENU,
     ChoixMode,
     Jeu,
-    Outil,
     END,
     NB_PROCESS,
 } GameProcess;
@@ -34,6 +33,7 @@ typedef enum {
     NIVEAU0,
     NIVEAU1,
     NIVEAU2,
+    INFO,
     CONSTRUCTION,
     CONSTRUCTIONROUTE,
     CONSTRUCTIONMAISON,
@@ -77,7 +77,6 @@ typedef enum {
     IMAGEARGENT,
     IMAGEPOPULATION,
     IMAGEOUTIL,
-    IMAGEROUTE,
     IMAGECHATEAUEAU,
     IMAGECENTRALEELEC,
     IMAGETERRAINVAGUE,
@@ -86,12 +85,12 @@ typedef enum {
     IMAGEIMMEUBLE,
     IMAGEGRATTECIEL,
     IMAGERUINE,
-    BOUTONEAU,
-    BOUTONELEC,
-    BOUTONROUTE,
-    BOUTONMAISON,
-    BOUTONPAUSE,
-    BOUTONEXIT,
+    IMAGEBOUTONEAU,
+    IMAGEBOUTONELEC,
+    IMAGEBOUTONROUTE,
+    IMAGEBOUTONMAISON,
+    IMAGEBOUTONPAUSE,
+    IMAGEBOUTONEXIT,
     IMAGEFIN,
     NB_IMAGES,
 
@@ -125,7 +124,6 @@ typedef enum {
 
 
 typedef enum{
-
     BOUTON_ROUTE,
     BOUTON_MAISON,
     BOUTON_CHATEAUDEAU,
@@ -136,6 +134,7 @@ typedef enum{
     BOUTON_NIVEAU_0,
     BOUTON_NIVEAU_1,
     BOUTON_NIVEAU_2,
+    BOUTON_INFOCASE,
     BOUTON_SAUVEGARDE,
     BOUTON_CONTINUER,
     BOUTON_EXIT_PAUSE,
@@ -174,6 +173,7 @@ static const char *boutonJeuText[] = {
         "NIVEAU 0\0",
         "NIVEAU -1\0",
         "NIVEAU -2\0",
+        "INFO CASE\0",
         "Sauvegarde\0",
         "Continuer\0",
         "EXIT\0",

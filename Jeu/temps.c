@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "Graphe.h"
 
 
 void timerCounter(ECECITY* ececity){
@@ -24,12 +25,12 @@ void resetTimer(ECECITY* ececity){
 
 void faireUneSauvegarde (ECECITY* ececity, FILE* text) {
 
-    fwrite(&ececity->graphe,sizeof(Graphe),1,text);
     fwrite(&ececity->jeu.typeJeu,sizeof(int),1,text);
     fwrite(&ececity->jeu.typeCalcul,sizeof(int),1,text);
     fwrite(&ececity->currentProcess,sizeof(int),1,text);
     fwrite(&ececity->compteur,sizeof (Compteur),1,text);
     fwrite(&ececity->time,sizeof(Time),1, text);
+    fwrite(&ececity->graphe->ordre,sizeof(int),1,text);
 
     if(ececity->compteur.compteurMaisons > 0){
         fwrite(&ececity->tabHabitations,sizeof(Case),ececity->compteur.compteurMaisons,text);
@@ -77,15 +78,24 @@ void ecraserSauvegarde(ECECITY* ececity,char* nomFichier){
 
 void faireUneRecupSauvegarde (ECECITY* ececity, FILE* text) {
 
-    fread(&ececity->graphe,sizeof(Graphe),1,text);
+    ececity->tabHabitations = (Case *) malloc(ececity->compteur.compteurMaisons * sizeof(Case));
+    ececity->tabChateauEau = (Case *) malloc(ececity->compteur.compteurChateaux * sizeof(Case));
+    ececity->tabCentrale = (Case *) malloc(ececity->compteur.compteurCentrales * sizeof(Case));
+
+    ececity->graphe = (Graphe *) malloc(sizeof(Graphe));
+    ececity->graphe->pSommet = (pSommet *) malloc(sizeof(struct Sommet));
+
     fread(&ececity->jeu.typeJeu,sizeof(int),1,text);
     fread(&ececity->jeu.typeCalcul,sizeof(int),1,text);
     fread(&ececity->currentProcess,sizeof(int),1,text);
     fread(&ececity->compteur,sizeof (Compteur),1,text);
     fread(&ececity->time,sizeof(Time),1, text);
+    fread(&ececity->graphe->ordre,sizeof(int),1,text);
+
     ececity->tabHabitations = (Case *) malloc(ececity->compteur.compteurMaisons * sizeof(Case));
     ececity->tabChateauEau = (Case *) malloc(ececity->compteur.compteurChateaux * sizeof(Case));
     ececity->tabCentrale = (Case *) malloc(ececity->compteur.compteurCentrales * sizeof(Case));
+
     if(ececity->compteur.compteurMaisons > 0){
         fread(&ececity->tabHabitations[ececity->compteur.compteurMaisons],sizeof(Case),ececity->compteur.compteurMaisons,text);
     }

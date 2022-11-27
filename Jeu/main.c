@@ -8,8 +8,6 @@ int main(void)
 
     ECECITY ececity = {0};
 
-    InitTOUT(&ececity);
-
     MainBoucle(&ececity);
 
     ARRETERTOUT(&ececity);

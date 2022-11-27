@@ -81,18 +81,10 @@ void AffichageGamePlay(ECECITY* ececity) {
                     (int) ececity->tabImage[image].format.y, WHITE);
     }
 
-    for (int image = BOUTONPAUSE; image < IMAGEFIN; ++image) {
+    for (int image = IMAGEBOUTONPAUSE; image < IMAGEFIN; ++image) {
         DrawTexture(ececity->tabImage[image].TextureImage, (int) ececity->tabImage[image].format.x,
                     (int) ececity->tabImage[image].format.y , WHITE);
     }
-   for (int boutonJeu = 0; boutonJeu < NB_BOUTON_JEU; ++boutonJeu){
-        if (ececity->tabBouton[Jeu][boutonJeu].actif == true  && CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_OUTIL].recBouton)){
-           for (int image = BOUTONEAU; image < BOUTONPAUSE; ++image) {
-               DrawTexture(ececity->tabImage[image].TextureImage, (int) ececity->tabImage[image].format.x,
-                           (int) ececity->tabImage[image].format.y, WHITE);
-           }
-       }
-     }
 
     DrawRectangleLines(1575, 20, MeasureText("Time: %dh %dmin %dsec", 20) + 100,
                        MeasureTextEx(ececity->write.font, "Time: %dh %dmin %dsec", 20, 0).y + 40, WHITE);
@@ -131,6 +123,7 @@ void AffichageGamePlay(ECECITY* ececity) {
                             case GAMEOVER:
                             case SAUVEGARDE:
                             case CONSTRUCTION:
+                            case INFO:
                                 colorRect = BLANK;
                                 break;
 
@@ -633,9 +626,6 @@ void AffichageGamePlay(ECECITY* ececity) {
     }
 
 
-    if (ececity->currentJeuProcess != GAMEPAUSE) {
-        AfficherCaseInfo(ececity);
-    }
 
     if(ececity->currentJeuProcess == SAUVEGARDE || ececity->currentJeuProcess == GAMEPAUSE){
         DrawRectangle(600, 100, 600, 850, BLACK);
@@ -647,6 +637,16 @@ void AffichageGamePlay(ECECITY* ececity) {
         }
     }
 
+    if(ececity->currentJeuProcess >= CONSTRUCTION && ececity->currentJeuProcess <= CONSTRUCTIONCENTRALE){
+        for (int image = IMAGEBOUTONEAU; image < IMAGEBOUTONPAUSE; ++image) {
+            DrawTexture(ececity->tabImage[image].TextureImage, (int) ececity->tabImage[image].format.x,
+                        (int) ececity->tabImage[image].format.y, WHITE);
+        }
+    }
+
+    if(ececity->currentJeuProcess == INFO){
+        AfficherCaseInfo(ececity);
+    }
 
     AfficherBouton(ececity);
 
@@ -656,9 +656,6 @@ void AffichageGamePlay(ECECITY* ececity) {
 
 
 void AfficherIso(ECECITY *ececity) {
-    DrawText(TextFormat("xsouris:%.2f , ysouris:%.2f", ececity->souris.position.x, ececity->souris.position.y),
-             10, 85, 30, LIME);
-
 
     Vector2 positionDebut = {0, 0};
     Vector2 positionFin = {0, 0};
@@ -858,6 +855,12 @@ void AfficherBouton(ECECITY *ececity) {
                                                          ececity->tabBouton[MENU][bouton].recBouton)) ? SKYBLUE
                                                                                                       : LIGHTGRAY);
             }
+            if (ececity->currentProcess == Jeu && (bouton >= BOUTON_NIVEAU_0 && bouton <= BOUTON_NIVEAU_2)) {
+                DrawRectangleRec(ececity->tabBouton[Jeu][bouton].recBouton,
+                                 (CheckCollisionPointRec(ececity->souris.position,
+                                                         ececity->tabBouton[Jeu][bouton].recBouton)) ? SKYBLUE
+                                                                                                      : LIGHTGRAY);
+            }
             DrawRectangleLines((int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.x,
                                (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.y,
                                (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.width,
@@ -886,12 +889,10 @@ void AffichageGameOver(ECECITY* ececity){
 
     ClearBackground(RAYWHITE);
 
+    DrawTexture(ececity->tabImage[IMAGEFIN].TextureImage, (int)ececity->tabImage[IMAGEFIN].format.x, (int)ececity->tabImage[IMAGEFIN].format.y, WHITE);
+
     if(ececity->compteur.soldeBanque <= 0 && ececity->compteur.nbHabitantsTotal ==0) {
-
-        DrawTexture(ececity->tabImage[IMAGEFIN].TextureImage, (int)ececity->tabImage[IMAGEFIN].format.x, (int)ececity->tabImage[IMAGEFIN].format.y, WHITE);
         DrawText("Vous êtes en faillite!", 200,200, 50, RED);
-
-
     }
     AfficherBouton(ececity);
 
