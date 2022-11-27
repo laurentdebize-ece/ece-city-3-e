@@ -6,7 +6,7 @@
 int main(void)
 {
 
-    ECECITY ececity;
+    ECECITY ececity = {0};
 
     InitTOUT(&ececity);
 

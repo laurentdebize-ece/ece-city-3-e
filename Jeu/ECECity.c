@@ -20,12 +20,10 @@ void MainBoucle(ECECITY* ececity){
             case ChoixMode :
                 ChoixModeJeu(ececity);
                 break;
-
             case Jeu:
                 Gameplay(ececity);
                 break;
             case END:
-                ececity->IsCodeRunning = false;
                 GameOver(ececity);
                 break;
             default:
@@ -134,6 +132,9 @@ void Menu(ECECITY* ececity) {
 
 void ChoixModeJeu(ECECITY* ececity) {
 
+    int pause = 0;
+
+    MusicMenu(ececity,&pause);
     ececity->souris.position = GetMousePosition();
     AffichageChoixMode(ececity);
     for (int bouton = 0; bouton < NB_BOUTON_CHOIX; ++bouton) {
@@ -199,7 +200,18 @@ void ChoixModeJeu(ECECITY* ececity) {
 
 void Gameplay(ECECITY* ececity){
 
+    int pause = 0;
+    MusicGameplay(ececity,&pause);
     ececity->souris.position = GetMousePosition();
+    if(ececity->compteur.soldeBanque <= ececity->prix.prixTerrainVague && ececity->compteur.nbHabitantsTotal == 0){
+        ececity->currentProcess = END;
+        for (int boutonJeu = 0; boutonJeu < NB_BOUTON_JEU; ++boutonJeu) {
+            ececity->tabBouton[Jeu][boutonJeu].actif = false;
+        }
+        for (int boutonFin = 0; boutonFin < NB_BOUTON_FIN; ++boutonFin) {
+            ececity->tabBouton[END][boutonFin].actif = true;
+        }
+    }
     if (ececity->currentJeuProcess != GAMEPAUSE && ececity->currentJeuProcess != SAUVEGARDE) {
         timerCounter(ececity);
         calculHabitant(ececity);
@@ -271,15 +283,29 @@ void Gameplay(ECECITY* ececity){
 }
 
 void GameOver(ECECITY* ececity){
+    ECECITY Newececity = {0};
+    AffichageGameOver(ececity);
 
-   if(ececity->compteur.soldeBanque <= 0 && ececity->compteur.nbHabitantsTotal ==0) {
-
-       DrawText("Vous êtes en faillite", 200,200, 20, WHITE );
-       DrawTexture(ececity->tabImage[IMAGEFIN].TextureImage, (int)ececity->tabImage[IMAGEFIN].format.x, (int)ececity->tabImage[IMAGEFIN].format.y, WHITE);
-
-   }
-
-
+    ececity->souris.position = GetMousePosition();
+    for (int bouton = 0; bouton < NB_BOUTON_FIN; ++bouton) {
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)
+            && CheckCollisionPointRec(ececity->souris.position, ececity->tabBouton[END][bouton].recBouton)
+            && ececity->tabBouton[END][bouton].actif == true) {
+            switch (bouton) {
+                case BOUTON_REJOUER:
+                    InitTOUT(&Newececity);
+                    break;
+                case BOUTON_EXIT_FIN:
+                    if (CheckCollisionPointRec(ececity->souris.position,
+                                                      ececity->tabBouton[END][BOUTON_EXIT_FIN].recBouton)) {
+                        ececity->IsCodeRunning = false;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }
 
 void calculTimerHabitations(ECECITY* ececity){
@@ -589,7 +615,7 @@ void defineCurrentJeuProcess(ECECITY* ececity){
                         if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE1].recBouton)){
                             text = fopen("../FichierText/sauvegarde","w+");
                             sauvegardeJeu(ececity, text);
-                            Graphe_DisplayArcs(ececity->graphe);
+                            Graphe_DisplaySommet(ececity->graphe);
                         }
                         break;
                     case BOUTON_SAUVEGARDE2:
@@ -845,7 +871,7 @@ void ajouteCelluleRoute(ECECITY* ececity, int colonne, int ligne, int numRoute, 
     }
 
     // pour chaque case a proximite de la case en cours, si pas encore marquee et si de type route ou chateau/centrale alors on la traite recursivement. Ainsi on va associer toutes les cases de type route - chateau/central à cette meme route
-    if (ligne - 1 >= 0  ){
+    if (ligne - 1 >= 0 ){
         if(typeCalcul == 1){
             num = ececity->tabCase[colonne][ligne - 1].numeroConnexeEau;
         } else{
@@ -980,7 +1006,8 @@ int calculDistance(ECECITY* ececity, Case caseSource, Case caseCible, int numRou
                 pArc temp1 = ececity->graphe->pSommet[n]->arc;
                 while (temp1 != NULL) {
                     int sommetSuivant = temp1->sommet2 - 1;
-                    if (ececity->tabCase[ececity->graphe->pSommet[sommetSuivant]->colonneTab][ececity->graphe->pSommet[sommetSuivant]->ligneTab].type == caseSource.type && ececity->tabCase[ececity->graphe->pSommet[sommetSuivant]->colonneTab][ececity->graphe->pSommet[sommetSuivant]->ligneTab].numeroType == caseSource.numeroType){
+                    if (ececity->tabCase[ececity->graphe->pSommet[sommetSuivant]->colonneTab][ececity->graphe->pSommet[sommetSuivant]->ligneTab].type == caseSource.type
+                    && ececity->tabCase[ececity->graphe->pSommet[sommetSuivant]->colonneTab][ececity->graphe->pSommet[sommetSuivant]->ligneTab].numeroType == caseSource.numeroType){
 
                         int retour = sousCalcDistance(ececity,n, caseCible, numRoute, distIni, listeMini, typeCalcul);
                         listeMini[i][j] = true;
@@ -1440,7 +1467,6 @@ void calculCommunisme ( ECECITY* ececity, int maisonTraitee, Compteur c){
             calculDistributionElec(ececity, nbmaxRoutesElec, c);
         }
         // FAIRE affichage nouvelle maison (Thomas)
-
     }
 }
 // calcul de l evolution d une habitation en mode capitaliste

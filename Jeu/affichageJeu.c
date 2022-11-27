@@ -6,6 +6,7 @@
 #include <math.h>
 #include <stdio.h>
 
+
 void AffichageMenu(ECECITY* ececity) {
 
     BeginDrawing();
@@ -94,6 +95,8 @@ void AffichageGamePlay(ECECITY* ececity){
 
     Color colorRect;
 
+    Color Fond = (Color){ 199,206, 87, 255};
+
     int formatColonne, formatLigne;
 
     if (ececity->currentJeuProcess != NIVEAU1 && ececity->currentJeuProcess != NIVEAU2){
@@ -147,8 +150,8 @@ void AffichageGamePlay(ECECITY* ececity){
                                 }
                                 if (MouseOnIso) {
                                 DrawTexture(ececity->tabImage[IMAGETERRAINVAGUE].TextureImage,
-                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.x-5,
-                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.y-30,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.x,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.y - 50,
                                                 WHITE);
                                 }
                                 break;
@@ -197,8 +200,8 @@ void AffichageGamePlay(ECECITY* ececity){
                                 }
                                 if (MouseOnIso) {
                                     DrawTexture(ececity->tabImage[IMAGECENTRALEELEC].TextureImage,
-                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.x,
-                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.y,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.x + 30,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.y -130,
                                                 WHITE);
                                 }
                                 break;
@@ -232,8 +235,8 @@ void AffichageGamePlay(ECECITY* ececity){
                                     formatLigne = ececity->formatBatiment.nblignesCentrales;
                                     break;
                                 default:
-                                    formatColonne = 1;
-                                    formatLigne = 1;
+                                    formatColonne = 0;
+                                    formatLigne = 0;
                                     break;
                             }
                             if (colonnes - ececity->souris.colonneSouris < formatColonne
@@ -270,6 +273,7 @@ void AffichageGamePlay(ECECITY* ececity){
                     case MAISON:
                     case IMMEUBLE:
                     case GRATTE_CIEL:
+                    case RUINE:
                         if (ececity->currentJeuProcess != CONSTRUCTIONMAISON) {
                             switch (ececity->currentJeuProcess) {
                                 case CONSTRUCTIONROUTE:
@@ -285,8 +289,8 @@ void AffichageGamePlay(ECECITY* ececity){
                                     formatLigne = ececity->formatBatiment.nblignesCentrales;
                                     break;
                                 default:
-                                    formatColonne = 1;
-                                    formatLigne = 1;
+                                    formatColonne = 0;
+                                    formatLigne = 0;
                                     break;
                             }
                             if (colonnes - ececity->souris.colonneSouris < formatColonne
@@ -296,7 +300,7 @@ void AffichageGamePlay(ECECITY* ececity){
                                 colorRect = RED;
                             }
                             else{
-                                colorRect = LIGHTGRAY;
+                                colorRect = Fond;
                             }
                         }
                         else{
@@ -307,7 +311,7 @@ void AffichageGamePlay(ECECITY* ececity){
                                 colorRect = RED;
                             }
                             else{
-                                colorRect = LIGHTGRAY;
+                                colorRect = Fond;
                             }
                         }
                         DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD],
@@ -334,8 +338,8 @@ void AffichageGamePlay(ECECITY* ececity){
                                     formatLigne = ececity->formatBatiment.nblignesCentrales;
                                     break;
                                 default:
-                                    formatColonne = 1;
-                                    formatLigne = 1;
+                                    formatColonne = 0;
+                                    formatLigne = 0;
                                     break;
                             }
                             if (colonnes - ececity->souris.colonneSouris < formatColonne
@@ -345,7 +349,7 @@ void AffichageGamePlay(ECECITY* ececity){
                                 colorRect = RED;
                             }
                             else{
-                                colorRect = BLUE;
+                                colorRect = Fond;
                             }
                         }
                         else{
@@ -357,7 +361,7 @@ void AffichageGamePlay(ECECITY* ececity){
                                 colorRect = RED;
                             }
                             else{
-                                colorRect = BLUE;
+                                colorRect = Fond;
                             }
                         }
                         DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD],
@@ -384,8 +388,8 @@ void AffichageGamePlay(ECECITY* ececity){
                                     formatLigne = ececity->formatBatiment.nblignesMaison;
                                     break;
                                 default:
-                                    formatColonne = 1;
-                                    formatLigne = 1;
+                                    formatColonne = 0;
+                                    formatLigne = 0;
                                     break;
                             }
                             if (colonnes - ececity->souris.colonneSouris < formatColonne
@@ -395,7 +399,7 @@ void AffichageGamePlay(ECECITY* ececity){
                                 colorRect = RED;
                             }
                             else{
-                                colorRect = GOLD;
+                                colorRect = Fond;
                             }
                         }
                         else{
@@ -407,7 +411,7 @@ void AffichageGamePlay(ECECITY* ececity){
                                 colorRect = RED;
                             }
                             else{
-                                colorRect = GOLD;
+                                colorRect = Fond;
                             }
                         }
                         DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD],
@@ -452,7 +456,8 @@ void AffichageGamePlay(ECECITY* ececity){
                         case MAISON:
                         case IMMEUBLE:
                         case GRATTE_CIEL:
-                            colorRect = LIGHTGRAY;
+                        case RUINE:
+                            colorRect = Fond;
                             DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD],
                                          ececity->tabCase[colonnes][lignes].cardinal[EST],
                                          ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
@@ -472,8 +477,6 @@ void AffichageGamePlay(ECECITY* ececity){
                             break;
 
                         case CENTRALE:
-                            break;
-
                         default:
                             break;
                     }
@@ -506,7 +509,8 @@ void AffichageGamePlay(ECECITY* ececity){
                         case MAISON:
                         case IMMEUBLE:
                         case GRATTE_CIEL:
-                            colorRect = LIGHTGRAY;
+                        case RUINE:
+                            colorRect = Fond;
                             DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD],
                                          ececity->tabCase[colonnes][lignes].cardinal[EST],
                                          ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
@@ -520,7 +524,7 @@ void AffichageGamePlay(ECECITY* ececity){
                             break;
 
                         case CENTRALE:
-                            colorRect = GOLD;
+                            colorRect = Fond;
                             DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD],
                                          ececity->tabCase[colonnes][lignes].cardinal[EST],
                                          ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
@@ -536,6 +540,77 @@ void AffichageGamePlay(ECECITY* ececity){
             }
         }
 
+    }
+    int tabOrdreAffichage[ececity->graphe->ordre];
+    for (int ordre = 0; ordre < ececity->graphe->ordre; ++ordre) {
+        tabOrdreAffichage[ordre] = ordre;
+    }
+    for (int ordre = 0; ordre < ececity->graphe->ordre - 1; ++ordre) {
+        for (int sommet = 0; sommet < ececity->graphe->ordre - 1; ++sommet) {
+            if (ececity->graphe->pSommet[tabOrdreAffichage[sommet]]->ligneTab >
+                ececity->graphe->pSommet[tabOrdreAffichage[sommet + 1]]->ligneTab) {
+                int tmp = tabOrdreAffichage[sommet];
+                tabOrdreAffichage[sommet] = tabOrdreAffichage[sommet + 1];
+                tabOrdreAffichage[sommet + 1] = tmp;
+            }
+            else if (ececity->graphe->pSommet[tabOrdreAffichage[sommet]]->ligneTab == ececity->graphe->pSommet[tabOrdreAffichage[sommet + 1]]->ligneTab) {
+                if(ececity->graphe->pSommet[tabOrdreAffichage[sommet]]->colonneTab < ececity->graphe->pSommet[tabOrdreAffichage[sommet + 1]]->colonneTab){
+                    int tmp = tabOrdreAffichage[sommet];
+                    tabOrdreAffichage[sommet] = tabOrdreAffichage[sommet + 1];
+                    tabOrdreAffichage[sommet + 1] = tmp;
+                }
+            }
+        }
+    }
+    for (int ordre = 0; ordre < ececity->graphe->ordre; ++ordre) {
+        if(ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->type == CHATEAUDEAU){
+            DrawTexture(ececity->tabImage[IMAGECHATEAUEAU].TextureImage,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.x + 5,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.y - 80,
+                        WHITE);
+        }
+        if(ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->type == CENTRALE){
+            DrawTexture(ececity->tabImage[IMAGECENTRALEELEC].TextureImage,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.x + 30,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.y - 130,
+                        WHITE);
+        }
+        if(ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->type == TerrainVague){
+            DrawTexture(ececity->tabImage[IMAGETERRAINVAGUE].TextureImage,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.x,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.y - 50,
+                        WHITE);
+        }
+        if(ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->type == CABANE){
+            DrawTexture(ececity->tabImage[IMAGECABANE].TextureImage,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.x - 5,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.y - 85,
+                        WHITE);
+        }
+        if(ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->type == MAISON){
+            DrawTexture(ececity->tabImage[IMAGEMAISON].TextureImage,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.x + 7,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.y - 63,
+                        WHITE);
+        }
+        if(ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->type == IMMEUBLE){
+            DrawTexture(ececity->tabImage[IMAGEIMMEUBLE].TextureImage,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.x - 47,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.y - 180,
+                        WHITE);
+        }
+        if(ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->type == GRATTE_CIEL){
+            DrawTexture(ececity->tabImage[IMAGEGRATTECIEL].TextureImage,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.x - 137,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.y - 315,
+                        WHITE);
+        }
+        if(ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->type == RUINE){
+            DrawTexture(ececity->tabImage[IMAGERUINE].TextureImage,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.x - 10,
+                        ececity->tabCase[ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->colonneTab][ececity->graphe->pSommet[tabOrdreAffichage[ordre]]->ligneTab].positionCase.y - 70,
+                        WHITE);
+        }
     }
 
 
@@ -615,6 +690,11 @@ void AfficherCaseInfo(ECECITY *ececity) {
                 nomCase = "Route\0";
                 DrawText(TextFormat("type: %s", nomCase), 10, 10, 30, RED);
 
+                break;
+
+            case RUINE:
+                nomCase = "Ruine\0";
+                DrawText(TextFormat("type: %s", nomCase), 10, 10, 30, RED);
                 break;
 
             case TerrainVague:
@@ -780,4 +860,21 @@ void AfficherBouton(ECECITY *ececity) {
                                               ? MAGENTA : RED);
         }
     }
+}
+
+void AffichageGameOver(ECECITY* ececity){
+    BeginDrawing();
+
+    ClearBackground(RAYWHITE);
+
+    if(ececity->compteur.soldeBanque <= 0 && ececity->compteur.nbHabitantsTotal ==0) {
+
+        DrawTexture(ececity->tabImage[IMAGEFIN].TextureImage, (int)ececity->tabImage[IMAGEFIN].format.x, (int)ececity->tabImage[IMAGEFIN].format.y, WHITE);
+        DrawText("Vous êtes en faillite!", 200,200, 50, RED);
+
+
+    }
+    AfficherBouton(ececity);
+
+    EndDrawing();
 }

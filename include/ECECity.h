@@ -81,6 +81,11 @@ typedef enum {
     IMAGECHATEAUEAU,
     IMAGECENTRALEELEC,
     IMAGETERRAINVAGUE,
+    IMAGECABANE,
+    IMAGEMAISON,
+    IMAGEIMMEUBLE,
+    IMAGEGRATTECIEL,
+    IMAGERUINE,
     IMAGEFIN,
     NB_IMAGES,
 
@@ -89,6 +94,7 @@ typedef enum {
 typedef enum {
     MusiqueAccueil,
     ClicSouris,
+    MusiqueGameplay,
     NB_MUSIQUE
 }NomMusique;
 
@@ -178,9 +184,6 @@ static const char *boutonChoixJeu[] = {
 
 static const char *boutonFinText[] = {
         "REJOUER\0",
-        "SAUVEGARDE 1\0",
-        "SAUVEGARDE 2\0",
-        "SAUVEGARDE 3\0",
         "EXIT\0",
 };
 

@@ -94,6 +94,14 @@ void buildGraphe(ECECITY* ececity,int typeBatiment) {
                        && arcExiste(ececity->graphe->pSommet[sommet2], ececity->graphe->pSommet[sommet1]) == false){
                         ececity->graphe->pSommet = Graph_CreateArc(ececity->graphe->pSommet, ececity->graphe->pSommet[sommet1]->id - 1, ececity->graphe->pSommet[sommet2]->id - 1);
                         ececity->graphe->pSommet = Graph_CreateArc(ececity->graphe->pSommet, ececity->graphe->pSommet[sommet2]->id - 1, ececity->graphe->pSommet[sommet1]->id - 1);
+                        if(ececity->graphe->pSommet[sommet2]->type == ROUTE && ececity->graphe->pSommet[sommet1]->type == ROUTE){
+                            int numCC = ececity->graphe->pSommet[sommet2]->numCC;
+                            for (int i = 0; i < ececity->graphe->ordre; ++i) {
+                                if(ececity->graphe->pSommet[i]->numCC == numCC && ececity->graphe->pSommet[i]->type == ROUTE){
+                                    ececity->graphe->pSommet[i]->numCC = ececity->graphe->pSommet[sommet1]->numCC; //actualisation des numCC pour eviter les cycles
+                                }
+                            }
+                        }
                         ececity->graphe->taille++;
                         ececity->graphe->pSommet[sommet1]->nbArcs++;
                         ececity->graphe->pSommet[sommet2]->nbArcs++;
@@ -253,13 +261,14 @@ void Graphe_DisplayArcs(Graphe* graphe) {
             }
             printf("\n");
         }
+        printf("graphe ordre :%d graphe taille :%d\n",graphe->ordre,graphe->taille);
     }
 }
 
 void Graphe_DisplaySommet(Graphe* graphe) {
     if(graphe != NULL){
         for (int i = 0; i < graphe->ordre; ++i) {
-            printf(" sommet %d: type: %d case[%d][%d]\n",graphe->pSommet[i]->id, graphe->pSommet[i]->type,graphe->pSommet[i]->colonneTab,graphe->pSommet[i]->ligneTab);
+            printf(" sommet: %d NumCC: %d case[%d][%d]\n",graphe->pSommet[i]->id, graphe->pSommet[i]->numCC,graphe->pSommet[i]->colonneTab,graphe->pSommet[i]->ligneTab);
         }
     }
 }

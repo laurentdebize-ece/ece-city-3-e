@@ -56,6 +56,7 @@ void InitJeu(ECECITY* ececity){
     ececity->currentMenuProcess = NONE;
     ececity->currentChoixJeuProcess = NONE;
     ececity->currentJeuProcess = NONE;
+    ececity->currentEndProcess = NONE;
     ececity->jeu.typeCalcul = 0;
     ececity->jeu.typeJeu = COMMUNISTE;
     ececity->souris.ligneSouris = INT_MAX;
@@ -98,6 +99,9 @@ void InitImage(ECECITY* ececity){
     ececity->tabImage[IMAGEJEU].format.x = 0;
     ececity->tabImage[IMAGEJEU].format.y = 0;
     ececity->tabImage[IMAGEJEU].format = (Rectangle){0,0,ececity->tabImage[IMAGEJEU].format.width,ececity->tabImage[IMAGEJEU].format.height};
+    Color color;
+    color = GetImageColor(ececity->tabImage[IMAGEJEU].Image,300,300);
+    printf("%d %d %d %d",color.r,color.g,color.b,color.a);
     UnloadImage(ececity->tabImage[IMAGEJEU].Image);
 
     ececity->tabImage[IMAGECLOCK].Image = LoadImage("../Images/CLOCK.png");
@@ -127,8 +131,6 @@ void InitImage(ECECITY* ececity){
     ececity->tabImage[IMAGEPOPULATION].format = (Rectangle){ececity->tabImage[IMAGEPOPULATION].format.x,ececity->tabImage[IMAGEPOPULATION].format.y,ececity->tabImage[IMAGEPOPULATION].format.width,ececity->tabImage[IMAGEPOPULATION].format.height};
     UnloadImage(ececity->tabImage[IMAGEPOPULATION].Image);
 
-
-
     ececity->tabImage[IMAGEROUTE].Image = LoadImage("../Images/route.png");
     ececity->tabImage[IMAGEROUTE].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEROUTE].Image);
     ececity->tabImage[IMAGEROUTE].format.width = 200;
@@ -146,15 +148,45 @@ void InitImage(ECECITY* ececity){
 
     ececity->tabImage[IMAGECENTRALEELEC].Image = LoadImage("../Images/elec.png");
     ececity->tabImage[IMAGECENTRALEELEC].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGECENTRALEELEC].Image);
-    ececity->tabImage[IMAGECENTRALEELEC].format.width = 173;
-    ececity->tabImage[IMAGECENTRALEELEC].format.height = 100;
+    ececity->tabImage[IMAGECENTRALEELEC].format.width = 110;
+    ececity->tabImage[IMAGECENTRALEELEC].format.height = 165;
     UnloadImage(ececity->tabImage[IMAGECENTRALEELEC].Image);
 
     ececity->tabImage[IMAGETERRAINVAGUE].Image = LoadImage("../Images/terrainvague.png");
     ececity->tabImage[IMAGETERRAINVAGUE].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGETERRAINVAGUE].Image);
-    ececity->tabImage[IMAGETERRAINVAGUE].format.width = 173;
-    ececity->tabImage[IMAGETERRAINVAGUE].format.height = 100;
+    ececity->tabImage[IMAGETERRAINVAGUE].format.width = 115;
+    ececity->tabImage[IMAGETERRAINVAGUE].format.height = 58;
     UnloadImage(ececity->tabImage[IMAGETERRAINVAGUE].Image);
+
+    ececity->tabImage[IMAGECABANE].Image = LoadImage("../Images/cabane.png");
+    ececity->tabImage[IMAGECABANE].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGECABANE].Image);
+    ececity->tabImage[IMAGECABANE].format.width = 200;
+    ececity->tabImage[IMAGECABANE].format.height = 200;
+    UnloadImage(ececity->tabImage[IMAGECABANE].Image);
+
+    ececity->tabImage[IMAGEMAISON].Image = LoadImage("../Images/Maison.png");
+    ececity->tabImage[IMAGEMAISON].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEMAISON].Image);
+    ececity->tabImage[IMAGEMAISON].format.width = 200;
+    ececity->tabImage[IMAGEMAISON].format.height = 200;
+    UnloadImage(ececity->tabImage[IMAGEMAISON].Image);
+
+    ececity->tabImage[IMAGEIMMEUBLE].Image = LoadImage("../Images/immeuble.png");
+    ececity->tabImage[IMAGEIMMEUBLE].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEIMMEUBLE].Image);
+    ececity->tabImage[IMAGEIMMEUBLE].format.width = 200;
+    ececity->tabImage[IMAGEIMMEUBLE].format.height = 200;
+    UnloadImage(ececity->tabImage[IMAGEIMMEUBLE].Image);
+
+    ececity->tabImage[IMAGEGRATTECIEL].Image = LoadImage("../Images/Gratte_Ciel.png");
+    ececity->tabImage[IMAGEGRATTECIEL].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEGRATTECIEL].Image);
+    ececity->tabImage[IMAGEGRATTECIEL].format.width = 200;
+    ececity->tabImage[IMAGEGRATTECIEL].format.height = 200;
+    UnloadImage(ececity->tabImage[IMAGEGRATTECIEL].Image);
+
+    ececity->tabImage[IMAGERUINE].Image = LoadImage("../Images/ruine.png");
+    ececity->tabImage[IMAGERUINE].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGERUINE].Image);
+    ececity->tabImage[IMAGERUINE].format.width = 200;
+    ececity->tabImage[IMAGERUINE].format.height = 200;
+    UnloadImage(ececity->tabImage[IMAGERUINE].Image);
 
     ececity->tabImage[IMAGEFIN].Image = LoadImage("../Images/GameOver.png");
     ececity->tabImage[IMAGEFIN].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEFIN].Image);
@@ -398,7 +430,7 @@ void InitBouton(ECECITY* ececity){
 
 
     for (int bouton = 0; bouton < NB_BOUTON_FIN; ++bouton) {
-        ececity->tabBouton[END][bouton].recBouton = (Rectangle){(float) ececity->display.width/ 2 - 150,(float)(300+(bouton*200)), 300, 150};
+        ececity->tabBouton[END][bouton].recBouton = (Rectangle){(float) ececity->display.width/ 2 - 150,(float)(600+(bouton*200)), 300, 150};
         ececity->tabBouton[END][bouton].nom = boutonFinText[bouton];
         ececity->tabBouton[END][bouton].actif = false;
     }
@@ -411,8 +443,9 @@ void InitMusique(ECECITY* ececity){
 
     assert(IsAudioDeviceReady());
 
-    ececity->tabMusic[MusiqueAccueil].music = LoadMusicStream("../MUSIQUE/SimCityMusique.wav");
+    ececity->tabMusic[MusiqueAccueil].music = LoadMusicStream("../Musique/SimCityMusique.wav");
     ececity->tabMusic[ClicSouris].music = LoadMusicStream("../Musique/ClicSouris.wav");
+    ececity->tabMusic[MusiqueGameplay].music = LoadMusicStream("../Musique/MusicGameplay.wav");
 
     for (int musique = 0; musique < NB_MUSIQUE; ++musique) {
         ececity->tabMusic[musique].volume = (float)0.5;//1.0 is max level
@@ -451,7 +484,7 @@ void InitCompteur(ECECITY* ececity){
     ececity->compteur.nbHabitantsTotal = 0;
     ececity->compteur.CapaciteCentrale = CAPACENTRALE;
     ececity->compteur.CapaciteEau = CAPAEAU;
-    ececity->compteur.soldeBanque = SOLDEBANQUE;
+    ececity->compteur.soldeBanque = SOLDEBANQUE + 10*10;
 }
 
 void InitInfoFichierText(char* monFichier, ECECITY* ececity)
@@ -591,8 +624,8 @@ void augmenterStadeMaison (ECECITY* tbxmaison , int maisonTraitee){//affichage
     int typearrivee = 0;
     if(typedepart != GRATTE_CIEL){
         if(typedepart == RUINE){
-            typearrivee = TerrainVague;
-            tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 0;
+            typearrivee = CABANE;
+            tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 10;
         }
         if(typedepart == TerrainVague){
             typearrivee = CABANE;
@@ -611,9 +644,16 @@ void augmenterStadeMaison (ECECITY* tbxmaison , int maisonTraitee){//affichage
             tbxmaison->tabHabitations[maisonTraitee].capaciteInitiale = 1000;
         }
         tbxmaison->tabHabitations[maisonTraitee].type = typearrivee;
+
+
         for (int j = 0; j < NB_LIGNES; j++) {
             for (int i = 0; i < NB_COLONNES; i++) {
                 if(tbxmaison->tabCase[i][j].type == typedepart && tbxmaison->tabCase[i][j].numeroType == tbxmaison->tabHabitations[maisonTraitee].numeroType){
+                    for (int ordre = 0; ordre < tbxmaison->graphe->ordre; ++ordre) {
+                        if(tbxmaison->graphe->pSommet[ordre]->colonneTab == i && tbxmaison->graphe->pSommet[ordre]->ligneTab == j){
+                            tbxmaison->graphe->pSommet[ordre]->type = typearrivee;
+                        }
+                    }
                     tbxmaison->tabCase[i][j].type = typearrivee;
                 }
             }
@@ -623,12 +663,8 @@ void augmenterStadeMaison (ECECITY* tbxmaison , int maisonTraitee){//affichage
 void diminuerStadeMaison (ECECITY* ececity , int maisonTraitee){//affichage
     int typedepart = ececity->tabHabitations[maisonTraitee].type;
     int typearrivee = 0;
-    if(ececity->tabHabitations[maisonTraitee].type == TerrainVague){
+    if(ececity->tabHabitations[maisonTraitee].type == CABANE){
         typearrivee = RUINE;
-        ececity->tabHabitations[maisonTraitee].capaciteInitiale = 0;
-    }
-    else if(ececity->tabHabitations[maisonTraitee].type == CABANE){
-        typearrivee = TerrainVague;
         ececity->tabHabitations[maisonTraitee].capaciteInitiale = 0;
     }
     else if(ececity->tabHabitations[maisonTraitee].type == MAISON){
@@ -647,6 +683,11 @@ void diminuerStadeMaison (ECECITY* ececity , int maisonTraitee){//affichage
     for (int j = 0; j < NB_LIGNES; j++) {
         for (int i = 0; i < NB_COLONNES; i++) {
             if(ececity->tabCase[i][j].type == typedepart && ececity->tabCase[i][j].numeroType == ececity->tabHabitations[maisonTraitee].numeroType){
+                for (int ordre = 0; ordre < ececity->graphe->ordre; ++ordre) {
+                    if(ececity->graphe->pSommet[ordre]->colonneTab == i && ececity->graphe->pSommet[ordre]->ligneTab == j){
+                        ececity->graphe->pSommet[ordre]->type = typearrivee;
+                    }
+                }
                 ececity->tabCase[i][j].type = typearrivee;
             }
         }

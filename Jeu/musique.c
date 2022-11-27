@@ -22,3 +22,20 @@ void MusicMenu(ECECITY* ececity, int* pause){
     }
 
 }
+
+void MusicGameplay(ECECITY* ececity, int* pause){
+
+    UpdateMusicStream(ececity->tabMusic[MusiqueGameplay].music);
+    if(!(*pause)){
+        PlayMusicStream(ececity->tabMusic[MusiqueGameplay].music);
+    }
+    if (IsKeyPressed(KEY_F3))
+    {
+        *pause = !(*pause);
+
+        if (*pause) PauseMusicStream(ececity->tabMusic[MusiqueGameplay].music);
+        else ResumeMusicStream(ececity->tabMusic[MusiqueGameplay].music);
+    }
+}
+
+
