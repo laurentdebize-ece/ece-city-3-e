@@ -81,6 +81,7 @@ typedef enum {
     IMAGECHATEAUEAU,
     IMAGECENTRALEELEC,
     IMAGETERRAINVAGUE,
+    IMAGEFIN,
     NB_IMAGES,
 
 }NomImage;
@@ -393,6 +394,7 @@ void Menu(ECECITY* ececity);
 void ChoixModeJeu(ECECITY* ececity);
 void Charger(ECECITY* ececity);
 void Gameplay(ECECITY* ececity);
+void GameOver(ECECITY* ececity);
 int calculRoute( ECECITY* ececity, int typeCalcul);
 void ajouteCelluleRoute(ECECITY* ececity, int colonne, int ligne, int numRoute, int typeCalcul);
 void rechercheHabitationRoute(int listeMaison[MAX_OBJET], int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], int typeCalcul);
