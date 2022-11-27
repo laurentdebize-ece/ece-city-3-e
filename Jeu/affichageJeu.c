@@ -1,18 +1,26 @@
 #include "affichageJeu.h"
+#include "ECECity.h"
+#include "affichage.h"
+#include "raylib.h"
+#include "initialisation.h"
 #include <math.h>
 #include <stdio.h>
 
-void AffichageMenu(ECECITY* ececity){
+void AffichageMenu(ECECITY* ececity) {
 
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
 
-    DrawTexture(ececity->tabImage[IMAGEACCUEIL].TextureImage, (int)ececity->tabImage[IMAGEACCUEIL].format.x, (int)ececity->tabImage[IMAGEACCUEIL].format.y, WHITE);
+    DrawTexture(ececity->tabImage[IMAGEACCUEIL].TextureImage, (int) ececity->tabImage[IMAGEACCUEIL].format.x,
+                (int) ececity->tabImage[IMAGEACCUEIL].format.y, WHITE);
 
-    if (ececity->currentMenuProcess == CREDITS){
+    if (ececity->currentMenuProcess == CREDITS) {
         DrawText("(c) ECE CITY by Aurelien, Jules, Eva and Thomas", 15, 15, 50, BLACK);
     }
+    DrawText("WELCOME TO ECE CITY", (int) (ececity->display.width / 2 - MeasureText("WELCOME TO ECE CITY", 100) / 2),
+             ececity->display.height / 11, 100, ORANGE);
+
      DrawText("WELCOME TO ECE CITY", (int)(ececity->display.width/2 - MeasureText("WELCOME TO ECE CITY",100)/2),
           ececity->display.height/11, 100, RED);
     if (ececity->currentMenuProcess == CHARGER){
@@ -27,7 +35,7 @@ void AffichageMenu(ECECITY* ececity){
         }
     }
 
-    AfficherBouton(ececity);
+        AfficherBouton(ececity);
 
     EndDrawing();
 }
@@ -41,8 +49,8 @@ void AffichageChoixMode( ECECITY* ececity){
 
     DrawTexture(ececity->tabImage[IMAGECHOIXJEU].TextureImage, (int)ececity->tabImage[IMAGECHOIXJEU].format.x, (int)ececity->tabImage[IMAGECHOIXJEU].format.y, WHITE);
 
-    DrawText("Choisis ton mode de jeu :", (int)(ececity->display.width/3),
-     ececity->display.height/9, 120, WHITE);
+    DrawText("Choisis ton mode de jeu :", (int)(ececity->display.width/8),
+     ececity->display.height/13, 120, WHITE);
 
     AfficherBoutonModeJeu(ececity);
 
@@ -56,11 +64,10 @@ void AffichageGamePlay(ECECITY* ececity){
     ClearBackground(RAYWHITE);
 
     DrawTexture(ececity->tabImage[IMAGEJEU].TextureImage, (int)ececity->tabImage[IMAGEJEU].format.x, (int)ececity->tabImage[IMAGEJEU].format.y, WHITE);
-
-
-    DrawRectangle(1575, 20, MeasureText("Time: %dh %dmin %dsec",20) + 100, MeasureTextEx(ececity->write.font,"Time: %dh %dmin %dsec",20,0).y + 40, BLACK);
-    DrawRectangle(1100, 20, MeasureText("Argent Restant: %d",20) + 125, MeasureTextEx(ececity->write.font,"Argent Restant: %d",20,0).y + 40, BLACK);
-    DrawRectangle(675, 20, MeasureText("Nombre d'habitants: %d",20) + 125, MeasureTextEx(ececity->write.font,"Nombre d'habitants: %d",20,0).y + 40, BLACK);
+    DrawTexture(ececity->tabImage[IMAGEOUTIL].TextureImage, (int) ececity->tabBouton[ececity->currentProcess][BOUTON_OUTIL].recBouton.x, (int) ececity->tabBouton[ececity->currentProcess][BOUTON_OUTIL].recBouton.y, WHITE);
+    DrawRectangle(1575, 20, MeasureText("Time: %dh %dmin %dsec",20) + 100, MeasureTextEx(ececity->write.font,"Time: %dh %dmin %dsec",20,0).y + 40, DARKGRAY);
+    DrawRectangle(1100, 20, MeasureText("Argent Restant: %d",20) + 125, MeasureTextEx(ececity->write.font,"Argent Restant: %d",20,0).y + 40, DARKGRAY);
+    DrawRectangle(675, 20, MeasureText("Nombre d'habitants: %d",20) + 125, MeasureTextEx(ececity->write.font,"Nombre d'habitants: %d",20,0).y + 40, DARKGRAY);
 
     for (int image = IMAGECLOCK; image <= IMAGEPOPULATION; ++image) {
         DrawTexture(ececity->tabImage[image].TextureImage, (int) ececity->tabImage[image].format.x,
@@ -68,18 +75,20 @@ void AffichageGamePlay(ECECITY* ececity){
     }
 
     DrawRectangleLines(1575, 20, MeasureText("Time: %dh %dmin %dsec", 20) + 100,
-                       MeasureTextEx(ececity->write.font, "Time: %dh %dmin %dsec", 20, 0).y + 40, BLACK);
+                       MeasureTextEx(ececity->write.font, "Time: %dh %dmin %dsec", 20, 0).y + 40, WHITE);
     DrawRectangleLines(1100, 20, MeasureText("Argent Restant: %d", 20) + 125,
-                       MeasureTextEx(ececity->write.font, "Argent Restant: %d", 20, 0).y + 40, BLACK);
+                       MeasureTextEx(ececity->write.font, "Argent Restant: %d", 20, 0).y + 40, WHITE);
     DrawRectangleLines(675, 20, MeasureText("Nombre d'habitants: %d", 20) + 125,
-                       MeasureTextEx(ececity->write.font, "Nombre d'habitants: %d", 20, 0).y + 40, BLACK);
+                       MeasureTextEx(ececity->write.font, "Nombre d'habitants: %d", 20, 0).y + 40, WHITE);
 
     DrawText(TextFormat("Time: %dh %dmin %dsec", ececity->time.timer.hoursCounter,
                         ececity->time.timer.minutesCounter, ececity->time.timer.secondsCounter), 1700, 40, 20,
-             MAGENTA);
+             WHITE);
 
-    DrawText(TextFormat("Argent Restant: %d", ececity->compteur.soldeBanque), 1175, 40, 20, MAGENTA);
-    DrawText(TextFormat("Nombre d'habitants: %d", ececity->compteur.nbHabitantsTotal), 750, 40, 20, MAGENTA);
+    DrawText(TextFormat("Argent Restant: %d", ececity->compteur.soldeBanque), 1175, 40, 20, ColorFromHSV(100,3,20));
+    DrawText(TextFormat("Nombre d'habitants: %d", ececity->compteur.nbHabitantsTotal), 770, 40, 20, GOLD);
+
+
 
     AfficherIso(ececity);
 
@@ -121,8 +130,11 @@ void AffichageGamePlay(ECECITY* ececity){
                                                  && lignes - ececity->souris.ligneSouris <
                                                     ececity->formatBatiment.nblignesMaison
                                                  && lignes - ececity->souris.ligneSouris >= 0
+
                                                 ) ? LIGHTGRAY : BLANK;
+
                                 }
+
                                 else{
                                     colorRect = (colonnes - ececity->souris.colonneSouris <
                                                  ececity->formatBatiment.nbcolonnesMaison
@@ -131,6 +143,12 @@ void AffichageGamePlay(ECECITY* ececity){
                                                     ececity->formatBatiment.nblignesMaison
                                                  && lignes - ececity->souris.ligneSouris >= 0
                                                 ) ? RED : BLANK;
+                                }
+                                if (MouseOnIso) {
+                                DrawTexture(ececity->tabImage[IMAGETERRAINVAGUE].TextureImage,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.x-5,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.y-30,
+                                                WHITE);
                                 }
                                 break;
 
@@ -150,6 +168,12 @@ void AffichageGamePlay(ECECITY* ececity){
                                                  lignes - ececity->souris.ligneSouris <
                                                  ececity->formatBatiment.nblignesChateaux &&
                                                  lignes - ececity->souris.ligneSouris >= 0) ? RED : BLANK;
+                                }
+                                if (MouseOnIso) {
+                                    DrawTexture(ececity->tabImage[IMAGECHATEAUEAU].TextureImage,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.x+5,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.y-80,
+                                                WHITE);
                                 }
                                 break;
 
@@ -172,8 +196,8 @@ void AffichageGamePlay(ECECITY* ececity){
                                 }
                                 if (MouseOnIso) {
                                     DrawTexture(ececity->tabImage[IMAGECENTRALEELEC].TextureImage,
-                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.x,
-                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.y,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.x + 30,
+                                                ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].positionCase.y - 130,
                                                 WHITE);
                                 }
                                 break;
@@ -400,8 +424,117 @@ void AffichageGamePlay(ECECITY* ececity){
             }
         }
     else {
-        DrawText("Aurelien a toi de completer", 0, 500, 30,
-                 (ececity->currentJeuProcess == NIVEAU1) ? BLUE : GOLD);
+
+        if (ececity->currentJeuProcess == NIVEAU1){
+            for (int lignes = 0; lignes < NB_LIGNES; ++lignes) {
+                for (int colonnes = 0; colonnes < NB_COLONNES; ++colonnes) {
+                    switch (ececity->tabCase[colonnes][lignes].type) {
+
+                        case VIDE:
+                            break;
+
+                        case ROUTE:
+                            if (ececity->tabCase[colonnes][lignes].estUtileEau){
+                                colorRect = BLUE;
+                                DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD],
+                                             ececity->tabCase[colonnes][lignes].cardinal[EST],
+                                             ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                                DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST],
+                                             ececity->tabCase[colonnes][lignes].cardinal[SUD],
+                                             ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                            }
+
+                            break;
+
+                        case TerrainVague:
+                        case CABANE:
+                        case MAISON:
+                        case IMMEUBLE:
+                        case GRATTE_CIEL:
+                            colorRect = LIGHTGRAY;
+                            DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD],
+                                         ececity->tabCase[colonnes][lignes].cardinal[EST],
+                                         ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                            DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST],
+                                         ececity->tabCase[colonnes][lignes].cardinal[SUD],
+                                         ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                            break;
+
+                        case CHATEAUDEAU:
+                            colorRect = BLUE;
+                            DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD],
+                                         ececity->tabCase[colonnes][lignes].cardinal[EST],
+                                         ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                            DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST],
+                                         ececity->tabCase[colonnes][lignes].cardinal[SUD],
+                                         ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                            break;
+
+                        case CENTRALE:
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+        else if (ececity->currentJeuProcess == NIVEAU2){
+            for (int lignes = 0; lignes < NB_LIGNES; ++lignes) {
+                for (int colonnes = 0; colonnes < NB_COLONNES; ++colonnes) {
+                    switch (ececity->tabCase[colonnes][lignes].type) {
+
+                        case VIDE:
+                            break;
+
+                        case ROUTE:
+                            if (ececity->tabCase[colonnes][lignes].estUtileElec){
+                                colorRect = GOLD;
+                                DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD],
+                                             ececity->tabCase[colonnes][lignes].cardinal[EST],
+                                             ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                                DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST],
+                                             ececity->tabCase[colonnes][lignes].cardinal[SUD],
+                                             ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                            }
+
+                            break;
+
+                        case TerrainVague:
+                        case CABANE:
+                        case MAISON:
+                        case IMMEUBLE:
+                        case GRATTE_CIEL:
+                            colorRect = LIGHTGRAY;
+                            DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD],
+                                         ececity->tabCase[colonnes][lignes].cardinal[EST],
+                                         ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                            DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST],
+                                         ececity->tabCase[colonnes][lignes].cardinal[SUD],
+                                         ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                            break;
+
+                        case CHATEAUDEAU:
+
+                            break;
+
+                        case CENTRALE:
+                            colorRect = GOLD;
+                            DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[SUD],
+                                         ececity->tabCase[colonnes][lignes].cardinal[EST],
+                                         ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                            DrawTriangle(ececity->tabCase[colonnes][lignes].cardinal[OUEST],
+                                         ececity->tabCase[colonnes][lignes].cardinal[SUD],
+                                         ececity->tabCase[colonnes][lignes].cardinal[NORD], colorRect);
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
     }
 
 
@@ -464,45 +597,80 @@ void AfficherCaseInfo(ECECITY *ececity) {
 
     if (MouseOnIso) {
         char *nomCase;
+        int capainit = 0;
+        int capaEau =0;
+        int capaElec = 0;
+        int capaRest = 0;
         switch (ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type) {
             case VIDE:
                 nomCase = "Vide\0";
+                capainit = 0;
+                capaRest = 0;
+                DrawText(TextFormat("type: %s", nomCase), 10, 10, 30, RED);
                 break;
 
             case ROUTE:
                 nomCase = "Route\0";
+                DrawText(TextFormat("type: %s", nomCase), 10, 10, 30, RED);
+
                 break;
 
             case TerrainVague:
                 nomCase = "TerrainVague\0";
+                capainit = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteInitiale;
+                capaEau = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabEauEnCours;
+                capaElec = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabElecEnCours;
+                DrawText(TextFormat("type: %s (Eau %d, Elec %d)", nomCase,capaEau, capaElec), 10, 10, 30, RED);
                 break;
 
             case CABANE:
                 nomCase = "Cabane\0";
+                capainit = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteInitiale;
+                capaEau = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabEauEnCours;
+                capaElec = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabElecEnCours;
+                DrawText(TextFormat("type: %s (Eau %d, Elec %d)", nomCase,capaEau, capaElec), 10, 10, 30, RED);
                 break;
 
             case MAISON:
                 nomCase = "Maison\0";
+                capainit = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteInitiale;
+                capaEau = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabEauEnCours;
+                capaElec = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabElecEnCours;
+                DrawText(TextFormat("type: %s (Eau %d, Elec %d)", nomCase,capaEau, capaElec), 10, 10, 30, RED);
                 break;
 
             case IMMEUBLE:
                 nomCase = "Immeuble\0";
+                capainit = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteInitiale;
+                capaEau = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabEauEnCours;
+                capaElec = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabElecEnCours;
+                DrawText(TextFormat("type: %s (Eau %d, Elec %d)", nomCase,capaEau, capaElec), 10, 10, 30, RED);
                 break;
 
             case GRATTE_CIEL:
                 nomCase = "GRATTE_CIEL\0";
+                capainit = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteInitiale;
+                capaEau = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabEauEnCours;
+                capaElec = ececity->tabHabitations[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteHabElecEnCours;
+                DrawText(TextFormat("type: %s (Eau %d, Elec %d)", nomCase,capaEau, capaElec), 10, 10, 30, RED);
                 break;
 
             case CHATEAUDEAU:
                 nomCase = "CHATEAUDEAU\0";
+                capainit = ececity->tabChateauEau[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteInitiale;
+                capaRest = ececity->tabChateauEau[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteRestante;
+                DrawText(TextFormat("type: %s (%d/%d)", nomCase,capaRest, capainit), 10, 10, 30, RED);
                 break;
 
             case CENTRALE:
                 nomCase = "Centrale\0";
+                capainit = ececity->tabCentrale[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteInitiale;
+                capaRest = ececity->tabCentrale[ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType - 1].capaciteRestante;
+                DrawText(TextFormat("type: %s (%d/%d)", nomCase,capaRest, capainit), 10, 10, 30, RED);
                 break;
         }
 
-        DrawText(TextFormat("type: %s", nomCase), 10, 10, 30, DARKPURPLE);
+
         DrawText(TextFormat("Case [%d] [%d]", ececity->souris.colonneSouris, ececity->souris.ligneSouris), 10,
                  45, 30, LIME);
     }
@@ -549,6 +717,9 @@ void AfficherBoutonModeJeu(ECECITY *ececity) {
 
 void AfficherBouton(ECECITY *ececity) {
 
+
+    bool clic = IsMouseButtonDown(MOUSE_BUTTON_LEFT) &&
+    CheckCollisionPointRec(ececity->souris.position, ececity->tabBouton[Jeu][BOUTON_OUTIL].recBouton);
     int NB_BOUTON = 0;
     int debutBouton = 0;
     switch (ececity->currentProcess) {
@@ -561,9 +732,14 @@ void AfficherBouton(ECECITY *ececity) {
             ececity->write.fontSize = 30;
             break;
         case Jeu:
-            NB_BOUTON = NB_BOUTON_JEU;
-            ececity->write.fontSize = 15;
+            if (clic == false) {
+            }else{
+                NB_BOUTON = NB_BOUTON_JEU;
+                ececity->write.fontSize = 15;
+
+            }
             break;
+
         case END:
             NB_BOUTON = NB_BOUTON_FIN;
             ececity->write.fontSize = 30;
@@ -574,6 +750,7 @@ void AfficherBouton(ECECITY *ececity) {
     if (ececity->currentJeuProcess == NIVEAU1 || ececity->currentJeuProcess == NIVEAU2) {
         debutBouton = BOUTON_NIVEAU_0;
     }
+
     for (int bouton = debutBouton; bouton < NB_BOUTON; ++bouton) {
         if(ececity->tabBouton[ececity->currentProcess][bouton].actif == true){
             if (ececity->currentProcess == MENU || ececity->currentProcess == ChoixMode) {

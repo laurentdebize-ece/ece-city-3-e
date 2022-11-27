@@ -10,7 +10,7 @@
 #define MAP_TILE_SIZE 20
 #define NB_COLONNES 45
 #define NB_LIGNES 35
-#define SIZEBOARDX 900
+#define SIZEBOARDX  900
 #define SIZEBOARDY 700
 #define MAX_OBJET 300
 #define CAPACENTRALE 5000
@@ -22,6 +22,7 @@ typedef enum {
     MENU,
     ChoixMode,
     Jeu,
+    Outil,
     END,
     NB_PROCESS,
 } GameProcess;
@@ -66,6 +67,7 @@ typedef enum{
     NB_CARDINAL,
 }Cardinal;
 
+
 typedef enum {
     IMAGEACCUEIL,
     IMAGECHOIXJEU,
@@ -73,10 +75,13 @@ typedef enum {
     IMAGECLOCK,
     IMAGEARGENT,
     IMAGEPOPULATION,
+    IMAGEOUTIL,
     IMAGEROUTE,
     IMAGECHATEAUEAU,
     IMAGECENTRALEELEC,
+    IMAGETERRAINVAGUE,
     NB_IMAGES,
+
 }NomImage;
 
 typedef enum {
@@ -104,13 +109,16 @@ typedef enum {
     NB_BOUTON_CHOIX,
 }NomBoutonChoixModeJeu;
 
+
 typedef enum{
+
     BOUTON_ROUTE,
     BOUTON_MAISON,
     BOUTON_CHATEAUDEAU,
     BOUTON_CENTRALE,
     BOUTON_PAUSE,
     BOUTON_EXIT_JEU,
+    BOUTON_OUTIL,
     BOUTON_NIVEAU_0,
     BOUTON_NIVEAU_1,
     BOUTON_NIVEAU_2,
@@ -141,12 +149,14 @@ static const char *boutonMenuText[] = {
 };
 
 static const char *boutonJeuText[] = {
+
         "ROUTE\0",
         "TerrainVague\0",
         "CHATEAUDEAU\0",
         "CENTRALE\0",
         "BOUTON_PAUSE\0",
         "EXIT\0",
+        "\0",
         "NIVEAU 0\0",
         "NIVEAU -1\0",
         "NIVEAU -2\0",
@@ -197,9 +207,19 @@ typedef struct{
     int capaciteHabElecEnCours;// capacité de remplissage d'une habitation en elec
     int capaciteHabEauEnCours;// capacité de remplissage d'une habitation en eau
     int distance;
+    bool estUtileEau;
+    bool estUtileElec;
     int timerSeconds;
 } Case;
 
+typedef struct{
+    int sourceType;
+    int sourceNumType;
+    int destType;
+    int destNumType;
+    int distance;
+    bool chemin[NB_COLONNES][NB_LIGNES];
+} cheminEau;
 
 enum SommetCouleur {
     UNEXPLORED,
@@ -236,6 +256,9 @@ typedef struct
 {
     int taille;
     int ordre;
+    int predligne;
+    int predcolonne;
+
     pSommet* pSommet;
 } Graphe;
 
@@ -373,8 +396,8 @@ int calculRoute( ECECITY* ececity, int typeCalcul);
 void ajouteCelluleRoute(ECECITY* ececity, int colonne, int ligne, int numRoute, int typeCalcul);
 void rechercheHabitationRoute(int listeMaison[MAX_OBJET], int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], int typeCalcul);
 // void calculDistributionElec_old(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabCentraleElec[MAX_OBJET], Case tabHabitation[MAX_OBJET], int nbMaxRoute, Compteur c);
-int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[NB_COLONNES][NB_LIGNES] );
-int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int distanceEnCours, Case matrice[NB_COLONNES][NB_LIGNES]);
+int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[NB_COLONNES][NB_LIGNES], bool liste[NB_COLONNES][NB_LIGNES] );
+int sousCalcDistance(int colonne, int ligne, Case caseCible, int numRoute, int distanceEnCours, Case matrice[NB_COLONNES][NB_LIGNES], bool liste[NB_COLONNES][NB_LIGNES]);
 void calculDistributionEau(ECECITY* ececity, int nbMaxRoute, Compteur c);
 void calculDistributionElec(ECECITY* ececity, int nbMaxRoute, Compteur c);
 void calculCommunisme ( ECECITY* ececity, int maisonTraitee, Compteur c);
