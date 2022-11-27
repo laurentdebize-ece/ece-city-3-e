@@ -21,7 +21,7 @@ void MainBoucle(ECECITY* ececity){
                 ChoixModeJeu(ececity);
                 break;
             case Jeu:
-                JEU(ececity);
+                Gameplay(ececity);
                 break;
             case END:
                 ececity->IsCodeRunning = false;
@@ -41,8 +41,9 @@ void Menu(ECECITY* ececity) {
     MusicMenu(ececity, &pause);
     ececity->souris.position = GetMousePosition();
     for (int bouton = 0; bouton < NB_BOUTON_MENU; ++bouton) {
-        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) &&
-            CheckCollisionPointRec(ececity->souris.position, ececity->tabBouton[MENU][bouton].recBouton)) {
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)
+            && CheckCollisionPointRec(ececity->souris.position, ececity->tabBouton[MENU][bouton].recBouton)
+            && ececity->tabBouton[MENU][bouton].actif == true) {
             switch (bouton) {
                 case BOUTON_STARTGAME:
                     if (ececity->currentMenuProcess != STARTGAME) {
@@ -61,11 +62,9 @@ void Menu(ECECITY* ececity) {
                     }
                     break;
                 case BOUTON_CHARGER:
-                    if (ececity->currentMenuProcess != CHARGER) {
-                        ececity->currentMenuProcess = CHARGER;
-                    } else if (CheckCollisionPointRec(ececity->souris.position,
+                    if (CheckCollisionPointRec(ececity->souris.position,
                                                       ececity->tabBouton[MENU][BOUTON_CHARGER].recBouton)) {
-                        ececity->currentMenuProcess = NONE;
+                        ececity->currentMenuProcess = CHARGER;
                     }
                     break;
                 case BOUTON_CREDITS:
@@ -83,27 +82,51 @@ void Menu(ECECITY* ececity) {
 
     }
 
-     switch (ececity->currentMenuProcess) {
-         case NONE:
-         case CREDITS:
-             break;
-         case STARTGAME:
-             ececity->currentProcess = ChoixMode;
-             ececity->currentMenuProcess = NONE;
-             resetTimer(ececity);
-            break;
-         case GAMEOVER:
-            ececity->IsCodeRunning = false;
-            ececity->currentMenuProcess = NONE;
-            break;
-         case CHARGER:
-            Charger(ececity);
-             ececity->currentMenuProcess = NONE;
-             //fonction charger
-             break;
-         default:
-            break;
-     }
+    switch (ececity->currentMenuProcess) {
+     case CREDITS:
+     case NONE:
+         for (int bouton = 0; bouton < NB_BOUTON_MENU; ++bouton) {
+             if (bouton < BOUTON_CHARGER1){
+                 ececity->tabBouton[MENU][bouton].actif = true;
+             }
+             else{
+                 ececity->tabBouton[MENU][bouton].actif = false;
+             }
+         }
+         break;
+     case STARTGAME:
+        ececity->currentProcess = ChoixMode;
+        ececity->currentMenuProcess = NONE;
+        ececity->currentJeuProcess = NONE;
+        resetTimer(ececity);
+        for (int bouton = 0; bouton < NB_BOUTON_MENU; ++bouton) {
+            ececity->tabBouton[MENU][bouton].actif = false;
+        }
+        for (int boutonChoix = 0; boutonChoix < NB_BOUTON_CHOIX; ++boutonChoix) {
+           ececity->tabBouton[Jeu][boutonChoix].actif = true;
+        }
+        break;
+     case GAMEOVER:
+        ececity->IsCodeRunning = false;
+        ececity->currentMenuProcess = NONE;
+        for (int bouton = 0; bouton < NB_BOUTON_MENU; ++bouton) {
+            ececity->tabBouton[MENU][bouton].actif = false;
+        }
+        break;
+     case CHARGER:
+         for (int bouton = 0; bouton < NB_BOUTON_MENU; ++bouton) {
+             if (bouton >= BOUTON_CHARGER1){
+                 ececity->tabBouton[MENU][bouton].actif = true;
+             }
+             else{
+                 ececity->tabBouton[MENU][bouton].actif = false;
+             }
+         }
+        Charger(ececity);
+        break;
+    default:
+        break;
+    }
 
 }
 
@@ -112,8 +135,9 @@ void ChoixModeJeu(ECECITY* ececity) {
     ececity->souris.position = GetMousePosition();
     AffichageChoixMode(ececity);
     for (int bouton = 0; bouton < NB_BOUTON_CHOIX; ++bouton) {
-        if (CheckCollisionPointRec(ececity->souris.position, ececity->tabBouton[ChoixMode][bouton].recBouton) &&
-            IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+        if (CheckCollisionPointRec(ececity->souris.position, ececity->tabBouton[ChoixMode][bouton].recBouton)
+            && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)
+            && ececity->tabBouton[ChoixMode][bouton].actif == true) {
             switch (bouton) {
                 case BOUTON_COMMUNISTE:
                     ececity->currentChoixJeuProcess = COMMUNISTE;
@@ -131,20 +155,38 @@ void ChoixModeJeu(ECECITY* ececity) {
     }
     switch(ececity->currentChoixJeuProcess){
         case NONE:
+            for (int BoutonChoix = 0; BoutonChoix < NB_BOUTON_CHOIX; ++BoutonChoix) {
+                ececity->tabBouton[ChoixMode][BoutonChoix].actif = true;
+            }
             break;
 
         case COMMUNISTE :
-           ececity->jeu.typeJeu = COMMUNISTE;
-           ececity->currentProcess = Jeu;
+            ececity->jeu.typeJeu = COMMUNISTE;
+            ececity->currentProcess = Jeu;
+            for (int boutonJeu = 0; boutonJeu <= BOUTON_NIVEAU_2; ++boutonJeu) {
+                ececity->tabBouton[Jeu][boutonJeu].actif = true;
+            }
+            for (int BoutonChoix = 0; BoutonChoix < NB_BOUTON_CHOIX; ++BoutonChoix) {
+                ececity->tabBouton[ChoixMode][BoutonChoix].actif = false;
+            }
            break;
 
         case CAPITALISTE :
-           ececity->jeu.typeJeu = CAPITALISTE;
-           ececity->currentProcess = Jeu;
+            ececity->jeu.typeJeu = CAPITALISTE;
+            ececity->currentProcess = Jeu;
+            for (int boutonJeu = 0; boutonJeu <= BOUTON_NIVEAU_2; ++boutonJeu) {
+            ececity->tabBouton[Jeu][boutonJeu].actif = true;
+            }
+            for (int BoutonChoix = 0; BoutonChoix < NB_BOUTON_CHOIX; ++BoutonChoix) {
+            ececity->tabBouton[ChoixMode][BoutonChoix].actif = false;
+            }
            break;
 
         case GAMEOVER :
-           ececity->IsCodeRunning = false;
+            ececity->IsCodeRunning = false;
+            for (int BoutonChoix = 0; BoutonChoix < NB_BOUTON_CHOIX; ++BoutonChoix) {
+                ececity->tabBouton[ChoixMode][BoutonChoix].actif = false;
+            }
            break;
 
         default:
@@ -152,7 +194,24 @@ void ChoixModeJeu(ECECITY* ececity) {
     }
 }
 
-void JEU(ECECITY* ececity){
+
+void Gameplay(ECECITY* ececity){
+
+    ececity->souris.position = GetMousePosition();
+    if (ececity->currentJeuProcess != GAMEPAUSE && ececity->currentJeuProcess != SAUVEGARDE) {
+        timerCounter(ececity);
+        calculHabitant(ececity);
+        CalculImpotChaqueMois(ececity);
+        calculTimerHabitations(ececity);
+    }
+
+    defineTypeCase(ececity);
+    defineCurrentJeuProcess(ececity);
+
+    if(ececity->currentJeuProcess == GAMEOVER){
+        ececity->IsCodeRunning = false;
+    }
+
     switch (ececity->currentJeuProcess) {
         case NONE:
         case CONSTRUCTIONROUTE:
@@ -163,26 +222,37 @@ void JEU(ECECITY* ececity){
         case NIVEAU0:
         case NIVEAU1:
         case NIVEAU2:
-            Gameplay(ececity);
+            for (int boutonJeu = 0; boutonJeu < NB_BOUTON_JEU; ++boutonJeu) {
+                if (boutonJeu <= BOUTON_NIVEAU_2){
+                    ececity->tabBouton[Jeu][boutonJeu].actif = true;
+                }
+                else{
+                    ececity->tabBouton[Jeu][boutonJeu].actif = false;
+                }
+            }
+            break;
+        case SAUVEGARDE:
+            for (int boutonJeu = 0; boutonJeu < NB_BOUTON_JEU; ++boutonJeu) {
+                if (boutonJeu > BOUTON_EXIT_PAUSE){
+                    ececity->tabBouton[Jeu][boutonJeu].actif = true;
+                }
+                else{
+                    ececity->tabBouton[Jeu][boutonJeu].actif = false;
+                }
+            }
             break;
         case GAMEPAUSE:
-            pause(ececity);
+            for (int boutonJeu = 0; boutonJeu < NB_BOUTON_JEU; ++boutonJeu) {
+                if (boutonJeu >= BOUTON_SAUVEGARDE && boutonJeu <= BOUTON_EXIT_PAUSE){
+                    ececity->tabBouton[Jeu][boutonJeu].actif = true;
+                }
+                else{
+                    ececity->tabBouton[Jeu][boutonJeu].actif = false;
+                }
+            }
             break;
-    }
-}
-
-void Gameplay(ECECITY* ececity){
-
-    ececity->souris.position = GetMousePosition();
-    timerCounter(ececity);
-    calculHabitant(ececity);
-    CalculImpotChaqueMois(ececity);
-    calculTimerHabitations(ececity);
-    defineTypeCase(ececity);
-    defineCurrentJeuProcess(ececity);
-
-    if(ececity->currentJeuProcess == GAMEOVER){
-        ececity->IsCodeRunning = false;
+        default:
+            break;
     }
     AffichageGamePlay(ececity);
 
@@ -230,7 +300,6 @@ void CalculImpotChaqueMois(ECECITY* ececity){
     }
     else{
         ececity->compteur.timerImpots = TIMENOW;
-        printf("HAB %d\n", ececity->compteur.nbHabitantsTotal);
     }
 
 }
@@ -242,6 +311,7 @@ void pause(ECECITY* ececity){
     }
     AffichageGamePlay(ececity);
 }
+
 
 
 void defineTypeCase(ECECITY* ececity){
@@ -260,16 +330,14 @@ void defineTypeCase(ECECITY* ececity){
                 case CONSTRUCTIONROUTE:
                     if(ececity->compteur.soldeBanque >= ececity->prix.prixRoute){
 
-                        if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE){
+                        if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE &&
+                                construire(ececity)){
                             ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type = ROUTE;
                             ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType = ececity->compteur.nbRoutes;
                             ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.prixRoute;
                             ececity->compteur.nbRoutes++;
-                            if(ececity->compteur.nbRoutes == 1){
-                                Graphe_AllocGraphe(ececity);
-                            }
                             ececity->graphe->ordre++;
-                            buildGraphe(ececity);
+                            buildGraphe(ececity,ROUTE);
                         }
                     }
                     break;
@@ -295,7 +363,6 @@ void defineTypeCase(ECECITY* ececity){
                                 ececity->tabHabitations = (Case *) realloc(ececity->tabHabitations, sizeof(Case) *
                                                                                                     (ececity->compteur.compteurMaisons));
                             }
-                            printf("cm:%d\n", ececity->compteur.compteurMaisons);
                             ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].type = TerrainVague;
                             ececity->tabHabitations[ececity->compteur.compteurMaisons -
                                                     1].numeroType = ececity->compteur.compteurMaisons;
@@ -306,6 +373,8 @@ void defineTypeCase(ECECITY* ececity){
                             ececity->tabHabitations[ececity->compteur.compteurMaisons - 1].capaciteRestante = 0;
                             ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.prixTerrainVague;
 
+                            ececity->graphe->ordre++;
+                            buildGraphe(ececity,TerrainVague);
                         }
                     }
                     break;
@@ -344,6 +413,8 @@ void defineTypeCase(ECECITY* ececity){
                             ececity->tabChateauEau[ececity->compteur.compteurChateaux - 1].capaciteHabElecEnCours = 0;
                             ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.chateauPrix;
 
+                            ececity->graphe->ordre++;
+                            buildGraphe(ececity,CHATEAUDEAU);
                         }
                     }
                     break;
@@ -381,6 +452,9 @@ void defineTypeCase(ECECITY* ececity){
                             ececity->tabCentrale[ececity->compteur.compteurCentrales - 1].capaciteHabElecEnCours = 0;
                             ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.centralePrix;
 
+                            ececity->graphe->ordre++;
+                            buildGraphe(ececity,CENTRALE);
+
                         }
                     }
                     break;
@@ -398,9 +472,10 @@ void defineTypeCase(ECECITY* ececity){
 
 void defineCurrentJeuProcess(ECECITY* ececity){
     int boutonActif;
+    FILE* text = NULL;
     for (int boutonJeu = 0; boutonJeu < NB_BOUTON_JEU; ++boutonJeu) {
         if (CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][boutonJeu].recBouton)){
-            if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
+            if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && ececity->tabBouton[Jeu][boutonJeu].actif == true){
                 switch (boutonJeu) {
                     case BOUTON_ROUTE:
                         if(ececity->currentJeuProcess == CONSTRUCTIONROUTE){
@@ -435,10 +510,7 @@ void defineCurrentJeuProcess(ECECITY* ececity){
                         }
                         break;
                     case BOUTON_PAUSE:
-                        if(ececity->currentJeuProcess == GAMEPAUSE){
-                            ececity->currentJeuProcess = NONE;
-                        }
-                        else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_PAUSE].recBouton)){
+                        if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_PAUSE].recBouton)){
                             ececity->currentJeuProcess = GAMEPAUSE;
                         }
                         break;
@@ -474,6 +546,41 @@ void defineCurrentJeuProcess(ECECITY* ececity){
                             ececity->currentJeuProcess = NIVEAU2;
                         }
                         break;
+                    case BOUTON_SAUVEGARDE:
+                        if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE].recBouton)){
+                            ececity->currentJeuProcess = SAUVEGARDE;
+                        }
+                        break;
+                    case BOUTON_CONTINUER:
+                        if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_CONTINUER].recBouton)){
+                            ececity->currentJeuProcess = NONE;
+                        }
+                        break;
+                    case BOUTON_EXIT_PAUSE:
+                        if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_EXIT_PAUSE].recBouton)){
+                            ececity->IsCodeRunning = false;
+                        }
+                        break;
+                    case BOUTON_SAUVEGARDE1:
+                        if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE1].recBouton)){
+                            text = fopen("../FichierText/sauvegarde","w+");
+                            sauvegardeJeu(ececity, text);
+                            Graphe_DisplayArcs(ececity->graphe);
+                            Graphe_DisplaySommet(ececity->graphe);
+                        }
+                        break;
+                    case BOUTON_SAUVEGARDE2:
+                        if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE2].recBouton)){
+                            text = fopen("../FichierText/sauvegarde2","w+");
+                            sauvegardeJeu(ececity, text);
+                        }
+                        break;
+                    case BOUTON_SAUVEGARDE3:
+                        if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE3].recBouton)){
+                            text = fopen("../FichierText/sauvegarde3","w+");
+                            sauvegardeJeu(ececity, text);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -483,17 +590,56 @@ void defineCurrentJeuProcess(ECECITY* ececity){
 }
 
 void Charger(ECECITY* ececity){
-
-    ececity->IsCodeRunning = false;
+    FILE* text = NULL;
+    for (int boutonMenu = BOUTON_CHARGER1; boutonMenu < NB_BOUTON_MENU ; ++boutonMenu) {
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)
+        && ececity->tabBouton[MENU][BOUTON_CHARGER1].actif == true){
+            switch(boutonMenu){
+                case BOUTON_CHARGER1:
+                    if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[MENU][BOUTON_CHARGER1].recBouton)){
+                        text = fopen("../FichierText/sauvegarde","r");
+                        if(GetFileLength("../FichierText/sauvegarde") != 0){
+                            recupSauvegarde(ececity,text);
+                        }
+                    }
+                    break;
+                case BOUTON_CHARGER2:
+                    if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[MENU][BOUTON_CHARGER2].recBouton)){
+                        text = fopen("../FichierText/sauvegarde2","r");
+                        if(GetFileLength("../FichierText/sauvegarde2") != 0){
+                            recupSauvegarde(ececity,text);
+                        }
+                    }
+                    break;
+                case BOUTON_CHARGER3:
+                    if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[MENU][BOUTON_CHARGER3].recBouton)){
+                        text = fopen("../FichierText/sauvegarde3","r");
+                        if(GetFileLength("../FichierText/sauvegarde3") != 0){
+                            recupSauvegarde(ececity,text);
+                        }
+                    }
+                    break;
+                case BOUTON_BACK_TO_MENU:
+                    if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[MENU][BOUTON_BACK_TO_MENU].recBouton)){
+                        ececity->currentMenuProcess = NONE;
+                        printf("back to menu");
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }
 
 bool construire(ECECITY* ececity){
-    if(!MouseOnIso){
+    if(ececity->souris.colonneSouris == INT_MAX || ececity->souris.ligneSouris == INT_MAX){
         return false;
     }
     if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type != VIDE){
         return false;
     }
+
     switch (ececity->currentJeuProcess){
         case CONSTRUCTIONROUTE:
             if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE){
@@ -501,9 +647,16 @@ bool construire(ECECITY* ececity){
             }
             break;
         case CONSTRUCTIONMAISON:
+            for (int lignesFormat = 0; lignesFormat < ececity->formatBatiment.nblignesMaison; ++lignesFormat) {
+                for (int colonnesFormat = 0; colonnesFormat < ececity->formatBatiment.nbcolonnesMaison; ++colonnesFormat) {
+                    if(ececity->souris.colonneSouris + colonnesFormat > NB_COLONNES - 1 || ececity->souris.ligneSouris + lignesFormat > NB_LIGNES - 1){
+                        return false;
+                    }
+                }
+            }
             for (int lignesMaison = 0; lignesMaison < ececity->formatBatiment.nblignesMaison; ++lignesMaison) {
                 for (int colonnesMaison = 0; colonnesMaison < ececity->formatBatiment.nbcolonnesMaison; ++colonnesMaison) {
-                    if(ececity->tabCase[colonnesMaison][lignesMaison].type != VIDE){
+                    if(ececity->tabCase[ececity->souris.colonneSouris + colonnesMaison][ececity->souris.ligneSouris + lignesMaison].type != VIDE){
                         return false;
                     }
                 }
@@ -513,9 +666,16 @@ bool construire(ECECITY* ececity){
             }
             break;
         case CONSTRUCTIONCHATEAUDEAU:
+            for (int lignesFormat = 0; lignesFormat < ececity->formatBatiment.nblignesChateaux; ++lignesFormat) {
+                for (int colonnesFormat = 0; colonnesFormat < ececity->formatBatiment.nbcolonnesChateaux; ++colonnesFormat) {
+                    if(ececity->souris.colonneSouris + colonnesFormat > NB_COLONNES - 1 || ececity->souris.ligneSouris + lignesFormat > NB_LIGNES - 1){
+                        return false;
+                    }
+                }
+            }
             for (int lignesChateau = 0; lignesChateau < ececity->formatBatiment.nblignesChateaux; ++lignesChateau) {
                 for (int colonnesChateau = 0; colonnesChateau < ececity->formatBatiment.nbcolonnesChateaux; ++colonnesChateau) {
-                    if(ececity->tabCase[colonnesChateau][lignesChateau].type != VIDE){
+                    if(ececity->tabCase[ececity->souris.colonneSouris + colonnesChateau][ececity->souris.ligneSouris + lignesChateau].type != VIDE){
                         return false;
                     }
                 }
@@ -525,9 +685,16 @@ bool construire(ECECITY* ececity){
             }
             break;
         case CONSTRUCTIONCENTRALE:
+            for (int lignesFormat = 0; lignesFormat < ececity->formatBatiment.nblignesCentrales; ++lignesFormat) {
+                for (int colonnesFormat = 0; colonnesFormat < ececity->formatBatiment.nbcolonnesCentrales; ++colonnesFormat) {
+                    if(ececity->souris.colonneSouris + colonnesFormat > NB_COLONNES - 1 || ececity->souris.ligneSouris + lignesFormat > NB_LIGNES - 1){
+                        return false;
+                    }
+                }
+            }
             for (int lignesCentrale = 0; lignesCentrale < ececity->formatBatiment.nblignesCentrales; ++lignesCentrale) {
                 for (int colonnesCentrale = 0; colonnesCentrale < ececity->formatBatiment.nbcolonnesCentrales; ++colonnesCentrale) {
-                    if(ececity->tabCase[colonnesCentrale][lignesCentrale].type != VIDE){
+                    if(ececity->tabCase[ececity->souris.colonneSouris + colonnesCentrale][ececity->souris.ligneSouris + lignesCentrale].type != VIDE){
                         return false;
                     }
                 }
@@ -547,13 +714,6 @@ bool proximiteRoute(ECECITY* ececity, int typeBatiment){
 
     int nbLignes = 0;
     int nbColonnes = 0;
-    if(!MouseOnIso){
-        return false;
-    }
-    if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == typeBatiment
-       || ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type != VIDE){
-        return false;
-    }
     switch (typeBatiment){
         case TerrainVague:
             nbLignes = ececity->formatBatiment.nblignesMaison;
@@ -570,16 +730,7 @@ bool proximiteRoute(ECECITY* ececity, int typeBatiment){
         default:
             break;
     }
-    for (int lignesFormat = 0; lignesFormat < nbLignes; ++lignesFormat) {
-        for (int colonnesFormat = 0; colonnesFormat < nbColonnes; ++colonnesFormat) {
-            if(ececity->souris.colonneSouris + colonnesFormat > NB_COLONNES - 2 || ececity->souris.ligneSouris + colonnesFormat > NB_LIGNES - 2){
-                return false;
-            }
-            if(ececity->tabCase[ececity->souris.colonneSouris + colonnesFormat][ececity->souris.ligneSouris + lignesFormat].type != VIDE){
-                return false;
-            }
-        }
-    }
+
     for (int lignesFormat = 0; lignesFormat < nbLignes; ++lignesFormat) {
         for (int colonnesFormat = 0; colonnesFormat < nbColonnes; ++colonnesFormat) {
             if(lignesFormat == 0
@@ -785,7 +936,10 @@ void calculDistributionElec_old(Case matrice[NB_COLONNES][NB_LIGNES], Case  tabC
 
 // Calcule la distance mini entre 2 cases le long d'un route
 // entree : caseSource, caseCible, numRoute
+void calculDistanceGraphe(ECECITY* ececity){
+    int distanceMini = INT_MAX;
 
+}
 int calculDistance(Case caseSource, Case caseCible, int numRoute, Case matrice[NB_COLONNES][NB_LIGNES] ){
     int distanceMini = INT_MAX;
 

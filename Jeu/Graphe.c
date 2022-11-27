@@ -53,17 +53,16 @@ void Graph_Print(Graphe *graphe) {
 void Graphe_AllocGraphe(ECECITY* ececity) {
 
     ececity->graphe = (Graphe *) malloc(sizeof(Graphe));
-    ececity->graphe->pSommet = (pSommet *) malloc((ececity->graphe->ordre + 1) * sizeof(pSommet));
+    ececity->graphe->pSommet = (pSommet *) malloc(sizeof(struct Sommet));
 
     ececity->graphe->ordre = 0;
     ececity->graphe->taille = 0;
-    ececity->graphe->pSommet = NULL;
 }
 
 
-void Graphe_ReallocGraphe(ECECITY* ececity) {
+void Graphe_ReallocGraphe(ECECITY* ececity,int typeBatiment) {
 
-    ececity->graphe->pSommet = (pSommet *) realloc(ececity->graphe->pSommet, ececity->graphe->ordre * sizeof(pSommet));
+    ececity->graphe->pSommet = (pSommet*) realloc(ececity->graphe->pSommet, (ececity->graphe->ordre) * sizeof(pSommet));
 
     ececity->graphe->pSommet[ececity->graphe->ordre - 1] = (pSommet) malloc(sizeof(struct Sommet));
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->id = ececity->graphe->ordre;
@@ -72,17 +71,18 @@ void Graphe_ReallocGraphe(ECECITY* ececity) {
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->couleur = UNEXPLORED;
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->numCC = ececity->graphe->ordre - 1;
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->arc = NULL;
-
+    ececity->graphe->pSommet[ececity->graphe->ordre - 1]->type = typeBatiment;
+    ececity->graphe->pSommet[ececity->graphe->ordre - 1]->nbArcs = 0;
 
 }
 
 
 
-void buildGraphe(ECECITY* ececity) {
+void buildGraphe(ECECITY* ececity,int typeBatiment) {
 
     if(ececity->graphe != NULL){
         if(ececity->graphe->ordre > 0) {
-            Graphe_ReallocGraphe(ececity);
+            Graphe_ReallocGraphe(ececity,typeBatiment);
         }
         for (int sommet1 = 0; sommet1 < ececity->graphe->ordre; ++sommet1) {
             for (int sommet2 = 0; sommet2 < ececity->graphe->ordre; ++sommet2) {
@@ -93,6 +93,8 @@ void buildGraphe(ECECITY* ececity) {
                         ececity->graphe->pSommet = Graph_CreateArc(ececity->graphe->pSommet, ececity->graphe->pSommet[sommet1]->id - 1, ececity->graphe->pSommet[sommet2]->id - 1);
                         ececity->graphe->pSommet = Graph_CreateArc(ececity->graphe->pSommet, ececity->graphe->pSommet[sommet2]->id - 1, ececity->graphe->pSommet[sommet1]->id - 1);
                         ececity->graphe->taille++;
+                        ececity->graphe->pSommet[sommet1]->nbArcs++;
+                        ececity->graphe->pSommet[sommet2]->nbArcs++;
                     }
                 }
             }
@@ -160,9 +162,8 @@ void Graphe_DisplayArcs(Graphe* graphe) {
     if(graphe != NULL && graphe->taille){
         for (int i = 0; i < graphe->taille; ++i) {
             pArc arc = graphe->pSommet[i]->arc;
-            printf("%d --> ", graphe->pSommet[i]->id);
             while (arc != NULL) {
-                printf(" sommet1:%d sommet2:%d NUMCCsommet1:%d NUMCC sommet2: %d\n", arc->sommet1,arc->sommet2,graphe->pSommet[arc->sommet1]->numCC, graphe->pSommet[arc->sommet2]->numCC);
+                printf(" %d--->%d\n", arc->sommet1,arc->sommet2);
                 arc = arc->arc_suivant;
             }
         }
@@ -170,9 +171,9 @@ void Graphe_DisplayArcs(Graphe* graphe) {
 }
 
 void Graphe_DisplaySommet(Graphe* graphe) {
-    if(graphe != NULL && graphe->ordre){
+    if(graphe != NULL){
         for (int i = 0; i < graphe->ordre; ++i) {
-            printf(" sommet %d: NUMCC: %d\n",graphe->pSommet[i]->id, graphe->pSommet[i]->numCC);
+            printf(" sommet %d: type: %d case[%d][%d]\n",graphe->pSommet[i]->id, graphe->pSommet[i]->type,graphe->pSommet[i]->colonneTab,graphe->pSommet[i]->ligneTab);
         }
     }
 }

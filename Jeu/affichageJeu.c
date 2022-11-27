@@ -1,5 +1,6 @@
 #include "affichageJeu.h"
 #include <math.h>
+#include <stdio.h>
 
 void AffichageMenu(ECECITY* ececity){
 
@@ -14,6 +15,17 @@ void AffichageMenu(ECECITY* ececity){
     }
      DrawText("WELCOME TO ECE CITY", (int)(ececity->display.width/2 - MeasureText("WELCOME TO ECE CITY",100)/2),
           ececity->display.height/11, 100, RED);
+    if (ececity->currentMenuProcess == CHARGER){
+        if (GetFileLength("../FichierText/sauvegarde") == 0){
+            DrawText("FICHIER 1: PAS DE SAUVEGARDE!",300,800 , 25, RED);
+        }
+        if (GetFileLength("../FichierText/sauvegarde2") == 0){
+            DrawText("FICHIER 2: PAS DE SAUVEGARDE!",800,800 , 25, RED);
+        }
+        if (GetFileLength("../FichierText/sauvegarde3") == 0){
+            DrawText("FICHIER 3: PAS DE SAUVEGARDE!",1300,800 , 25, RED);
+        }
+    }
 
     AfficherBouton(ececity);
 
@@ -71,7 +83,6 @@ void AffichageGamePlay(ECECITY* ececity){
 
     AfficherIso(ececity);
 
-
     Color colorRect;
 
     int formatColonne, formatLigne;
@@ -87,6 +98,7 @@ void AffichageGamePlay(ECECITY* ececity){
                             case GAMEPAUSE:
                             case NIVEAU0:
                             case GAMEOVER:
+                            case SAUVEGARDE:
                                 colorRect = BLANK;
                                 break;
 
@@ -195,6 +207,8 @@ void AffichageGamePlay(ECECITY* ececity){
                                     formatLigne = ececity->formatBatiment.nblignesCentrales;
                                     break;
                                 default:
+                                    formatColonne = 1;
+                                    formatLigne = 1;
                                     break;
                             }
                             if (colonnes - ececity->souris.colonneSouris < formatColonne
@@ -246,6 +260,8 @@ void AffichageGamePlay(ECECITY* ececity){
                                     formatLigne = ececity->formatBatiment.nblignesCentrales;
                                     break;
                                 default:
+                                    formatColonne = 1;
+                                    formatLigne = 1;
                                     break;
                             }
                             if (colonnes - ececity->souris.colonneSouris < formatColonne
@@ -293,6 +309,8 @@ void AffichageGamePlay(ECECITY* ececity){
                                     formatLigne = ececity->formatBatiment.nblignesCentrales;
                                     break;
                                 default:
+                                    formatColonne = 1;
+                                    formatLigne = 1;
                                     break;
                             }
                             if (colonnes - ececity->souris.colonneSouris < formatColonne
@@ -341,6 +359,8 @@ void AffichageGamePlay(ECECITY* ececity){
                                     formatLigne = ececity->formatBatiment.nblignesMaison;
                                     break;
                                 default:
+                                    formatColonne = 1;
+                                    formatLigne = 1;
                                     break;
                             }
                             if (colonnes - ececity->souris.colonneSouris < formatColonne
@@ -384,11 +404,24 @@ void AffichageGamePlay(ECECITY* ececity){
                  (ececity->currentJeuProcess == NIVEAU1) ? BLUE : GOLD);
     }
 
-    AfficherBouton(ececity);
 
     if (ececity->currentJeuProcess != GAMEPAUSE) {
         AfficherCaseInfo(ececity);
     }
+
+    if(ececity->currentJeuProcess == SAUVEGARDE || ececity->currentJeuProcess == GAMEPAUSE){
+        DrawRectangle(600, 100, 600, 850, BLACK);
+        if (ececity->currentJeuProcess == SAUVEGARDE) {
+            DrawText("Dans quel fichier souhaitez-vous \n sauvegarder votre partie?", 650, 200, 30, MAGENTA);
+        }
+        else{
+            DrawText("Jeu en pause, un petit cafe?", 650, 200, 30, MAGENTA);
+        }
+    }
+
+
+    AfficherBouton(ececity);
+
 
     EndDrawing();
 }
@@ -535,35 +568,39 @@ void AfficherBouton(ECECITY *ececity) {
             NB_BOUTON = NB_BOUTON_FIN;
             ececity->write.fontSize = 30;
             break;
+        default:
+            break;
     }
     if (ececity->currentJeuProcess == NIVEAU1 || ececity->currentJeuProcess == NIVEAU2) {
         debutBouton = BOUTON_NIVEAU_0;
     }
     for (int bouton = debutBouton; bouton < NB_BOUTON; ++bouton) {
-        if (ececity->currentProcess == MENU || ececity->currentProcess == ChoixMode) {
-            DrawRectangleRec(ececity->tabBouton[MENU][bouton].recBouton,
-                             (CheckCollisionPointRec(ececity->souris.position,
-                                                     ececity->tabBouton[MENU][bouton].recBouton)) ? SKYBLUE
-                                                                                                  : LIGHTGRAY);
-        }
-        DrawRectangleLines((int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.x,
-                           (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.y,
-                           (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.width,
-                           (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.height,
-                           (CheckCollisionPointRec(ececity->souris.position,
-                                                   ececity->tabBouton[ececity->currentProcess][bouton].recBouton))
-                           ? BLUE : GRAY);
+        if(ececity->tabBouton[ececity->currentProcess][bouton].actif == true){
+            if (ececity->currentProcess == MENU || ececity->currentProcess == ChoixMode) {
+                DrawRectangleRec(ececity->tabBouton[MENU][bouton].recBouton,
+                                 (CheckCollisionPointRec(ececity->souris.position,
+                                                         ececity->tabBouton[MENU][bouton].recBouton)) ? SKYBLUE
+                                                                                                      : LIGHTGRAY);
+            }
+            DrawRectangleLines((int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.x,
+                               (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.y,
+                               (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.width,
+                               (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.height,
+                               (CheckCollisionPointRec(ececity->souris.position,
+                                                       ececity->tabBouton[ececity->currentProcess][bouton].recBouton))
+                               ? BLUE : GRAY);
 
-        DrawText(ececity->tabBouton[ececity->currentProcess][bouton].nom,
-                 (int) (ececity->tabBouton[ececity->currentProcess][bouton].recBouton.x +
-                        ececity->tabBouton[ececity->currentProcess][bouton].recBouton.width / 2 -
-                        (float) MeasureText(ececity->tabBouton[ececity->currentProcess][bouton].nom,
-                                            ececity->write.fontSize) / 2),
-                 (int) (ececity->tabBouton[ececity->currentProcess][bouton].recBouton.y +
-                        ececity->tabBouton[ececity->currentProcess][bouton].recBouton.height / 2 -
-                        (float) (ececity->write.fontSize) / 2),
-                 ececity->write.fontSize, (CheckCollisionPointRec(ececity->souris.position,
-                                                                  ececity->tabBouton[ececity->currentProcess][bouton].recBouton))
-                                          ? MAGENTA : RED);
+            DrawText(ececity->tabBouton[ececity->currentProcess][bouton].nom,
+                     (int) (ececity->tabBouton[ececity->currentProcess][bouton].recBouton.x +
+                            ececity->tabBouton[ececity->currentProcess][bouton].recBouton.width / 2 -
+                            (float) MeasureText(ececity->tabBouton[ececity->currentProcess][bouton].nom,
+                                                ececity->write.fontSize) / 2),
+                     (int) (ececity->tabBouton[ececity->currentProcess][bouton].recBouton.y +
+                            ececity->tabBouton[ececity->currentProcess][bouton].recBouton.height / 2 -
+                            (float) (ececity->write.fontSize) / 2),
+                     ececity->write.fontSize, (CheckCollisionPointRec(ececity->souris.position,
+                                                                      ececity->tabBouton[ececity->currentProcess][bouton].recBouton))
+                                              ? MAGENTA : RED);
+        }
     }
 }

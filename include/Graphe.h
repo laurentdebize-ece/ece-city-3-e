@@ -4,8 +4,8 @@
 #include "ECECity.h"
 
 void Graphe_AllocGraphe(ECECITY* ececity);
-void Graphe_ReallocGraphe(ECECITY* ececity);
-void buildGraphe(ECECITY* ececity);
+void Graphe_ReallocGraphe(ECECITY* ececity,int typeBatiment);
+void buildGraphe(ECECITY* ececity,int typeBatiment);
 
 pSommet* Graph_CreateArc(pSommet* sommet, int s1, int s2);
 

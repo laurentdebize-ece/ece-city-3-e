@@ -16,8 +16,6 @@
 #define CAPACENTRALE 5000
 #define CAPAEAU 5000
 #define SOLDEBANQUE 500000
-#define PRIXIMPOT 10
-
 
 
 typedef enum {
@@ -30,8 +28,8 @@ typedef enum {
 
 typedef enum {
     CREDITS,
-    COMMUNISTE,
-    CAPITALISTE,
+    COMMUNISTE, // pas bouger 1
+    CAPITALISTE, //pas bouger 2
     NIVEAU0,
     NIVEAU1,
     NIVEAU2,
@@ -92,6 +90,10 @@ typedef enum{
     BOUTON_EXIT_MENU,
     BOUTON_CHARGER,
     BOUTON_CREDITS,
+    BOUTON_CHARGER1,
+    BOUTON_CHARGER2,
+    BOUTON_CHARGER3,
+    BOUTON_BACK_TO_MENU,
     NB_BOUTON_MENU,
 }NomBoutonMenu;
 
@@ -112,12 +114,17 @@ typedef enum{
     BOUTON_NIVEAU_0,
     BOUTON_NIVEAU_1,
     BOUTON_NIVEAU_2,
+    BOUTON_SAUVEGARDE,
+    BOUTON_CONTINUER,
+    BOUTON_EXIT_PAUSE,
+    BOUTON_SAUVEGARDE1,
+    BOUTON_SAUVEGARDE2,
+    BOUTON_SAUVEGARDE3,
     NB_BOUTON_JEU,
 }NomBoutonJeu;
 
 typedef enum{
     BOUTON_REJOUER,
-    BOUTON_SAUVEGARDE,
     BOUTON_EXIT_FIN,
     NB_BOUTON_FIN,
 }NomBoutonFin;
@@ -127,6 +134,10 @@ static const char *boutonMenuText[] = {
         "EXIT GAME\0",
         "CHARGER\0",
         "CREDITS\0",
+        "CHARGER 1\0",
+        "CHARGER 2\0",
+        "CHARGER 3\0",
+        "BACK TO MENU\0",
 };
 
 static const char *boutonJeuText[] = {
@@ -139,6 +150,12 @@ static const char *boutonJeuText[] = {
         "NIVEAU 0\0",
         "NIVEAU -1\0",
         "NIVEAU -2\0",
+        "Sauvegarde\0",
+        "Continuer\0",
+        "EXIT\0",
+        "Sauvegarde1\0",
+        "Sauvegarde2\0",
+        "Sauvegarde3\0",
 };
 
 static const char *boutonChoixJeu[] = {
@@ -149,8 +166,10 @@ static const char *boutonChoixJeu[] = {
 
 static const char *boutonFinText[] = {
         "REJOUER\0",
-        "SAUVEGARDER\0",
-        "QUITTER\0",
+        "SAUVEGARDE 1\0",
+        "SAUVEGARDE 2\0",
+        "SAUVEGARDE 3\0",
+        "EXIT\0",
 };
 
 
@@ -201,6 +220,7 @@ struct Sommet
     struct Arc* arc;
     int id;
     int type;
+    int nbArcs;
     struct Sommet *predecesseur;
     struct Sommet *suivant;
     int numCC;
@@ -212,7 +232,7 @@ struct Sommet
 typedef struct Sommet* pSommet;
 
 
-typedef struct Graphe
+typedef struct
 {
     int taille;
     int ordre;
@@ -220,7 +240,6 @@ typedef struct Graphe
 } Graphe;
 
 typedef struct{
-    int temporel;
     int nbHabitantsTotal;
     int CapaciteEau;
     int CapaciteCentrale;
@@ -307,6 +326,7 @@ typedef struct{
 typedef struct{
     Rectangle recBouton;
     const char* nom;
+    bool actif;
 }Bouton;
 
 typedef struct{
@@ -323,6 +343,7 @@ typedef struct {
     int currentMenuProcess;
     int currentJeuProcess;
     int currentChoixJeuProcess;
+    int currentEndProcess;
     ElementSauvegarde jeu;
     Isometric infoIso;
     Graphe* graphe;
@@ -347,7 +368,6 @@ void MainBoucle(ECECITY* ececity);
 void Menu(ECECITY* ececity);
 void ChoixModeJeu(ECECITY* ececity);
 void Charger(ECECITY* ececity);
-void JEU(ECECITY* ececity);
 void Gameplay(ECECITY* ececity);
 int calculRoute( ECECITY* ececity, int typeCalcul);
 void ajouteCelluleRoute(ECECITY* ececity, int colonne, int ligne, int numRoute, int typeCalcul);

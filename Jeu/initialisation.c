@@ -1,4 +1,5 @@
 #include "../include/initialisation.h"
+#include "graphe.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
@@ -30,6 +31,8 @@ void InitTOUT(ECECITY* ececity){
     InitISO(ececity);
 
     InitInfoFichierText("../FichierText/fichier", ececity);
+
+    Graphe_AllocGraphe(ececity);
 
 }
 
@@ -266,58 +269,105 @@ void InitISO(ECECITY* ececity){
         ececity->tabCase[NB_COLONNES - 1][lignes].cardinal[OUEST].y = ececity->tabCase[NB_COLONNES - 1][lignes].positionCase.y;
     }
 
-
-    for (int lignes = 0; lignes < NB_LIGNES; ++lignes) {
-        for (int colonnes = 0; colonnes < NB_COLONNES; ++colonnes) {
-            printf("casenormal [%d] [%d] x = %f, y = %f\n",colonnes,lignes,ececity->tabCase[colonnes][lignes].positionCase.x,ececity->tabCase[colonnes][lignes].positionCase.y);
-        }
-    }
 }
 
 
 void InitBouton(ECECITY* ececity){
 
 
-    for (int bouton = 0; bouton < NB_BOUTON_MENU; ++bouton) {
+    for (int bouton = 0; bouton < BOUTON_CHARGER1; ++bouton) {
         ececity->tabBouton[MENU][bouton].recBouton = (Rectangle){(float) ececity->display.width/ 2 - 150,(float)(300+(bouton*200)), 300, 150};
         ececity->tabBouton[MENU][bouton].nom = boutonMenuText[bouton];
+        ececity->tabBouton[MENU][bouton].actif = true;
     }
+
+    ececity->tabBouton[MENU][BOUTON_CHARGER1].recBouton = (Rectangle){250,450, 300, 150};
+    ececity->tabBouton[MENU][BOUTON_CHARGER1].nom = boutonMenuText[BOUTON_CHARGER1];
+    ececity->tabBouton[MENU][BOUTON_CHARGER1].actif = false;
+
+    ececity->tabBouton[MENU][BOUTON_CHARGER2].recBouton = (Rectangle){600,450, 300, 150};
+    ececity->tabBouton[MENU][BOUTON_CHARGER2].nom = boutonMenuText[BOUTON_CHARGER2];
+    ececity->tabBouton[MENU][BOUTON_CHARGER2].actif = false;
+
+    ececity->tabBouton[MENU][BOUTON_CHARGER3].recBouton = (Rectangle){950,450, 300, 150};
+    ececity->tabBouton[MENU][BOUTON_CHARGER3].nom = boutonMenuText[BOUTON_CHARGER3];
+    ececity->tabBouton[MENU][BOUTON_CHARGER3].actif = false;
+
+    ececity->tabBouton[MENU][BOUTON_BACK_TO_MENU].recBouton = (Rectangle){1300,450, 300, 150};
+    ececity->tabBouton[MENU][BOUTON_BACK_TO_MENU].nom = boutonMenuText[BOUTON_BACK_TO_MENU];
+    ececity->tabBouton[MENU][BOUTON_BACK_TO_MENU].actif = false;
 
     for (int bouton = 0; bouton < NB_BOUTON_CHOIX; ++bouton) {
         ececity->tabBouton[ChoixMode][bouton].recBouton = (Rectangle){(float) ececity->display.width/ 2 - 150,(float)(300+(bouton*200)), 400, 150};
         ececity->tabBouton[ChoixMode][bouton].nom = boutonChoixJeu[bouton];
+        ececity->tabBouton[ChoixMode][bouton].actif = false;
     }
 
     ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton = (Rectangle){(float) ececity->display.width - 250,300, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_ROUTE].nom = boutonJeuText[BOUTON_ROUTE];
+    ececity->tabBouton[Jeu][BOUTON_ROUTE].actif = false;
 
     ececity->tabBouton[Jeu][BOUTON_MAISON].recBouton = (Rectangle){(float) ececity->display.width - 250,400, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_MAISON].nom = boutonJeuText[BOUTON_MAISON];
+    ececity->tabBouton[Jeu][BOUTON_MAISON].actif = false;
 
     ececity->tabBouton[Jeu][BOUTON_CHATEAUDEAU].recBouton = (Rectangle){(float) ececity->display.width - 250,500, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_CHATEAUDEAU].nom = boutonJeuText[BOUTON_CHATEAUDEAU];
+    ececity->tabBouton[Jeu][BOUTON_CHATEAUDEAU].actif = false;
 
     ececity->tabBouton[Jeu][BOUTON_CENTRALE].recBouton = (Rectangle){(float) ececity->display.width - 250,600, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_CENTRALE].nom = boutonJeuText[BOUTON_CENTRALE];
+    ececity->tabBouton[Jeu][BOUTON_CENTRALE].actif = false;
 
     ececity->tabBouton[Jeu][BOUTON_PAUSE].recBouton = (Rectangle){(float) ececity->display.width - 250,700, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_PAUSE].nom = boutonJeuText[BOUTON_PAUSE];
+    ececity->tabBouton[Jeu][BOUTON_PAUSE].actif = false;
 
     ececity->tabBouton[Jeu][BOUTON_EXIT_JEU].recBouton = (Rectangle){(float) ececity->display.width - 250,800, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_EXIT_JEU].nom = boutonJeuText[BOUTON_EXIT_JEU];
+    ececity->tabBouton[Jeu][BOUTON_EXIT_JEU].actif = false;
 
     ececity->tabBouton[Jeu][BOUTON_NIVEAU_0].recBouton = (Rectangle){(float) ececity->display.width - 550,650, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_NIVEAU_0].nom = boutonJeuText[BOUTON_NIVEAU_0];
+    ececity->tabBouton[Jeu][BOUTON_NIVEAU_0].actif = false;
 
     ececity->tabBouton[Jeu][BOUTON_NIVEAU_1].recBouton = (Rectangle){(float) ececity->display.width - 550,750, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_NIVEAU_1].nom = boutonJeuText[BOUTON_NIVEAU_1];
+    ececity->tabBouton[Jeu][BOUTON_NIVEAU_1].actif = false;
 
     ececity->tabBouton[Jeu][BOUTON_NIVEAU_2].recBouton = (Rectangle){(float) ececity->display.width - 550,850, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_NIVEAU_2].nom = boutonJeuText[BOUTON_NIVEAU_2];
+    ececity->tabBouton[Jeu][BOUTON_NIVEAU_2].actif = false;
+
+    ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE].recBouton = (Rectangle){750,300, 300, 150};
+    ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE].nom = boutonJeuText[BOUTON_SAUVEGARDE];
+    ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE].actif = false;
+
+    ececity->tabBouton[Jeu][BOUTON_CONTINUER].recBouton = (Rectangle){750,500, 300, 150};
+    ececity->tabBouton[Jeu][BOUTON_CONTINUER].nom = boutonJeuText[BOUTON_CONTINUER];
+    ececity->tabBouton[Jeu][BOUTON_CONTINUER].actif = false;
+
+    ececity->tabBouton[Jeu][BOUTON_EXIT_PAUSE].recBouton = (Rectangle){750,700, 300, 150};
+    ececity->tabBouton[Jeu][BOUTON_EXIT_PAUSE].nom = boutonJeuText[BOUTON_EXIT_PAUSE];
+    ececity->tabBouton[Jeu][BOUTON_EXIT_PAUSE].actif = false;
+
+    ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE1].recBouton = (Rectangle){750,300, 300, 150};
+    ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE1].nom = boutonJeuText[BOUTON_SAUVEGARDE1];
+    ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE1].actif = false;
+
+    ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE2].recBouton = (Rectangle){750,500, 300, 150};
+    ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE2].nom = boutonJeuText[BOUTON_SAUVEGARDE2];
+    ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE2].actif = false;
+
+    ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE3].recBouton = (Rectangle){750,700, 300, 150};
+    ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE3].nom = boutonJeuText[BOUTON_SAUVEGARDE3];
+    ececity->tabBouton[Jeu][BOUTON_SAUVEGARDE3].actif = false;
+
 
     for (int bouton = 0; bouton < NB_BOUTON_FIN; ++bouton) {
         ececity->tabBouton[END][bouton].recBouton = (Rectangle){(float) ececity->display.width/ 2 - 150,(float)(300+(bouton*200)), 300, 150};
         ececity->tabBouton[END][bouton].nom = boutonFinText[bouton];
+        ececity->tabBouton[END][bouton].actif = false;
     }
 
 }
