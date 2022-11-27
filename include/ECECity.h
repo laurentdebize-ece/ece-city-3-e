@@ -10,7 +10,7 @@
 #define MAP_TILE_SIZE 20
 #define NB_COLONNES 45
 #define NB_LIGNES 35
-#define SIZEBOARDX 900
+#define SIZEBOARDX  900
 #define SIZEBOARDY 700
 #define MAX_OBJET 300
 #define CAPACENTRALE 5000
@@ -24,6 +24,7 @@ typedef enum {
     MENU,
     ChoixMode,
     Jeu,
+    Outil,
     END,
     NB_PROCESS,
 } GameProcess;
@@ -76,6 +77,7 @@ typedef enum {
     IMAGECLOCK,
     IMAGEARGENT,
     IMAGEPOPULATION,
+    IMAGEOUTIL,
     IMAGEROUTE,
     IMAGECHATEAUEAU,
     IMAGECENTRALEELEC,
@@ -107,12 +109,14 @@ typedef enum {
 
 
 typedef enum{
+
     BOUTON_ROUTE,
     BOUTON_MAISON,
     BOUTON_CHATEAUDEAU,
     BOUTON_CENTRALE,
     BOUTON_PAUSE,
     BOUTON_EXIT_JEU,
+    BOUTON_OUTIL,
     BOUTON_NIVEAU_0,
     BOUTON_NIVEAU_1,
     BOUTON_NIVEAU_2,
@@ -134,12 +138,14 @@ static const char *boutonMenuText[] = {
 };
 
 static const char *boutonJeuText[] = {
+
         "ROUTE\0",
         "TerrainVague\0",
         "CHATEAUDEAU\0",
         "CENTRALE\0",
         "BOUTON_PAUSE\0",
         "EXIT\0",
+        "\0",
         "NIVEAU 0\0",
         "NIVEAU -1\0",
         "NIVEAU -2\0",

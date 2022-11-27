@@ -1,21 +1,27 @@
 #include "affichageJeu.h"
+#include "ECECity.h"
+#include "affichage.h"
+#include "raylib.h"
+#include "initialisation.h"
 #include <math.h>
 
-void AffichageMenu(ECECITY* ececity){
+void AffichageMenu(ECECITY* ececity) {
 
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
 
-    DrawTexture(ececity->tabImage[IMAGEACCUEIL].TextureImage, (int)ececity->tabImage[IMAGEACCUEIL].format.x, (int)ececity->tabImage[IMAGEACCUEIL].format.y, WHITE);
+    DrawTexture(ececity->tabImage[IMAGEACCUEIL].TextureImage, (int) ececity->tabImage[IMAGEACCUEIL].format.x,
+                (int) ececity->tabImage[IMAGEACCUEIL].format.y, WHITE);
 
-    if (ececity->currentMenuProcess == CREDITS){
+    if (ececity->currentMenuProcess == CREDITS) {
         DrawText("(c) ECE CITY by Aurelien, Jules, Eva and Thomas", 15, 15, 50, BLACK);
     }
-     DrawText("WELCOME TO ECE CITY", (int)(ececity->display.width/2 - MeasureText("WELCOME TO ECE CITY",100)/2),
-          ececity->display.height/11, 100, RED);
+    DrawText("WELCOME TO ECE CITY", (int) (ececity->display.width / 2 - MeasureText("WELCOME TO ECE CITY", 100) / 2),
+             ececity->display.height / 11, 100, ORANGE);
 
-    AfficherBouton(ececity);
+
+        AfficherBouton(ececity);
 
     EndDrawing();
 }
@@ -29,8 +35,8 @@ void AffichageChoixMode( ECECITY* ececity){
 
     DrawTexture(ececity->tabImage[IMAGECHOIXJEU].TextureImage, (int)ececity->tabImage[IMAGECHOIXJEU].format.x, (int)ececity->tabImage[IMAGECHOIXJEU].format.y, WHITE);
 
-    DrawText("Choisis ton mode de jeu :", (int)(ececity->display.width/3),
-     ececity->display.height/9, 120, WHITE);
+    DrawText("Choisis ton mode de jeu :", (int)(ececity->display.width/8),
+     ececity->display.height/13, 120, WHITE);
 
     AfficherBoutonModeJeu(ececity);
 
@@ -44,11 +50,10 @@ void AffichageGamePlay(ECECITY* ececity){
     ClearBackground(RAYWHITE);
 
     DrawTexture(ececity->tabImage[IMAGEJEU].TextureImage, (int)ececity->tabImage[IMAGEJEU].format.x, (int)ececity->tabImage[IMAGEJEU].format.y, WHITE);
-
-
-    DrawRectangle(1575, 20, MeasureText("Time: %dh %dmin %dsec",20) + 100, MeasureTextEx(ececity->write.font,"Time: %dh %dmin %dsec",20,0).y + 40, BLACK);
-    DrawRectangle(1100, 20, MeasureText("Argent Restant: %d",20) + 125, MeasureTextEx(ececity->write.font,"Argent Restant: %d",20,0).y + 40, BLACK);
-    DrawRectangle(675, 20, MeasureText("Nombre d'habitants: %d",20) + 125, MeasureTextEx(ececity->write.font,"Nombre d'habitants: %d",20,0).y + 40, BLACK);
+    DrawTexture(ececity->tabImage[IMAGEOUTIL].TextureImage, (int) ececity->tabBouton[ececity->currentProcess][BOUTON_OUTIL].recBouton.x, (int) ececity->tabBouton[ececity->currentProcess][BOUTON_OUTIL].recBouton.y, WHITE);
+    DrawRectangle(1575, 20, MeasureText("Time: %dh %dmin %dsec",20) + 100, MeasureTextEx(ececity->write.font,"Time: %dh %dmin %dsec",20,0).y + 40, DARKGRAY);
+    DrawRectangle(1100, 20, MeasureText("Argent Restant: %d",20) + 125, MeasureTextEx(ececity->write.font,"Argent Restant: %d",20,0).y + 40, DARKGRAY);
+    DrawRectangle(675, 20, MeasureText("Nombre d'habitants: %d",20) + 125, MeasureTextEx(ececity->write.font,"Nombre d'habitants: %d",20,0).y + 40, DARKGRAY);
 
     for (int image = IMAGECLOCK; image <= IMAGEPOPULATION; ++image) {
         DrawTexture(ececity->tabImage[image].TextureImage, (int) ececity->tabImage[image].format.x,
@@ -56,18 +61,18 @@ void AffichageGamePlay(ECECITY* ececity){
     }
 
     DrawRectangleLines(1575, 20, MeasureText("Time: %dh %dmin %dsec", 20) + 100,
-                       MeasureTextEx(ececity->write.font, "Time: %dh %dmin %dsec", 20, 0).y + 40, BLACK);
+                       MeasureTextEx(ececity->write.font, "Time: %dh %dmin %dsec", 20, 0).y + 40, WHITE);
     DrawRectangleLines(1100, 20, MeasureText("Argent Restant: %d", 20) + 125,
-                       MeasureTextEx(ececity->write.font, "Argent Restant: %d", 20, 0).y + 40, BLACK);
+                       MeasureTextEx(ececity->write.font, "Argent Restant: %d", 20, 0).y + 40, WHITE);
     DrawRectangleLines(675, 20, MeasureText("Nombre d'habitants: %d", 20) + 125,
-                       MeasureTextEx(ececity->write.font, "Nombre d'habitants: %d", 20, 0).y + 40, BLACK);
+                       MeasureTextEx(ececity->write.font, "Nombre d'habitants: %d", 20, 0).y + 40, WHITE);
 
     DrawText(TextFormat("Time: %dh %dmin %dsec", ececity->time.timer.hoursCounter,
                         ececity->time.timer.minutesCounter, ececity->time.timer.secondsCounter), 1700, 40, 20,
-             MAGENTA);
+             WHITE);
 
-    DrawText(TextFormat("Argent Restant: %d", ececity->compteur.soldeBanque), 1175, 40, 20, MAGENTA);
-    DrawText(TextFormat("Nombre d'habitants: %d", ececity->compteur.nbHabitantsTotal), 750, 40, 20, MAGENTA);
+    DrawText(TextFormat("Argent Restant: %d", ececity->compteur.soldeBanque), 1175, 40, 20, ColorFromHSV(100,3,20));
+    DrawText(TextFormat("Nombre d'habitants: %d", ececity->compteur.nbHabitantsTotal), 770, 40, 20, GOLD);
 
 
 
@@ -677,6 +682,9 @@ void AfficherBoutonModeJeu(ECECITY *ececity) {
 
 void AfficherBouton(ECECITY *ececity) {
 
+
+    bool clic = IsMouseButtonDown(MOUSE_BUTTON_LEFT) &&
+    CheckCollisionPointRec(ececity->souris.position, ececity->tabBouton[Jeu][BOUTON_OUTIL].recBouton);
     int NB_BOUTON = 0;
     int debutBouton = 0;
     switch (ececity->currentProcess) {
@@ -689,9 +697,14 @@ void AfficherBouton(ECECITY *ececity) {
             ececity->write.fontSize = 30;
             break;
         case Jeu:
-            NB_BOUTON = NB_BOUTON_JEU;
-            ececity->write.fontSize = 15;
+            if (clic == false) {
+            }else{
+                NB_BOUTON = NB_BOUTON_JEU;
+                ececity->write.fontSize = 15;
+
+            }
             break;
+
         case END:
             NB_BOUTON = NB_BOUTON_FIN;
             ececity->write.fontSize = 30;
@@ -700,6 +713,7 @@ void AfficherBouton(ECECITY *ececity) {
     if (ececity->currentJeuProcess == NIVEAU1 || ececity->currentJeuProcess == NIVEAU2) {
         debutBouton = BOUTON_NIVEAU_0;
     }
+
     for (int bouton = debutBouton; bouton < NB_BOUTON; ++bouton) {
         if (ececity->currentProcess == MENU || ececity->currentProcess == ChoixMode) {
             DrawRectangleRec(ececity->tabBouton[MENU][bouton].recBouton,
@@ -707,6 +721,7 @@ void AfficherBouton(ECECITY *ececity) {
                                                      ececity->tabBouton[MENU][bouton].recBouton)) ? SKYBLUE
                                                                                                   : LIGHTGRAY);
         }
+
         DrawRectangleLines((int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.x,
                            (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.y,
                            (int) ececity->tabBouton[ececity->currentProcess][bouton].recBouton.width,

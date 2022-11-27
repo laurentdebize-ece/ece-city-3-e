@@ -36,8 +36,8 @@ void InitTOUT(ECECITY* ececity){
 
 void InitDisplay(ECECITY* ececity){
 
-    ececity->display.width = 1600;//1920
-    ececity->display.height = 800;//1065
+    ececity->display.width = 1920;
+    ececity->display.height = 1065;
     ececity->display.FPS = 60;
 
     InitWindow(ececity->display.width, ececity->display.height,NULL);
@@ -78,6 +78,15 @@ void InitImage(ECECITY* ececity){
     ececity->tabImage[IMAGECHOIXJEU].format.y = 0;
     ececity->tabImage[IMAGECHOIXJEU].format = (Rectangle){0,0,ececity->tabImage[IMAGECHOIXJEU].format.width,ececity->tabImage[IMAGECHOIXJEU].format.height};
     UnloadImage(ececity->tabImage[IMAGECHOIXJEU].Image);
+
+    ececity->tabImage[IMAGEOUTIL].Image = LoadImage("../Images/ImageOutil.png");
+    ececity->tabImage[IMAGEOUTIL].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEOUTIL].Image);
+    ececity->tabImage[IMAGEOUTIL].format.width = 200;
+    ececity->tabImage[IMAGEOUTIL].format.height = 100;
+    ececity->tabImage[IMAGEOUTIL].format.x = ececity->tabBouton[Jeu][BOUTON_OUTIL].recBouton.x;
+    ececity->tabImage[IMAGEOUTIL].format.y = ececity->tabBouton[Jeu][BOUTON_OUTIL].recBouton.y;
+    ececity->tabImage[IMAGEOUTIL].format = (Rectangle){ececity->tabBouton[Jeu][BOUTON_OUTIL].recBouton.x,ececity->tabBouton[Jeu][BOUTON_OUTIL].recBouton.y,ececity->tabImage[IMAGEOUTIL].format.width,ececity->tabImage[IMAGEOUTIL].format.height};
+    UnloadImage(ececity->tabImage[IMAGEOUTIL].Image);
 
     ececity->tabImage[IMAGEJEU].Image = LoadImage("../Images/fondMap.png");
     ececity->tabImage[IMAGEJEU].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEJEU].Image);
@@ -293,23 +302,26 @@ void InitBouton(ECECITY* ececity){
         ececity->tabBouton[ChoixMode][bouton].nom = boutonChoixJeu[bouton];
     }
 
-    ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton = (Rectangle){(float) ececity->display.width - 250,300, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton = (Rectangle){20,300, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_ROUTE].nom = boutonJeuText[BOUTON_ROUTE];
 
-    ececity->tabBouton[Jeu][BOUTON_MAISON].recBouton = (Rectangle){(float) ececity->display.width - 250,400, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_MAISON].recBouton = (Rectangle){20,400, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_MAISON].nom = boutonJeuText[BOUTON_MAISON];
 
-    ececity->tabBouton[Jeu][BOUTON_CHATEAUDEAU].recBouton = (Rectangle){(float) ececity->display.width - 250,500, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_CHATEAUDEAU].recBouton = (Rectangle){20,500, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_CHATEAUDEAU].nom = boutonJeuText[BOUTON_CHATEAUDEAU];
 
-    ececity->tabBouton[Jeu][BOUTON_CENTRALE].recBouton = (Rectangle){(float) ececity->display.width - 250,600, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_CENTRALE].recBouton = (Rectangle){20,600, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_CENTRALE].nom = boutonJeuText[BOUTON_CENTRALE];
 
-    ececity->tabBouton[Jeu][BOUTON_PAUSE].recBouton = (Rectangle){(float) ececity->display.width - 250,700, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_PAUSE].recBouton = (Rectangle){20,700, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_PAUSE].nom = boutonJeuText[BOUTON_PAUSE];
 
-    ececity->tabBouton[Jeu][BOUTON_EXIT_JEU].recBouton = (Rectangle){(float) ececity->display.width - 250,800, 200, 100};
+    ececity->tabBouton[Jeu][BOUTON_EXIT_JEU].recBouton = (Rectangle){20,800, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_EXIT_JEU].nom = boutonJeuText[BOUTON_EXIT_JEU];
+
+    ececity->tabBouton[Jeu][BOUTON_OUTIL].recBouton = (Rectangle){20 ,900, 200, 180};
+    ececity->tabBouton[Jeu][BOUTON_OUTIL].nom = boutonJeuText[BOUTON_OUTIL];
 
     ececity->tabBouton[Jeu][BOUTON_NIVEAU_0].recBouton = (Rectangle){(float) ececity->display.width - 550,650, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_NIVEAU_0].nom = boutonJeuText[BOUTON_NIVEAU_0];

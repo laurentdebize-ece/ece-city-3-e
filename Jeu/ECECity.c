@@ -9,7 +9,7 @@
 #include "stdio.h"
 #include <math.h>
 
-#include "../include/Gestionfichier.h"
+//#include "../include/Gestionfichier.h"
 
 void MainBoucle(ECECITY* ececity){
     while(ececity->IsCodeRunning){
@@ -43,7 +43,7 @@ void Menu(ECECITY* ececity) {
     ececity->souris.position = GetMousePosition();
     for (int bouton = 0; bouton < NB_BOUTON_MENU; ++bouton) {
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) &&
-            CheckCollisionPointRec(ececity->souris.position, ececity->tabBouton[MENU][bouton].recBouton)) {
+            CheckCollisionPointRec(ececity->souris.position, ececity->tabBouton[MENU][bouton].recBouton)){
             switch (bouton) {
                 case BOUTON_STARTGAME:
                     if (ececity->currentMenuProcess != STARTGAME) {
@@ -207,10 +207,10 @@ void calculTimerHabitations(ECECITY* ececity){
                ececity->tabHabitations[i].timerSeconds = TIMENOW;
            }
        }
-       ecritureFichierTab( "tabChateau",  ececity->tabChateauEau, ececity->compteur.compteurChateaux);
-       ecritureFichierTab("tabMaison", ececity->tabHabitations, ececity->compteur.compteurMaisons);
-       ecritureFichierTab("tabcentrales", ececity->tabCentrale, ececity->compteur.compteurCentrales);
-       ecritureFichierGrille("resultat1.txt", *ececity);
+       //ecritureFichierTab( "tabChateau",  ececity->tabChateauEau, ececity->compteur.compteurChateaux);
+      // ecritureFichierTab("tabMaison", ececity->tabHabitations, ececity->compteur.compteurMaisons);
+      // ecritureFichierTab("tabcentrales", ececity->tabCentrale, ececity->compteur.compteurCentrales);
+      // ecritureFichierGrille("resultat1.txt", *ececity);
 
 
    }
@@ -260,14 +260,13 @@ void defineTypeCase(ECECITY* ececity){
         if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
             switch(ececity->currentJeuProcess){
                 case CONSTRUCTIONROUTE:
-                    if(ececity->compteur.soldeBanque >= ececity->prix.prixRoute){
+                    if (ececity->compteur.soldeBanque >= ececity->prix.prixRoute) {
 
-                        if(ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE){
+                        if (ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type == VIDE) {
                             ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type = ROUTE;
                             ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType = ececity->compteur.nbRoutes;
-                            ececity->compteur.soldeBanque = ececity->compteur.soldeBanque - ececity->prix.prixRoute;
                             ececity->compteur.nbRoutes++;
-                            if(ececity->compteur.nbRoutes == 1){
+                            if (ececity->compteur.nbRoutes == 1) {
                                 Graphe_AllocGraphe(ececity);
                             }
                             ececity->graphe->ordre++;
