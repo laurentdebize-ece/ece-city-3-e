@@ -99,9 +99,6 @@ void InitImage(ECECITY* ececity){
     ececity->tabImage[IMAGEJEU].format.x = 0;
     ececity->tabImage[IMAGEJEU].format.y = 0;
     ececity->tabImage[IMAGEJEU].format = (Rectangle){0,0,ececity->tabImage[IMAGEJEU].format.width,ececity->tabImage[IMAGEJEU].format.height};
-    Color color;
-    color = GetImageColor(ececity->tabImage[IMAGEJEU].Image,300,300);
-    printf("%d %d %d %d",color.r,color.g,color.b,color.a);
     UnloadImage(ececity->tabImage[IMAGEJEU].Image);
 
     ececity->tabImage[IMAGECLOCK].Image = LoadImage("../Images/CLOCK.png");
@@ -131,14 +128,71 @@ void InitImage(ECECITY* ececity){
     ececity->tabImage[IMAGEPOPULATION].format = (Rectangle){ececity->tabImage[IMAGEPOPULATION].format.x,ececity->tabImage[IMAGEPOPULATION].format.y,ececity->tabImage[IMAGEPOPULATION].format.width,ececity->tabImage[IMAGEPOPULATION].format.height};
     UnloadImage(ececity->tabImage[IMAGEPOPULATION].Image);
 
+    ececity->tabImage[BOUTONROUTE].Image = LoadImage("../Images/BoutonRoute.png");
+    ececity->tabImage[BOUTONROUTE].TextureImage = LoadTextureFromImage(ececity->tabImage[BOUTONROUTE].Image);
+    ececity->tabImage[BOUTONROUTE].format.width = 60;
+    ececity->tabImage[BOUTONROUTE].format.height = 60;
+    ececity->tabImage[BOUTONROUTE].format.x = 675;
+    ececity->tabImage[BOUTONROUTE].format.y = 40;
+    ececity->tabImage[BOUTONROUTE].format = (Rectangle){ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.x,ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.y,ececity->tabImage[BOUTONROUTE].format.width,ececity->tabImage[BOUTONROUTE].format.height};
+    UnloadImage(ececity->tabImage[BOUTONROUTE].Image);
+
+
+    ececity->tabImage[BOUTONEAU].Image = LoadImage("../Images/BoutonEau.png");
+    ececity->tabImage[BOUTONEAU].TextureImage = LoadTextureFromImage(ececity->tabImage[BOUTONEAU].Image);
+    ececity->tabImage[BOUTONEAU].format.height = 60;
+    ececity->tabImage[BOUTONEAU].format.width = 60;
+    ececity->tabImage[BOUTONEAU].format.x = 40;
+    ececity->tabImage[BOUTONEAU].format.y = 500;
+    ececity->tabImage[BOUTONEAU].format = (Rectangle){ececity->tabBouton[Jeu][BOUTON_CHATEAUDEAU].recBouton.x,ececity->tabBouton[Jeu][BOUTON_CHATEAUDEAU].recBouton.y,ececity->tabImage[BOUTONEAU].format.width,ececity->tabImage[BOUTONEAU].format.height};
+    UnloadImage(ececity->tabImage[BOUTONEAU].Image);
+
+    ececity->tabImage[BOUTONELEC].Image = LoadImage("../Images/BoutonElec.png");
+    ececity->tabImage[BOUTONELEC].TextureImage = LoadTextureFromImage(ececity->tabImage[BOUTONELEC].Image);
+    ececity->tabImage[BOUTONELEC].format.width = 60;
+    ececity->tabImage[BOUTONELEC].format.height = 60;
+    ececity->tabImage[BOUTONELEC].format.x = 40;
+    ececity->tabImage[BOUTONELEC].format.y = 600;
+    ececity->tabImage[BOUTONELEC].format = (Rectangle){ececity->tabBouton[Jeu][BOUTON_CENTRALE].recBouton.x,ececity->tabBouton[Jeu][BOUTON_CENTRALE].recBouton.y,ececity->tabImage[BOUTONELEC].format.width,ececity->tabImage[BOUTONELEC].format.height};
+    UnloadImage(ececity->tabImage[BOUTONELEC].Image);
+
+    ececity->tabImage[BOUTONEXIT].Image = LoadImage("../Images/BoutonExit.png");
+    ececity->tabImage[BOUTONEXIT].TextureImage = LoadTextureFromImage(ececity->tabImage[BOUTONEXIT].Image);
+    ececity->tabImage[BOUTONEXIT].format.width = 60;
+    ececity->tabImage[BOUTONEXIT].format.height = 60;
+    ececity->tabImage[BOUTONEXIT].format.x = 40;
+    ececity->tabImage[BOUTONEXIT].format.y = 800;
+    ececity->tabImage[BOUTONEXIT].format = (Rectangle){ececity->tabBouton[Jeu][BOUTON_EXIT_JEU].recBouton.x,ececity->tabBouton[Jeu][BOUTON_EXIT_JEU].recBouton.y,ececity->tabImage[BOUTONEXIT].format.width,ececity->tabImage[BOUTONEXIT].format.height};
+    UnloadImage(ececity->tabImage[BOUTONEXIT].Image);
+
+    ececity->tabImage[BOUTONMAISON].Image = LoadImage("../Images/BoutonMaison.png");
+    ececity->tabImage[BOUTONMAISON].TextureImage = LoadTextureFromImage(ececity->tabImage[BOUTONMAISON].Image);
+    ececity->tabImage[BOUTONMAISON].format.width = 60;
+    ececity->tabImage[BOUTONMAISON].format.height = 60;
+    ececity->tabImage[BOUTONMAISON].format.x = 40;
+    ececity->tabImage[BOUTONMAISON].format.y = 700;
+    ececity->tabImage[BOUTONMAISON].format = (Rectangle){ececity->tabBouton[Jeu][BOUTON_MAISON].recBouton.x,ececity->tabBouton[Jeu][BOUTON_MAISON].recBouton.y,ececity->tabImage[BOUTONMAISON].format.width,ececity->tabImage[BOUTONMAISON].format.height};
+    UnloadImage(ececity->tabImage[BOUTONMAISON].Image);
+
+    ececity->tabImage[BOUTONPAUSE].Image = LoadImage("../Images/BoutonPause.png");
+    ececity->tabImage[BOUTONPAUSE].TextureImage = LoadTextureFromImage(ececity->tabImage[BOUTONPAUSE].Image);
+    ececity->tabImage[BOUTONPAUSE].format.width = 60;
+    ececity->tabImage[BOUTONPAUSE].format.height = 60;
+    ececity->tabImage[BOUTONPAUSE].format.x = 100;
+    ececity->tabImage[BOUTONPAUSE].format.y = 900;
+    ececity->tabImage[BOUTONPAUSE].format = (Rectangle){ececity->tabBouton[Jeu][BOUTON_PAUSE].recBouton.x,ececity->tabBouton[Jeu][BOUTON_PAUSE].recBouton.y,ececity->tabImage[BOUTONPAUSE].format.width,ececity->tabImage[BOUTONPAUSE].format.height};
+    UnloadImage(ececity->tabImage[BOUTONPAUSE].Image);
+
+
     ececity->tabImage[IMAGEROUTE].Image = LoadImage("../Images/route.png");
     ececity->tabImage[IMAGEROUTE].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEROUTE].Image);
     ececity->tabImage[IMAGEROUTE].format.width = 200;
     ececity->tabImage[IMAGEROUTE].format.height = 100;
-    ececity->tabImage[IMAGEROUTE].format.x = ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.x;
+    ececity->tabImage[IMAGEROUTE].format.x = ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.x ;
     ececity->tabImage[IMAGEROUTE].format.y = ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.y;
     ececity->tabImage[IMAGEROUTE].format = (Rectangle){ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.x,ececity->tabBouton[Jeu][BOUTON_ROUTE].recBouton.y,ececity->tabImage[IMAGEROUTE].format.width,ececity->tabImage[IMAGEROUTE].format.height};
     UnloadImage(ececity->tabImage[IMAGEROUTE].Image);
+
 
     ececity->tabImage[IMAGECHATEAUEAU].Image = LoadImage("../Images/eau.png");
     ececity->tabImage[IMAGECHATEAUEAU].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGECHATEAUEAU].Image);
@@ -484,7 +538,7 @@ void InitCompteur(ECECITY* ececity){
     ececity->compteur.nbHabitantsTotal = 0;
     ececity->compteur.CapaciteCentrale = CAPACENTRALE;
     ececity->compteur.CapaciteEau = CAPAEAU;
-    ececity->compteur.soldeBanque = SOLDEBANQUE + 10*10;
+    ececity->compteur.soldeBanque = SOLDEBANQUE;
 }
 
 void InitInfoFichierText(char* monFichier, ECECITY* ececity)
