@@ -407,7 +407,7 @@ void evolutionConstruction( ECECITY* ececity, int maisonTraitee, Compteur c);
 void pause(ECECITY* ececity);
 void defineTypeCase(ECECITY* ececity);
 void defineCurrentJeuProcess(ECECITY* ececity);
-bool proximiteRoute(ECECITY* ececity, int typeBatiment);
+bool proximiteRoute(ECECITY* ececity, int typeBatiment, int colonne,int ligne);
 bool construire(ECECITY* ececity);
 void calculTimerHabitations(ECECITY* ececity);
 void calculHabitant(ECECITY* ececity);

@@ -87,7 +87,7 @@ void buildGraphe(ECECITY* ececity,int typeBatiment) {
         for (int sommet1 = 0; sommet1 < ececity->graphe->ordre; ++sommet1) {
             for (int sommet2 = 0; sommet2 < ececity->graphe->ordre; ++sommet2) {
                 if(sommet1 != sommet2){
-                    if(proximiteSommet(ececity->graphe->pSommet[sommet1], ececity->graphe->pSommet[sommet2]) == true
+                    if(proximiteSommet(ececity,ececity->graphe->pSommet[sommet1], ececity->graphe->pSommet[sommet2]) == true
                        && arcExiste(ececity->graphe->pSommet[sommet1], ececity->graphe->pSommet[sommet2]) == false
                        && arcExiste(ececity->graphe->pSommet[sommet2], ececity->graphe->pSommet[sommet1]) == false){
                         ececity->graphe->pSommet = Graph_CreateArc(ececity->graphe->pSommet, ececity->graphe->pSommet[sommet1]->id - 1, ececity->graphe->pSommet[sommet2]->id - 1);
@@ -118,15 +118,67 @@ bool arcExiste(pSommet sommet1, pSommet sommet2) {
     return false;
 }
 
-bool proximiteSommet(pSommet sommet1, pSommet sommet2) {
-    if (sommet1->ligneTab == sommet2->ligneTab) {
-        if (sommet1->colonneTab == sommet2->colonneTab + 1 || sommet1->colonneTab == sommet2->colonneTab - 1) {
-            return true;
+bool proximiteSommet(ECECITY* ececity,pSommet sommet1, pSommet sommet2) {
+    if(sommet1->type == ROUTE && sommet2->type == ROUTE){
+        if (sommet1->ligneTab == sommet2->ligneTab) {
+            if (sommet1->colonneTab == sommet2->colonneTab + 1 || sommet1->colonneTab == sommet2->colonneTab - 1) {
+                return true;
+            }
+        }
+        else if (sommet1->colonneTab == sommet2->colonneTab) {
+            if (sommet1->ligneTab == sommet2->ligneTab + 1 || sommet1->ligneTab == sommet2->ligneTab - 1) {
+                return true;
+            }
         }
     }
-    else if (sommet1->colonneTab == sommet2->colonneTab) {
-        if (sommet1->ligneTab == sommet2->ligneTab + 1 || sommet1->ligneTab == sommet2->ligneTab - 1) {
-            return true;
+    else if((sommet1->type == ROUTE || sommet2->type == ROUTE ) && sommet1->type != sommet2->type){
+        if(sommet1->type == ROUTE){
+            switch (sommet2->type){
+                case TerrainVague:
+                    if((sommet1->ligneTab >= sommet2->ligneTab - 1 && sommet1->ligneTab <= sommet2->ligneTab + ececity->formatBatiment.nblignesMaison)
+                       && (sommet1->colonneTab <= sommet2->colonneTab - 1 && sommet1->colonneTab >= sommet2->colonneTab + ececity->formatBatiment.nbcolonnesMaison)){
+                        return true;
+                    }
+                    break;
+                case CHATEAUDEAU:
+                    if((sommet1->ligneTab >= sommet2->ligneTab - 1 && sommet1->ligneTab <= sommet2->ligneTab + ececity->formatBatiment.nblignesChateaux)
+                       && (sommet1->colonneTab <= sommet2->colonneTab - 1 && sommet1->colonneTab >= sommet2->colonneTab + ececity->formatBatiment.nbcolonnesChateaux)){
+                        return true;
+                    }
+                    break;
+                case CENTRALE:
+                    if((sommet1->ligneTab >= sommet2->ligneTab - 1 && sommet1->ligneTab <= sommet2->ligneTab + ececity->formatBatiment.nblignesCentrales)
+                       && (sommet1->colonneTab <= sommet2->colonneTab - 1 && sommet1->colonneTab >= sommet2->colonneTab + ececity->formatBatiment.nbcolonnesCentrales)){
+                        return true;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        else if(sommet2->type == ROUTE){
+            switch (sommet1->type){
+                case TerrainVague:
+                    if((sommet2->ligneTab >= sommet1->ligneTab - 1 && sommet2->ligneTab <= sommet1->ligneTab + ececity->formatBatiment.nblignesMaison)
+                    && (sommet2->colonneTab >= sommet1->colonneTab - 1 && sommet2->colonneTab <= sommet1->colonneTab + ececity->formatBatiment.nbcolonnesMaison)){
+                        return true;
+                    }
+                    break;
+                case CHATEAUDEAU:
+                    if((sommet2->ligneTab >= sommet1->ligneTab - 1 && sommet2->ligneTab <= sommet1->ligneTab + ececity->formatBatiment.nblignesChateaux)
+                       && (sommet2->colonneTab >= sommet1->colonneTab - 1 && sommet2->colonneTab <= sommet1->colonneTab + ececity->formatBatiment.nbcolonnesChateaux)){
+                        return true;
+                    }
+                    break;
+                case CENTRALE:
+                    if((sommet2->ligneTab >= sommet1->ligneTab - 1 && sommet2->ligneTab <= sommet1->ligneTab + ececity->formatBatiment.nblignesCentrales)
+                       && (sommet2->colonneTab >= sommet1->colonneTab - 1 && sommet2->colonneTab <= sommet1->colonneTab + ececity->formatBatiment.nbcolonnesCentrales)){
+                        return true;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
     return false;
@@ -160,12 +212,14 @@ void Graphe_PrintPaths(Graphe *graphe, int sommetActuel) {
 
 void Graphe_DisplayArcs(Graphe* graphe) {
     if(graphe != NULL && graphe->taille){
-        for (int i = 0; i < graphe->taille; ++i) {
+        for (int i = 0; i < graphe->ordre; ++i) {
             pArc arc = graphe->pSommet[i]->arc;
+            printf("%d",arc->sommet1);
             while (arc != NULL) {
-                printf(" %d--->%d\n", arc->sommet1,arc->sommet2);
+                printf(" --->%d",arc->sommet2);
                 arc = arc->arc_suivant;
             }
+            printf("\n");
         }
     }
 }

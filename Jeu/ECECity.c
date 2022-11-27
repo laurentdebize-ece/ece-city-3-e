@@ -586,7 +586,6 @@ void defineCurrentJeuProcess(ECECITY* ececity){
                             text = fopen("../FichierText/sauvegarde","w+");
                             sauvegardeJeu(ececity, text);
                             Graphe_DisplayArcs(ececity->graphe);
-                            Graphe_DisplaySommet(ececity->graphe);
                         }
                         break;
                     case BOUTON_SAUVEGARDE2:
@@ -681,7 +680,7 @@ bool construire(ECECITY* ececity){
                     }
                 }
             }
-            if(proximiteRoute(ececity, TerrainVague)){
+            if(proximiteRoute(ececity, TerrainVague,ececity->souris.colonneSouris,ececity->souris.ligneSouris)){
                 return true;
             }
             break;
@@ -700,7 +699,7 @@ bool construire(ECECITY* ececity){
                     }
                 }
             }
-            if(proximiteRoute(ececity, CHATEAUDEAU)){
+            if(proximiteRoute(ececity, CHATEAUDEAU,ececity->souris.colonneSouris,ececity->souris.ligneSouris)){
                 return true;
             }
             break;
@@ -719,7 +718,7 @@ bool construire(ECECITY* ececity){
                     }
                 }
             }
-            if(proximiteRoute(ececity, CENTRALE)){
+            if(proximiteRoute(ececity, CENTRALE,ececity->souris.colonneSouris,ececity->souris.ligneSouris)){
                 return true;
             }
             break;
@@ -730,7 +729,7 @@ bool construire(ECECITY* ececity){
 }
 
 
-bool proximiteRoute(ECECITY* ececity, int typeBatiment){
+bool proximiteRoute(ECECITY* ececity, int typeBatiment, int colonne,int ligne){
 
     int nbLignes = 0;
     int nbColonnes = 0;
@@ -757,10 +756,10 @@ bool proximiteRoute(ECECITY* ececity, int typeBatiment){
             || lignesFormat == nbLignes - 1
             || colonnesFormat == 0
             || colonnesFormat == nbColonnes - 1){
-                if(ececity->tabCase[ececity->souris.colonneSouris + colonnesFormat + 1][ececity->souris.ligneSouris + lignesFormat].type == ROUTE
-                || ececity->tabCase[ececity->souris.colonneSouris + colonnesFormat - 1][ececity->souris.ligneSouris + lignesFormat].type == ROUTE
-                || ececity->tabCase[ececity->souris.colonneSouris + colonnesFormat][ececity->souris.ligneSouris + lignesFormat + 1].type == ROUTE
-                || ececity->tabCase[ececity->souris.colonneSouris + colonnesFormat][ececity->souris.ligneSouris + lignesFormat - 1].type == ROUTE){
+                if(ececity->tabCase[colonne + colonnesFormat + 1][ligne + lignesFormat].type == ROUTE
+                || ececity->tabCase[colonne + colonnesFormat - 1][ligne + lignesFormat].type == ROUTE
+                || ececity->tabCase[colonne + colonnesFormat][ligne + lignesFormat + 1].type == ROUTE
+                || ececity->tabCase[colonne + colonnesFormat][ligne + lignesFormat - 1].type == ROUTE){
                     return true;
                 }
             }
