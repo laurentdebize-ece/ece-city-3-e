@@ -70,6 +70,8 @@ void Graphe_ReallocGraphe(ECECITY* ececity,int typeBatiment) {
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->colonneTab = ececity->souris.colonneSouris;
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->couleur = UNEXPLORED;
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->numCC = ececity->graphe->ordre - 1;
+    ececity->graphe->pSommet[ececity->graphe->ordre - 1]->type = ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].type;
+    ececity->graphe->pSommet[ececity->graphe->ordre - 1]->numType = ececity->tabCase[ececity->souris.colonneSouris][ececity->souris.ligneSouris].numeroType;
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->arc = NULL;
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->type = typeBatiment;
     ececity->graphe->pSommet[ececity->graphe->ordre - 1]->nbArcs = 0;
@@ -136,19 +138,34 @@ bool proximiteSommet(ECECITY* ececity,pSommet sommet1, pSommet sommet2) {
             switch (sommet2->type){
                 case TerrainVague:
                     if((sommet1->ligneTab >= sommet2->ligneTab - 1 && sommet1->ligneTab <= sommet2->ligneTab + ececity->formatBatiment.nblignesMaison)
-                       && (sommet1->colonneTab <= sommet2->colonneTab - 1 && sommet1->colonneTab >= sommet2->colonneTab + ececity->formatBatiment.nbcolonnesMaison)){
+                       && (sommet1->colonneTab <= sommet2->colonneTab - 1 && sommet1->colonneTab >= sommet2->colonneTab + ececity->formatBatiment.nbcolonnesMaison)
+                       && !(sommet1->colonneTab == sommet2->colonneTab - 1 && sommet1->ligneTab == sommet2->ligneTab - 1)
+                       && !(sommet1->colonneTab == sommet2->colonneTab - 1 && sommet1->ligneTab == sommet2->ligneTab + ececity->formatBatiment.nblignesMaison)
+                       && !(sommet1->colonneTab == sommet2->colonneTab + ececity->formatBatiment.nbcolonnesMaison && sommet1->ligneTab == sommet2->ligneTab - 1)
+                       && !(sommet1->colonneTab == sommet2->colonneTab + ececity->formatBatiment.nbcolonnesMaison && sommet1->ligneTab == sommet2->ligneTab + ececity->formatBatiment.nblignesMaison)
+                       ){
                         return true;
                     }
                     break;
                 case CHATEAUDEAU:
                     if((sommet1->ligneTab >= sommet2->ligneTab - 1 && sommet1->ligneTab <= sommet2->ligneTab + ececity->formatBatiment.nblignesChateaux)
-                       && (sommet1->colonneTab <= sommet2->colonneTab - 1 && sommet1->colonneTab >= sommet2->colonneTab + ececity->formatBatiment.nbcolonnesChateaux)){
+                       && (sommet1->colonneTab <= sommet2->colonneTab - 1 && sommet1->colonneTab >= sommet2->colonneTab + ececity->formatBatiment.nbcolonnesChateaux)
+                      && !(sommet1->colonneTab == sommet2->colonneTab - 1 && sommet1->ligneTab == sommet2->ligneTab - 1)
+                      && !(sommet1->colonneTab == sommet2->colonneTab - 1 && sommet1->ligneTab == sommet2->ligneTab + ececity->formatBatiment.nblignesChateaux)
+                      && !(sommet1->colonneTab == sommet2->colonneTab + ececity->formatBatiment.nbcolonnesChateaux && sommet1->ligneTab == sommet2->ligneTab - 1)
+                      && !(sommet1->colonneTab == sommet2->colonneTab + ececity->formatBatiment.nbcolonnesChateaux && sommet1->ligneTab == sommet2->ligneTab + ececity->formatBatiment.nblignesChateaux)
+                       ){
                         return true;
                     }
                     break;
                 case CENTRALE:
                     if((sommet1->ligneTab >= sommet2->ligneTab - 1 && sommet1->ligneTab <= sommet2->ligneTab + ececity->formatBatiment.nblignesCentrales)
-                       && (sommet1->colonneTab <= sommet2->colonneTab - 1 && sommet1->colonneTab >= sommet2->colonneTab + ececity->formatBatiment.nbcolonnesCentrales)){
+                       && (sommet1->colonneTab <= sommet2->colonneTab - 1 && sommet1->colonneTab >= sommet2->colonneTab + ececity->formatBatiment.nbcolonnesCentrales)
+                      && !(sommet1->colonneTab == sommet2->colonneTab - 1 && sommet1->ligneTab == sommet2->ligneTab - 1)
+                      && !(sommet1->colonneTab == sommet2->colonneTab - 1 && sommet1->ligneTab == sommet2->ligneTab + ececity->formatBatiment.nblignesCentrales)
+                      && !(sommet1->colonneTab == sommet2->colonneTab + ececity->formatBatiment.nbcolonnesCentrales && sommet1->ligneTab == sommet2->ligneTab - 1)
+                      && !(sommet1->colonneTab == sommet2->colonneTab + ececity->formatBatiment.nbcolonnesCentrales && sommet1->ligneTab == sommet2->ligneTab + ececity->formatBatiment.nblignesCentrales)
+                       ){
                         return true;
                     }
                     break;
@@ -160,19 +177,34 @@ bool proximiteSommet(ECECITY* ececity,pSommet sommet1, pSommet sommet2) {
             switch (sommet1->type){
                 case TerrainVague:
                     if((sommet2->ligneTab >= sommet1->ligneTab - 1 && sommet2->ligneTab <= sommet1->ligneTab + ececity->formatBatiment.nblignesMaison)
-                    && (sommet2->colonneTab >= sommet1->colonneTab - 1 && sommet2->colonneTab <= sommet1->colonneTab + ececity->formatBatiment.nbcolonnesMaison)){
+                    && (sommet2->colonneTab >= sommet1->colonneTab - 1 && sommet2->colonneTab <= sommet1->colonneTab + ececity->formatBatiment.nbcolonnesMaison)
+                   && !(sommet2->colonneTab == sommet1->colonneTab - 1 && sommet2->ligneTab == sommet1->ligneTab - 1)
+                   && !(sommet2->colonneTab == sommet1->colonneTab - 1 && sommet2->ligneTab == sommet1->ligneTab + ececity->formatBatiment.nblignesMaison)
+                   && !(sommet2->colonneTab == sommet1->colonneTab + ececity->formatBatiment.nbcolonnesMaison && sommet2->ligneTab == sommet1->ligneTab - 1)
+                   && !(sommet2->colonneTab == sommet1->colonneTab + ececity->formatBatiment.nbcolonnesMaison && sommet2->ligneTab == sommet1->ligneTab + ececity->formatBatiment.nblignesMaison)
+                    ){
                         return true;
                     }
                     break;
                 case CHATEAUDEAU:
                     if((sommet2->ligneTab >= sommet1->ligneTab - 1 && sommet2->ligneTab <= sommet1->ligneTab + ececity->formatBatiment.nblignesChateaux)
-                       && (sommet2->colonneTab >= sommet1->colonneTab - 1 && sommet2->colonneTab <= sommet1->colonneTab + ececity->formatBatiment.nbcolonnesChateaux)){
+                       && (sommet2->colonneTab >= sommet1->colonneTab - 1 && sommet2->colonneTab <= sommet1->colonneTab + ececity->formatBatiment.nbcolonnesChateaux)
+                      && !(sommet2->colonneTab == sommet1->colonneTab - 1 && sommet2->ligneTab == sommet1->ligneTab - 1)
+                      && !(sommet2->colonneTab == sommet1->colonneTab - 1 && sommet2->ligneTab == sommet1->ligneTab + ececity->formatBatiment.nblignesChateaux)
+                      && !(sommet2->colonneTab == sommet1->colonneTab + ececity->formatBatiment.nbcolonnesChateaux && sommet2->ligneTab == sommet1->ligneTab - 1)
+                      && !(sommet2->colonneTab == sommet1->colonneTab + ececity->formatBatiment.nbcolonnesChateaux && sommet2->ligneTab == sommet1->ligneTab + ececity->formatBatiment.nblignesChateaux)
+                       ){
                         return true;
                     }
                     break;
                 case CENTRALE:
                     if((sommet2->ligneTab >= sommet1->ligneTab - 1 && sommet2->ligneTab <= sommet1->ligneTab + ececity->formatBatiment.nblignesCentrales)
-                       && (sommet2->colonneTab >= sommet1->colonneTab - 1 && sommet2->colonneTab <= sommet1->colonneTab + ececity->formatBatiment.nbcolonnesCentrales)){
+                       && (sommet2->colonneTab >= sommet1->colonneTab - 1 && sommet2->colonneTab <= sommet1->colonneTab + ececity->formatBatiment.nbcolonnesCentrales)
+                      && !(sommet2->colonneTab == sommet1->colonneTab - 1 && sommet2->ligneTab == sommet1->ligneTab - 1)
+                      && !(sommet2->colonneTab == sommet1->colonneTab - 1 && sommet2->ligneTab == sommet1->ligneTab + ececity->formatBatiment.nblignesCentrales)
+                      && !(sommet2->colonneTab == sommet1->colonneTab + ececity->formatBatiment.nbcolonnesCentrales && sommet2->ligneTab == sommet1->ligneTab - 1)
+                      && !(sommet2->colonneTab == sommet1->colonneTab + ececity->formatBatiment.nbcolonnesCentrales && sommet2->ligneTab == sommet1->ligneTab + ececity->formatBatiment.nblignesCentrales)
+                       ){
                         return true;
                     }
                     break;
