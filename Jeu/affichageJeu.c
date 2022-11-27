@@ -108,6 +108,7 @@ void AffichageGamePlay(ECECITY* ececity){
                             case NIVEAU0:
                             case GAMEOVER:
                             case SAUVEGARDE:
+                            case CONSTRUCTION:
                                 colorRect = BLANK;
                                 break;
 
@@ -717,9 +718,6 @@ void AfficherBoutonModeJeu(ECECITY *ececity) {
 
 void AfficherBouton(ECECITY *ececity) {
 
-
-    bool clic = IsMouseButtonDown(MOUSE_BUTTON_LEFT) &&
-    CheckCollisionPointRec(ececity->souris.position, ececity->tabBouton[Jeu][BOUTON_OUTIL].recBouton);
     int NB_BOUTON = 0;
     int debutBouton = 0;
     switch (ececity->currentProcess) {
@@ -732,12 +730,8 @@ void AfficherBouton(ECECITY *ececity) {
             ececity->write.fontSize = 30;
             break;
         case Jeu:
-            if (clic == false) {
-            }else{
-                NB_BOUTON = NB_BOUTON_JEU;
-                ececity->write.fontSize = 15;
-
-            }
+            NB_BOUTON = NB_BOUTON_JEU;
+            ececity->write.fontSize = 15;
             break;
 
         case END:

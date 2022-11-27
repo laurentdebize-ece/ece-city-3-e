@@ -349,6 +349,8 @@ void InitBouton(ECECITY* ececity){
 
     ececity->tabBouton[Jeu][BOUTON_OUTIL].recBouton = (Rectangle){20 ,900, 200, 180};
     ececity->tabBouton[Jeu][BOUTON_OUTIL].nom = boutonJeuText[BOUTON_OUTIL];
+    ececity->tabBouton[Jeu][BOUTON_OUTIL].actif = false;
+
 
     ececity->tabBouton[Jeu][BOUTON_NIVEAU_0].recBouton = (Rectangle){(float) ececity->display.width - 550,650, 200, 100};
     ececity->tabBouton[Jeu][BOUTON_NIVEAU_0].nom = boutonJeuText[BOUTON_NIVEAU_0];

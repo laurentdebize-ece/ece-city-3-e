@@ -215,14 +215,24 @@ void Gameplay(ECECITY* ececity){
 
     switch (ececity->currentJeuProcess) {
         case NONE:
-        case CONSTRUCTIONROUTE:
-        case CONSTRUCTIONMAISON:
-        case CONSTRUCTIONCHATEAUDEAU:
-        case CONSTRUCTIONCENTRALE:
         case GAMEOVER:
         case NIVEAU0:
         case NIVEAU1:
         case NIVEAU2:
+            for (int boutonJeu = 0; boutonJeu < NB_BOUTON_JEU; ++boutonJeu) {
+                if (boutonJeu <= BOUTON_NIVEAU_2 && boutonJeu >= BOUTON_OUTIL){
+                    ececity->tabBouton[Jeu][boutonJeu].actif = true;
+                }
+                else{
+                    ececity->tabBouton[Jeu][boutonJeu].actif = false;
+                }
+            }
+            break;
+        case CONSTRUCTION:
+        case CONSTRUCTIONROUTE:
+        case CONSTRUCTIONMAISON:
+        case CONSTRUCTIONCHATEAUDEAU:
+        case CONSTRUCTIONCENTRALE:
             for (int boutonJeu = 0; boutonJeu < NB_BOUTON_JEU; ++boutonJeu) {
                 if (boutonJeu <= BOUTON_NIVEAU_2){
                     ececity->tabBouton[Jeu][boutonJeu].actif = true;
@@ -509,6 +519,14 @@ void defineCurrentJeuProcess(ECECITY* ececity){
                         }
                         else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_CENTRALE].recBouton)){
                             ececity->currentJeuProcess = CONSTRUCTIONCENTRALE;
+                        }
+                        break;
+                    case BOUTON_OUTIL:
+                        if(ececity->currentJeuProcess == CONSTRUCTION){
+                            ececity->currentJeuProcess = NONE;
+                        }
+                        else if(CheckCollisionPointRec(ececity->souris.position,ececity->tabBouton[Jeu][BOUTON_OUTIL].recBouton)){
+                            ececity->currentJeuProcess = CONSTRUCTION;
                         }
                         break;
                     case BOUTON_PAUSE:
