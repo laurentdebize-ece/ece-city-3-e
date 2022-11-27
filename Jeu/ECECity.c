@@ -26,6 +26,7 @@ void MainBoucle(ECECITY* ececity){
                 break;
             case END:
                 ececity->IsCodeRunning = false;
+                GameOver(ececity);
                 break;
             default:
                 break;
@@ -269,7 +270,17 @@ void Gameplay(ECECITY* ececity){
 
 }
 
+void GameOver(ECECITY* ececity){
 
+   if(ececity->compteur.soldeBanque <= 0 && ececity->compteur.nbHabitantsTotal ==0) {
+
+       DrawText("Vous êtes en faillite", 200,200, 20, WHITE );
+       DrawTexture(ececity->tabImage[IMAGEFIN].TextureImage, (int)ececity->tabImage[IMAGEFIN].format.x, (int)ececity->tabImage[IMAGEFIN].format.y, WHITE);
+
+   }
+
+
+}
 
 void calculTimerHabitations(ECECITY* ececity){
    int t = TIMENOW;

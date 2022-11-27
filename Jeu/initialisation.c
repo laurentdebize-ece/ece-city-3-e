@@ -156,6 +156,14 @@ void InitImage(ECECITY* ececity){
     ececity->tabImage[IMAGETERRAINVAGUE].format.height = 100;
     UnloadImage(ececity->tabImage[IMAGETERRAINVAGUE].Image);
 
+    ececity->tabImage[IMAGEFIN].Image = LoadImage("../Images/GameOver.png");
+    ececity->tabImage[IMAGEFIN].TextureImage = LoadTextureFromImage(ececity->tabImage[IMAGEFIN].Image);
+    ececity->tabImage[IMAGEFIN].format.width = 1920;
+    ececity->tabImage[IMAGEFIN].format.height = 1065;
+    ececity->tabImage[IMAGEFIN].format.x = 0;
+    ececity->tabImage[IMAGEFIN].format.y = 0;
+    ececity->tabImage[IMAGEFIN].format = (Rectangle){0,0,ececity->tabImage[IMAGEFIN].format.width,ececity->tabImage[IMAGEFIN].format.height};
+    UnloadImage(ececity->tabImage[IMAGEFIN].Image);
 
 }
 
